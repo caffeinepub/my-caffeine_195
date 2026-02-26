@@ -1,61 +1,39 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add UPI QR Code and Bank Details to Donation Section",
+  "title": "Fix Admin Panel Villages Tab — District Add Error",
   "requirements": [
     {
-      "id": "REQ-11",
-      "summary": "Add UPI payment panel with QR code, copyable UPI ID, and supported apps list to DonationSection",
+      "id": "REQ-37",
+      "summary": "Fix the addDistrict mutation error in the Admin Panel Villages tab by correcting the mutation hook to properly call the backend addDistrict method with the correct argument shape, add proper error handling, and ensure the districts query invalidates after successful addition",
       "acceptanceCriteria": [
-        "DonationSection shows a UPI QR code image for UPI ID 76800701@ubin",
-        "UPI ID '76800701@ubin' is displayed as copyable text with a copy icon button",
-        "Clicking copy button copies the UPI ID to clipboard and shows a toast confirmation",
-        "Supported UPI apps (Paytm, Google Pay, PhonePe) are listed beneath the QR code",
-        "Panel uses the existing maroon (#632626) and gold (#dacc96) color tokens"
+        "Entering a district name in the Admin Panel > Villages tab and clicking the submit button successfully calls the backend `addDistrict` endpoint without throwing an error.",
+        "After a successful district add, the districts list in the Admin Panel refreshes and shows the newly added district.",
+        "A success toast notification is shown after successfully adding a district.",
+        "No red error text is displayed on the Admin Panel Villages tab during or after a district add operation.",
+        "If the backend returns a genuine error (e.g., duplicate name), it is displayed as a meaningful error message rather than a raw JS error.",
+        "The Add Village form similarly works without errors when a valid district is selected and a village name is entered."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/DonationSection.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add a UPI payment panel section alongside the existing donation form. Display the generated QR code image from frontend/public/assets/generated/upi-qr-code.dim_400x500.png with 'Scan & Pay' heading. Include copyable UPI ID text '76800701@ubin' with a copy button that triggers navigator.clipboard.writeText and shows a toast via the Sonner toast function. List supported UPI apps (Paytm, Google Pay, PhonePe, and any UPI app) beneath the QR code. Style the panel using existing maroon/gold palette tokens from Tailwind config. Implement copy-to-clipboard functionality with error handling and toast notifications."
-        }
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "summary": "Add Bank Details card with copyable account information to DonationSection",
-      "acceptanceCriteria": [
-        "Bank Details card is visible in the DonationSection below or alongside the UPI panel",
-        "Account Name 'Gausiya Ashrafiya Foundation' is displayed with a copy button",
-        "Account Number '353901010037412' is displayed with a copy button",
-        "IFSC Code 'UBIN0535397' is displayed with a copy button",
-        "Each copy button copies the respective value to clipboard and shows a toast",
-        "Card header includes a bank/building icon and 'Bank Details' label",
-        "Card uses the maroon/gold color palette consistent with the rest of the app"
-      ],
-      "file_operations": [
+          "description": "Fix the useAddDistrict mutation hook to correctly call actor.addDistrict(name) with a single string argument (not an object). Update the mutationFn to pass the district name directly as a string parameter. Ensure the onSuccess callback properly invalidates the 'districts' query key to trigger a refetch. Add proper error handling in onError to display meaningful error messages via toast notifications instead of allowing raw errors to propagate to the UI."
+        },
         {
-          "path": "frontend/src/components/DonationSection.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add a Bank Details card below or adjacent to the UPI panel. Display three labeled fields: Account Name 'Gausiya Ashrafiya Foundation', Account Number '353901010037412', and IFSC Code 'UBIN0535397'. Each field must have an individual copy button that copies the exact value to clipboard using navigator.clipboard.writeText and displays a toast confirmation. Include a bank/building icon (from lucide-react or similar) in the card header with 'Bank Details' label. Style the card consistently with maroon/gold palette using Tailwind classes from the existing config. Ensure all values match the constraints exactly as specified."
-        }
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "summary": "Wire the generated UPI QR code image asset into the DonationSection UI",
-      "acceptanceCriteria": [
-        "A QR code image is rendered in the UPI payment panel of DonationSection",
-        "The QR code card has a white background with rounded corners",
-        "'SCAN & PAY' heading appears above the QR code",
-        "UPI ID text '76800701@ubin' appears below the QR code image",
-        "BHIM UPI branding label is shown beneath the UPI ID"
-      ],
-      "file_operations": [
+          "description": "Fix the useAddVillage mutation hook to correctly call actor.addVillage(districtId, villageName) with two separate arguments (bigint and string). Update the mutationFn to destructure the variables object and pass districtId and villageName as individual parameters. Ensure the onSuccess callback invalidates both 'districts' and the specific district's villages query. Add proper error handling in onError with toast notifications for user-friendly error display."
+        },
         {
-          "path": "frontend/src/components/DonationSection.tsx",
+          "path": "frontend/src/components/AdminPanel.tsx",
           "operation": "modify",
-          "description": "Import and render the generated UPI QR code image from frontend/public/assets/generated/upi-qr-code.dim_400x500.png inside the UPI payment panel. Wrap the image in a white rounded card container. Display 'SCAN & PAY' heading above the QR code image using bold text. Show the UPI ID '76800701@ubin' as text beneath the QR code. Include a BHIM UPI branding reference below the UPI ID text. Use responsive image sizing and ensure the card layout matches the design requirements with proper spacing and alignment within the existing maroon/gold color scheme."
+          "description": "Update the Villages tab district form submission handler to pass the district name as a plain string (not wrapped in an object) to the addDistrict mutation. Remove any object wrapping like {name: districtName} and pass districtName directly. Ensure the form clears the input field after successful submission. Add visual feedback (loading state on submit button) during the mutation. Verify that error states from the mutation hook are properly displayed to the user without showing raw error objects."
+        },
+        {
+          "path": "frontend/src/components/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "Update the Villages tab village form submission handler to pass districtId and villageName as an object {districtId, villageName} to the addVillage mutation, ensuring districtId is converted to bigint if needed. Ensure the form clears after successful submission and displays proper loading states. Add error boundary handling to catch and display authorization errors (admin-only guards) in a user-friendly format rather than showing red error text."
         }
       ]
     }

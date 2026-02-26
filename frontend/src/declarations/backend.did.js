@@ -19,20 +19,21 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
-export const Time = IDL.Int;
-export const ExternalBlob = IDL.Vec(IDL.Nat8);
-export const Activity = IDL.Record({
-  'id' : IDL.Nat,
-  'title' : IDL.Text,
-  'date' : Time,
-  'description' : IDL.Text,
-  'image' : ExternalBlob,
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
 });
-export const Donation = IDL.Record({
-  'donorName' : IDL.Text,
-  'message' : IDL.Text,
-  'timestamp' : Time,
-  'amount' : IDL.Nat,
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const Village = IDL.Record({
+  'id' : IDL.Nat,
+  'name' : IDL.Text,
+  'districtId' : IDL.Nat,
+});
+export const District = IDL.Record({
+  'id' : IDL.Nat,
+  'villages' : IDL.Vec(Village),
+  'name' : IDL.Text,
 });
 
 export const idlService = IDL.Service({
@@ -62,24 +63,23 @@ export const idlService = IDL.Service({
       [],
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
-  'addContactInquiry' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-  'addDonation' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text], [], []),
-  'getActivities' : IDL.Func([], [IDL.Vec(Activity)], ['query']),
-  'getDonations' : IDL.Func([], [IDL.Vec(Donation)], ['query']),
-  'getFoundationInfo' : IDL.Func(
-      [],
-      [
-        IDL.Record({
-          'description' : IDL.Text,
-          'email' : IDL.Text,
-          'address' : IDL.Text,
-          'phone' : IDL.Text,
-          'socialMedia' : IDL.Vec(IDL.Text),
-        }),
-      ],
+  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addDistrict' : IDL.Func([IDL.Text], [IDL.Nat], []),
+  'addVillage' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Nat], []),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'deleteDistrict' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'deleteVillage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getDistricts' : IDL.Func([], [IDL.Vec(District)], ['query']),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(UserProfile)],
       ['query'],
     ),
-  'seedActivities' : IDL.Func([], [], []),
+  'getVillagesByDistrict' : IDL.Func([IDL.Nat], [IDL.Vec(Village)], ['query']),
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
 });
 
 export const idlInitArgs = [];
@@ -96,20 +96,21 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
-  const Time = IDL.Int;
-  const ExternalBlob = IDL.Vec(IDL.Nat8);
-  const Activity = IDL.Record({
-    'id' : IDL.Nat,
-    'title' : IDL.Text,
-    'date' : Time,
-    'description' : IDL.Text,
-    'image' : ExternalBlob,
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
   });
-  const Donation = IDL.Record({
-    'donorName' : IDL.Text,
-    'message' : IDL.Text,
-    'timestamp' : Time,
-    'amount' : IDL.Nat,
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const Village = IDL.Record({
+    'id' : IDL.Nat,
+    'name' : IDL.Text,
+    'districtId' : IDL.Nat,
+  });
+  const District = IDL.Record({
+    'id' : IDL.Nat,
+    'villages' : IDL.Vec(Village),
+    'name' : IDL.Text,
   });
   
   return IDL.Service({
@@ -139,24 +140,27 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
-    'addContactInquiry' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-    'addDonation' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text], [], []),
-    'getActivities' : IDL.Func([], [IDL.Vec(Activity)], ['query']),
-    'getDonations' : IDL.Func([], [IDL.Vec(Donation)], ['query']),
-    'getFoundationInfo' : IDL.Func(
-        [],
-        [
-          IDL.Record({
-            'description' : IDL.Text,
-            'email' : IDL.Text,
-            'address' : IDL.Text,
-            'phone' : IDL.Text,
-            'socialMedia' : IDL.Vec(IDL.Text),
-          }),
-        ],
+    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addDistrict' : IDL.Func([IDL.Text], [IDL.Nat], []),
+    'addVillage' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Nat], []),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'deleteDistrict' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'deleteVillage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getDistricts' : IDL.Func([], [IDL.Vec(District)], ['query']),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(UserProfile)],
         ['query'],
       ),
-    'seedActivities' : IDL.Func([], [], []),
+    'getVillagesByDistrict' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Vec(Village)],
+        ['query'],
+      ),
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   });
 };
 

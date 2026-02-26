@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-donationsection-component-to-include-a-upi-payment-panel-displaying-1-a-upi-qr-code-image-generated-asset-with-scan-pay-heading-2-the-upi-id-76800701-ubin-as-copyable-text-with-a-copy-to-clipboard-button-3-a-note-listing-supported-apps-paytm-google-pay-phonepe-and-any-upi-app-style-this-panel-consistently-with-the-existing-maroon-gold-palette",
-      "featureTitle": "Update the DonationSection component to include a UPI payment panel displaying: (1) a UPI QR code image (generated asset) with 'Scan & Pay' heading, (2) the UPI ID '76800701@ubin' as copyable text with a copy-to-clipboard button, (3) a note listing supported apps: Paytm, Google Pay, PhonePe, and any UPI app. Style this panel consistently with the existing maroon/gold palette.",
+      "featureId": "feature-investigate-and-fix-the-error-occurring-in-the-admin-panel-villages-tab-when-attempting-to-add-a-district-the-red-error-text-visible-on-the-ui-indicates-the-adddistrict-mutation-is-failing-diagnose-whether-the-issue-is-1-a-backend-authorization-permission-check-rejecting-the-call-admin-only-guard-2-a-mismatch-between-the-frontend-mutation-arguments-and-the-backend-adddistrict-name-text-function-signature-3-an-actor-initialization-issue-causing-the-mutation-to-fail-silently-or-4-an-error-in-the-useadddistrict-react-query-mutation-hook-wrong-method-name-incorrect-argument-shape-or-missing-actor-reference-fix-the-root-cause-so-that-submitting-the-add-district-form-in-the-villages-tab-successfully-calls-the-backend-adds-the-district-invalidates-the-districts-query-and-shows-a-success-toast-instead-of-a-red-error-message",
+      "featureTitle": "Investigate and fix the error occurring in the Admin Panel > Villages tab when attempting to add a district. The red error text visible on the UI indicates the `addDistrict` mutation is failing. Diagnose whether the issue is: (1) a backend authorization/permission check rejecting the call (admin-only guard), (2) a mismatch between the frontend mutation arguments and the backend `addDistrict(name: Text)` function signature, (3) an actor initialization issue causing the mutation to fail silently, or (4) an error in the `useAddDistrict` React Query mutation hook (wrong method name, incorrect argument shape, or missing actor reference). Fix the root cause so that submitting the Add District form in the Villages tab successfully calls the backend, adds the district, invalidates the districts query, and shows a success toast instead of a red error message.",
       "files": [
-        "frontend/src/components/DonationSection.tsx"
+        "frontend/src/components/AdminPanel.tsx",
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -13,48 +14,11 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-11"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-bank-details-card-to-the-donationsection-component-displaying-the-following-information-with-individual-copy-to-clipboard-buttons-for-each-field-account-name-gausiya-ashrafiya-foundation-account-no-353901010037412-ifsc-code-ubin0535397-union-bank-of-india-include-a-bank-icon-in-the-card-header-style-consistently-with-the-maroon-gold-palette",
-      "featureTitle": "Add a Bank Details card to the DonationSection component displaying the following information with individual copy-to-clipboard buttons for each field: Account Name: Gausiya Ashrafiya Foundation, Account No.: 353901010037412, IFSC Code: UBIN0535397 (Union Bank of India). Include a bank icon in the card header. Style consistently with the maroon/gold palette.",
-      "files": [
-        "frontend/src/components/DonationSection.tsx"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-12"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-upi-qr-code-image-asset-to-the-donation-section-the-image-should-be-a-clean-scannable-qr-code-graphic-for-upi-id-76800701-ubin-displayed-inside-a-white-rounded-card-with-scan-pay-heading-and-the-bhim-upi-branding-label-beneath-it",
-      "featureTitle": "Add a UPI QR code image asset to the Donation Section. The image should be a clean, scannable QR code graphic for UPI ID 76800701@ubin, displayed inside a white rounded card with 'SCAN & PAY' heading and the BHIM UPI branding label beneath it.",
-      "files": [
-        "frontend/src/components/DonationSection.tsx"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-13"
+        "REQ-37"
       ],
       "confidence": "high"
     }

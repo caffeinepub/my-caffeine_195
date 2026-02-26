@@ -1,14 +1,17 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 11,
+  "projectStateVersion": 27,
   "summary": "गौसिया अशरफिया फाउंडेशन के लिए एक आकर्षक चैरिटेबल सोसाइटी ऐप बनाया जा रहा है। ऐप हिंदी में होगा और फाउंडेशन की गतिविधियों, दान, और सामाजिक कार्यों को प्रदर्शित करेगा। यूज़र ने एक नई कलर पैलेट (colorhunt.co/palette/6326269d5353bf8b67dacc96) अप्लाई करने का अनुरोध किया है।",
   "architectural_notes": [
     "App is in Hindi language targeting Indian audience for a charitable society named गौसिया अशरफिया फाउंडेशन",
-    "New color palette: #632626 (dark maroon), #9d5353 (deep red), #bf8b67 (warm tan), #dacc96 (light gold) — from colorhunt.co/palette/6326269d5353bf8b67dacc96"
+    "New color palette: #632626 (dark maroon), #9d5353 (deep red), #bf8b67 (warm tan), #dacc96 (light gold) — from colorhunt.co/palette/6326269d5353bf8b67dacc96",
+    "Admin panel required for viewing membership, donation, assistance, and contact submissions — needs authentication/access control",
+    "Admin Panel should only be accessible via hamburger menu link, opening on a separate page/route — not embedded on the homepage"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- UPI QR code graphic encoding UPI ID 76800701@ubin, white rounded card background, 'SCAN & PAY' bold heading at top, BHIM UPI logo at bottom, clean minimalist style (upi-qr-code.dim_400x500.png)",
+  "known_issues": [
+    "Admin Panel > Villages Tab में District Add करने पर लाल रंग का error text दिखता है — district add नहीं हो रहा"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-create-a-homepage-hero-section-displaying-the-foundation-name-gausiya-ashrafia-foundation-prominently-in-hindi-and-english-with-a-tagline-mission-statement-and-a-call-to-action-button-for-donations",
@@ -113,6 +116,166 @@
         "REQ-13"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-aboutsection-component-s-our-values-grid-to-include-the-following-five-additional-core-values-as-cards-each-with-an-appropriate-icon-1-education-campaign-2-anti-dowry-campaign-3-medical-help-4-career-guidance-5-eradicating-social-evils-each-card-should-follow-the-existing-card-based-layout-and-maroon-gold-color-palette-already-established-in-the-component",
+      "title": "Update the AboutSection component's 'हमारे मूल्य' (Our Values) grid to include the following five additional core values as cards, each with an appropriate icon: (1) शिक्षा अभियान (Education Campaign), (2) दहेज प्रथा रोकथाम अभियान (Anti-Dowry Campaign), (3) मेडिकल हेल्प (Medical Help), (4) करियर गाइडेंस (Career Guidance), (5) मुआशरे में फैली बुराइयों को खत्म करना (Eradicating Social Evils). Each card should follow the existing card-based layout and maroon/gold color palette already established in the component.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-reset-all-impact-statistics-displayed-in-the-activitiessection-component-to-zero-the-stats-block-currently-shows-hardcoded-numbers-e-g-beneficiaries-helped-events-held-volunteers-years-of-service-set-all-numeric-stat-values-to-0",
+      "title": "Reset all impact statistics displayed in the ActivitiesSection component to zero. The stats block currently shows hardcoded numbers (e.g., beneficiaries helped, events held, volunteers, years of service). Set all numeric stat values to 0.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-membershipsection-frontend-component-with-a-hindi-language-membership-registration-form-fields-full-name-mobile-number-email-optional-city-address-on-submission-call-the-addmembership-backend-mutation-show-a-success-toast-and-reset-the-form-style-consistently-with-the-existing-maroon-gold-palette-and-card-based-layout-add-this-section-to-app-tsx-between-the-activitiessection-and-contactsection",
+      "title": "Create a new MembershipSection frontend component with a Hindi-language membership registration form. Fields: Full Name (पूरा नाम), Mobile Number (मोबाइल नंबर), Email (ईमेल, optional), City/Address (शहर/पता). On submission, call the `addMembership` backend mutation, show a success toast, and reset the form. Style consistently with the existing maroon/gold palette and card-based layout. Add this section to App.tsx between the ActivitiesSection and ContactSection.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-assistancesection-frontend-component-with-a-hindi-language-assistance-request-form-fields-full-name-mobile-number-city-type-of-assistance-needed-textarea-on-submission-call-the-addassistancerequest-backend-mutation-show-a-success-toast-and-reset-the-form-style-consistently-with-the-existing-maroon-gold-palette-and-card-based-layout-add-this-section-to-app-tsx-between-the-membershipsection-and-contactsection",
+      "title": "Create a new AssistanceSection frontend component with a Hindi-language assistance request form. Fields: Full Name (पूरा नाम), Mobile Number (मोबाइल नंबर), City (शहर), Type of Assistance Needed (किस प्रकार की सहायता चाहिए — textarea). On submission, call the `addAssistanceRequest` backend mutation, show a success toast, and reset the form. Style consistently with the existing maroon/gold palette and card-based layout. Add this section to App.tsx between the MembershipSection and ContactSection.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-react-query-hooks-useaddmembership-usegetmemberships-useaddassistancerequest-usegetassistancerequests-to-frontend-src-hooks-usequeries-ts-to-support-the-new-membership-and-assistance-backend-endpoints",
+      "title": "Add React Query hooks (`useAddMembership`, `useGetMemberships`, `useAddAssistanceRequest`, `useGetAssistanceRequests`) to `frontend/src/hooks/useQueries.ts` to support the new Membership and Assistance backend endpoints.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-membershipsection-frontend-component-to-add-1-an-aadhaar-number-field-12-digit-numeric-validation-2-an-address-proof-file-upload-input-accepting-image-pdf-files-up-to-2mb-3-an-identity-proof-file-upload-input-accepting-image-pdf-files-up-to-2mb-convert-uploaded-files-to-base64-data-uris-before-submitting-via-the-useaddmembership-mutation-show-filename-and-a-remove-button-after-file-selection-update-useaddmembership-hook-in-usequeries-ts-to-pass-the-new-fields",
+      "title": "Update the MembershipSection frontend component to add: (1) an Aadhaar Number field (आधार नंबर, 12-digit numeric validation), (2) an Address Proof file upload input (पता प्रमाण अपलोड करें) accepting image/pdf files up to 2MB, (3) an Identity Proof file upload input (पहचान प्रमाण अपलोड करें) accepting image/pdf files up to 2MB. Convert uploaded files to base64 data URIs before submitting via the useAddMembership mutation. Show filename and a remove button after file selection. Update useAddMembership hook in useQueries.ts to pass the new fields.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-protected-admin-panel-page-section-frontend-src-components-adminpanel-tsx-the-panel-should-be-accessible-via-a-hidden-route-or-a-button-visible-only-when-an-admin-passcode-hardcoded-e-g-admin1234-is-entered-in-a-simple-login-gate-the-panel-displays-four-tabbed-views-1-donations-table-of-all-donation-records-donor-name-amount-message-timestamp-2-memberships-table-of-all-membership-registrations-name-mobile-email-city-aadhaar-number-address-proof-download-link-identity-proof-download-link-timestamp-3-assistance-requests-table-of-all-assistance-request-submissions-name-mobile-city-assistance-type-timestamp-4-contact-inquiries-table-of-all-contact-form-submissions-name-email-message-timestamp-each-tab-fetches-data-using-existing-react-query-hooks-usegetdonations-usegetmemberships-usegetassistancerequests-usegetcontactinquiries-style-consistently-with-the-maroon-gold-palette-add-an-admin-link-in-the-header-that-opens-the-admin-panel-hidden-behind-the-passcode-gate",
+      "title": "Create a protected Admin Panel page/section (frontend/src/components/AdminPanel.tsx). The panel should be accessible via a hidden route or a button visible only when an admin passcode (hardcoded, e.g., 'admin1234') is entered in a simple login gate. The panel displays four tabbed views: (1) Donations — table of all donation records (donor name, amount, message, timestamp), (2) Memberships — table of all membership registrations (name, mobile, email, city, aadhaar number, address proof download link, identity proof download link, timestamp), (3) Assistance Requests — table of all assistance request submissions (name, mobile, city, assistance type, timestamp), (4) Contact Inquiries — table of all contact form submissions (name, email, message, timestamp). Each tab fetches data using existing React Query hooks (useGetDonations, useGetMemberships, useGetAssistanceRequests, useGetContactInquiries). Style consistently with the maroon/gold palette. Add an 'Admin' link in the Header that opens the admin panel (hidden behind the passcode gate).",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-site-wide-search-bar-component-frontend-src-components-searchbar-tsx-that-allows-users-to-search-across-app-sections-and-content-the-search-input-should-filter-highlight-matching-sections-about-activities-donation-membership-assistance-gallery-government-schemes-contact-and-scroll-to-the-relevant-section-on-selection-display-search-results-as-a-dropdown-overlay-beneath-the-input-style-consistently-with-the-existing-maroon-632626-and-gold-dacc96-palette",
+      "title": "Create a site-wide Search Bar component (frontend/src/components/SearchBar.tsx) that allows users to search across app sections and content. The search input should filter/highlight matching sections (About, Activities, Donation, Membership, Assistance, Gallery, Government Schemes, Contact) and scroll to the relevant section on selection. Display search results as a dropdown overlay beneath the input. Style consistently with the existing maroon (#632626) and gold (#dacc96) palette.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-gallery-section-component-frontend-src-components-gallerysection-tsx-that-displays-a-responsive-photo-image-grid-showcasing-foundation-events-and-activities-include-at-least-6-placeholder-gallery-images-with-captions-e-g-food-drives-medical-camps-education-programs-add-a-section-heading-gallery-with-a-decorative-gold-divider-style-consistently-with-the-maroon-gold-palette-and-card-based-layout-add-this-section-to-app-tsx-between-activitiessection-and-membershipsection",
+      "title": "Create a Gallery section component (frontend/src/components/GallerySection.tsx) that displays a responsive photo/image grid showcasing foundation events and activities. Include at least 6 placeholder gallery images with captions (e.g., food drives, medical camps, education programs). Add a section heading 'गैलेरी' (Gallery) with a decorative gold divider. Style consistently with the maroon/gold palette and card-based layout. Add this section to App.tsx between ActivitiesSection and MembershipSection.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-government-schemes-section-component-frontend-src-components-governmentschemessection-tsx-that-displays-information-about-relevant-indian-government-welfare-schemes-e-g-pm-awas-yojana-ayushman-bharat-scholarship-schemes-for-minorities-include-at-least-5-scheme-cards-with-scheme-name-in-hindi-a-brief-description-eligibility-note-and-an-icon-add-a-section-heading-government-schemes-with-a-decorative-gold-divider-style-consistently-with-the-maroon-gold-palette-and-card-based-layout-add-this-section-to-app-tsx-between-gallerysection-and-membershipsection",
+      "title": "Create a Government Schemes section component (frontend/src/components/GovernmentSchemesSection.tsx) that displays information about relevant Indian government welfare schemes (e.g., PM Awas Yojana, Ayushman Bharat, Scholarship schemes for minorities). Include at least 5 scheme cards with scheme name (in Hindi), a brief description, eligibility note, and an icon. Add a section heading 'सरकारी योजनाएं' (Government Schemes) with a decorative gold divider. Style consistently with the maroon/gold palette and card-based layout. Add this section to App.tsx between GallerySection and MembershipSection.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-header-component-frontend-src-components-header-tsx-to-add-navigation-links-for-search-bar-with-a-search-icon-that-toggles-the-search-bar-overlay-gallery-and-government-schemes-in-the-hamburger-mobile-menu-also-add-these-links-to-the-desktop-navigation-bar-clicking-each-link-should-scroll-to-the-respective-section-using-matching-section-ids-gallery-government-schemes-ensure-the-search-icon-in-the-nav-toggles-the-searchbar-component-visibility",
+      "title": "Update the Header component (frontend/src/components/Header.tsx) to add navigation links for Search Bar (with a search icon that toggles the search bar overlay), Gallery (गैलेरी), and Government Schemes (सरकारी योजनाएं) in the hamburger/mobile menu. Also add these links to the desktop navigation bar. Clicking each link should scroll to the respective section (using matching section IDs: #gallery, #government-schemes). Ensure the search icon in the nav toggles the SearchBar component visibility.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-react-query-hooks-to-frontend-src-hooks-usequeries-ts-for-the-new-district-village-endpoints-usegetdistricts-usegetvillagesbydistrict-districtid-number-null-disabled-when-districtid-is-null-useadddistrict-mutation-useaddvillage-mutation-usedeletedistrict-mutation-usedeletevillage-mutation-follow-the-existing-hook-patterns-in-the-file",
+      "title": "Add React Query hooks to `frontend/src/hooks/useQueries.ts` for the new district/village endpoints: `useGetDistricts()`, `useGetVillagesByDistrict(districtId: number | null)` (disabled when districtId is null), `useAddDistrict()` (mutation), `useAddVillage()` (mutation), `useDeleteDistrict()` (mutation), `useDeleteVillage()` (mutation). Follow the existing hook patterns in the file.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-frontend-component-frontend-src-components-villagessection-tsx-that-displays-an-associated-villages-section-the-ui-should-show-1-a-section-heading-with-a-decorative-gold-divider-2-a-two-level-dropdown-interaction-a-list-grid-of-district-buttons-or-cards-clicking-a-district-card-expands-or-reveals-the-list-of-villages-under-that-district-accordion-or-inline-expand-pattern-3-villages-for-the-selected-district-are-fetched-via-usegetvillagesbydistrict-and-displayed-as-a-list-of-village-name-chips-tags-inside-the-expanded-district-panel-show-a-loading-state-while-villages-are-being-fetched-if-no-villages-exist-for-a-district-show-style-consistently-with-the-existing-maroon-632626-gold-dacc96-palette-and-card-based-layout-add-this-section-to-frontend-src-app-tsx-between-the-governmentschemessection-and-membershipsection",
+      "title": "Create a new frontend component `frontend/src/components/VillagesSection.tsx` that displays an 'Associated Villages' (हमसे जुड़े गाँव) section. The UI should show: (1) a section heading 'हमसे जुड़े गाँव' with a decorative gold divider, (2) a two-level dropdown interaction: a list/grid of district buttons or cards — clicking a district card expands or reveals the list of villages under that district (accordion or inline expand pattern), (3) villages for the selected district are fetched via `useGetVillagesByDistrict` and displayed as a list of village name chips/tags inside the expanded district panel. Show a loading state while villages are being fetched. If no villages exist for a district, show 'कोई गाँव नहीं जोड़ा गया'. Style consistently with the existing maroon (#632626) / gold (#dacc96) palette and card-based layout. Add this section to `frontend/src/App.tsx` between the GovernmentSchemesSection and MembershipSection.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-existing-admin-panel-frontend-src-components-adminpanel-tsx-to-add-a-fifth-tab-called-villages-this-tab-should-provide-a-manual-management-interface-with-1-an-add-district-form-with-a-text-input-district-name-and-a-submit-button-that-calls-useadddistrict-2-an-add-village-form-with-a-district-selector-dropdown-populated-from-usegetdistricts-and-a-village-name-text-input-with-a-submit-button-that-calls-useaddvillage-3-a-list-of-all-districts-each-expandable-to-show-its-villages-each-district-row-has-a-delete-button-calls-usedeletedistrict-each-village-row-has-a-delete-button-calls-usedeletevillage-show-success-error-toasts-on-all-actions-style-consistently-with-the-existing-maroon-gold-admin-panel-palette",
+      "title": "Extend the existing Admin Panel (`frontend/src/components/AdminPanel.tsx`) to add a fifth tab called 'Villages' (गाँव प्रबंधन). This tab should provide a manual management interface with: (1) an 'Add District' form with a text input (district name) and a submit button that calls `useAddDistrict`, (2) an 'Add Village' form with a district selector dropdown (populated from `useGetDistricts`) and a village name text input, with a submit button that calls `useAddVillage`, (3) a list of all districts, each expandable to show its villages — each district row has a delete button (calls `useDeleteDistrict`), each village row has a delete button (calls `useDeleteVillage`). Show success/error toasts on all actions. Style consistently with the existing maroon/gold admin panel palette.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-navigation-link-to-the-header-component-frontend-src-components-header-tsx-in-both-the-desktop-navigation-bar-and-the-hamburger-mobile-menu-clicking-this-link-should-scroll-to-the-villagessection-using-the-section-id-villages",
+      "title": "Add a navigation link 'हमसे जुड़े गाँव' to the Header component (`frontend/src/components/Header.tsx`) in both the desktop navigation bar and the hamburger/mobile menu. Clicking this link should scroll to the VillagesSection using the section id `#villages`.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-existing-generated-upi-qr-code-image-in-the-donationsection-with-the-user-uploaded-qr-code-image-img-20260221-wa0043-jpg-save-the-new-image-as-a-static-asset-at-frontend-public-assets-generated-upi-qr-code-png-and-render-it-in-the-donationsection-s-scan-pay-panel-the-image-shows-the-actual-bhim-upi-qr-code-for-upi-id-76800701-ubin-with-union-bank-of-india-branding-paytm-google-pay-phonepe-vyom-and-bharatqr-logos-keep-the-existing-scan-pay-heading-upi-id-display-and-card-layout-unchanged",
+      "title": "Replace the existing generated UPI QR code image in the DonationSection with the user-uploaded QR code image (IMG-20260221-WA0043.jpg). Save the new image as a static asset at frontend/public/assets/generated/upi-qr-code.png and render it in the DonationSection's 'Scan & Pay' panel. The image shows the actual BHIM UPI QR code for UPI ID 76800701@ubin with Union Bank of India branding, Paytm, Google Pay, PhonePe, VYOM, and BharatQR logos. Keep the existing 'SCAN & PAY' heading, UPI ID display, and card layout unchanged.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-adminpanel-component-from-its-current-inline-position-in-app-tsx-where-it-renders-as-a-section-on-the-homepage-the-adminpanel-should-no-longer-be-rendered-as-part-of-the-main-page-layout",
+      "title": "Remove the AdminPanel component from its current inline position in App.tsx (where it renders as a section on the homepage). The AdminPanel should no longer be rendered as part of the main page layout.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-client-side-routing-using-a-hash-based-or-path-based-approach-compatible-with-the-icp-frontend-setup-so-that-the-admin-panel-is-accessible-at-a-dedicated-route-e-g-admin-or-admin-render-adminpanel-only-when-this-route-is-active-otherwise-render-the-normal-homepage-layout",
+      "title": "Implement client-side routing (using a hash-based or path-based approach compatible with the ICP frontend setup) so that the Admin Panel is accessible at a dedicated route (e.g., /admin or #/admin). Render AdminPanel only when this route is active; otherwise render the normal homepage layout.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-header-component-frontend-src-components-header-tsx-so-that-the-admin-link-appears-only-in-the-hamburger-mobile-menu-and-not-in-the-desktop-navigation-bar-clicking-the-admin-link-in-the-hamburger-menu-should-navigate-to-the-admin-route-e-g-admin-to-open-the-admin-panel-on-its-dedicated-page-and-close-the-hamburger-menu-remove-any-existing-admin-link-from-the-desktop-nav",
+      "title": "Update the Header component (frontend/src/components/Header.tsx) so that the 'Admin' link appears only in the hamburger/mobile menu and NOT in the desktop navigation bar. Clicking the Admin link in the hamburger menu should navigate to the admin route (e.g., /#/admin) to open the Admin Panel on its dedicated page, and close the hamburger menu. Remove any existing Admin link from the desktop nav.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-error-occurring-in-the-admin-panel-villages-tab-when-attempting-to-add-a-district-the-red-error-text-visible-on-the-ui-indicates-the-adddistrict-mutation-is-failing-diagnose-whether-the-issue-is-1-a-backend-authorization-permission-check-rejecting-the-call-admin-only-guard-2-a-mismatch-between-the-frontend-mutation-arguments-and-the-backend-adddistrict-name-text-function-signature-3-an-actor-initialization-issue-causing-the-mutation-to-fail-silently-or-4-an-error-in-the-useadddistrict-react-query-mutation-hook-wrong-method-name-incorrect-argument-shape-or-missing-actor-reference-fix-the-root-cause-so-that-submitting-the-add-district-form-in-the-villages-tab-successfully-calls-the-backend-adds-the-district-invalidates-the-districts-query-and-shows-a-success-toast-instead-of-a-red-error-message",
+      "title": "Investigate and fix the error occurring in the Admin Panel > Villages tab when attempting to add a district. The red error text visible on the UI indicates the `addDistrict` mutation is failing. Diagnose whether the issue is: (1) a backend authorization/permission check rejecting the call (admin-only guard), (2) a mismatch between the frontend mutation arguments and the backend `addDistrict(name: Text)` function signature, (3) an actor initialization issue causing the mutation to fail silently, or (4) an error in the `useAddDistrict` React Query mutation hook (wrong method name, incorrect argument shape, or missing actor reference). Fix the root cause so that submitting the Add District form in the Villages tab successfully calls the backend, adds the district, invalidates the districts query, and shows a success toast instead of a red error message.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -155,6 +318,122 @@
     {
       "id": "AR-8",
       "summary": "डोनेशन सेक्शन में ऑनलाइन पेमेंट फीचर जोड़ें (UPI/card/bank transfer support)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "About Us / हमारे मूल्य (Our Values) सेक्शन में नई जानकारी/मूल्य जोड़ें",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Stats सेक्शन को जीरो/रीसेट करें (all statistics set to 0)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "सदस्यता (Membership) फार्म जोड़ें — users can register as members of the foundation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "सहायता प्राप्त करने के लिए (Help/Assistance Request) फार्म जोड़ें — users can request help/assistance from the foundation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Create a backend data model and API for storing membership registrations. The membership record should capture: full name, mobile number, email (optional), city/address, and registration timestamp. Expose a `addMembership` update call and a `getMemberships` query.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Create a backend data model and API for storing assistance/help requests. The record should capture: full name, mobile number, city, type of assistance needed (text/description), and submission timestamp. Expose an `addAssistanceRequest` update call and a `getAssistanceRequests` query.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "एडमिन स्पेस (Admin Panel) क्रिएट करें — जहाँ डोनेशन, सदस्यता, सहायता अनुरोध और संपर्क फॉर्म सबमिशन देखे जा सकें",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "सदस्यता फॉर्म में आधार नंबर (Aadhaar Number) का कॉलम/फील्ड जोड़ें",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "सदस्यता फॉर्म में Address Proof और Identity Proof डॉक्यूमेंट अपलोड करने का ऑप्शन दें",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Extend the backend Membership data model to include: (1) aadhaarNumber (Text field), (2) addressProofFile (optional Blob or Text storing base64-encoded file data + filename), (3) identityProofFile (optional Blob or Text storing base64-encoded file data + filename). Update the `addMembership` endpoint to accept these new fields. Also extend the Membership record type in all relevant backend queries.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "सर्च बार (Search Bar) क्रिएट करें — ऐप में कंटेंट/सेक्शन सर्च करने की सुविधा",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "गैलेरी (Gallery) सेक्शन जोड़ें — फाउंडेशन की फोटो/इवेंट गैलेरी दिखाएं",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "गवर्नमेंट स्कीम (Government Schemes) सेक्शन जोड़ें — सरकारी योजनाओं की जानकारी दिखाएं",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "हैमबर्गर मेनू में Search Bar, Gallery और Government Schemes के नेविगेशन लिंक जोड़ें",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "हमसे जुड़े हुए गाँव (Associated Villages) का ड्रॉपडाउन मेनू बनाएं — पहले जिला दिखे, क्लिक करने पर उस जिले के गाँव दिखें। Admin panel में मैन्युअल रूप से जिला और गाँव जोड़ने की सुविधा हो।",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Create a backend data model and API for managing districts and villages. Each District record should have: id (auto-incremented Nat), name (Text), and a list of associated village names. Each Village record should have: id (Nat), name (Text), and districtId (Nat). Expose the following endpoints: `addDistrict(name: Text): async Nat` (returns new district id), `getDistricts(): async [District]` (returns all districts), `addVillage(districtId: Nat, villageName: Text): async Nat` (returns new village id), `getVillagesByDistrict(districtId: Nat): async [Village]` (returns villages for a district), `deleteDistrict(districtId: Nat): async Bool`, `deleteVillage(villageId: Nat): async Bool`. Store data in stable variables.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "UPI QR code स्कैनर इमेज को रिप्लेस करें — नया/असली QR कोड इमेज लगाएं",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Admin Panel को फ्रंट पेज से हटाएं — सिर्फ हैमबर्गर मेनू में Admin लिंक रखें, क्लिक करने पर एक अलग पेज/रूट पर खुले (not inline on homepage)",
       "reqIds": [],
       "status": "pending"
     }

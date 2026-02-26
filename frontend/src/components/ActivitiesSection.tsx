@@ -4,10 +4,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGetActivities, useSeedActivities } from "@/hooks/useQueries";
 
 const impactStats = [
-  { value: "५०००+", label: "परिवारों की मदद" },
-  { value: "१०+", label: "वर्षों की सेवा" },
-  { value: "२०+", label: "कार्यक्रम प्रतिवर्ष" },
-  { value: "१०००+", label: "स्वयंसेवक" },
+  { value: "0", label: "परिवारों की मदद" },
+  { value: "0", label: "वर्षों की सेवा" },
+  { value: "0", label: "कार्यक्रम प्रतिवर्ष" },
+  { value: "0", label: "स्वयंसेवक" },
 ];
 
 function formatDate(timestamp: bigint) {

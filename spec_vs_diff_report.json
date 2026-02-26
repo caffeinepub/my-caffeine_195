@@ -1,23 +1,41 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T06:47:27.342Z",
-  "summary": "The diff implements UPI QR code panel and Bank Details card in DonationSection.tsx with copy-to-clipboard functionality, toast confirmations, and maroon/gold styling. Most requirements are met, but the actual UPI QR code image asset (upi-qr-code.dim_400x500.png) is not present in the diff, and the BHIM UPI branding label is not confirmed in the truncated code.",
+  "generatedAt": "2026-02-26T08:54:56.249Z",
+  "summary": "The diff modifies the backend (main.mo) to implement addDistrict/addVillage with admin-only guards, and updates the frontend useQueries.ts with fully wired district/village CRUD hooks including Hindi toast error handling, and AdminPanel.tsx with the VillagesTab implementation. The changes appear to address REQ-37 by fixing the mutation hooks, wiring the actor correctly, and showing toast notifications. However, due to truncation, some acceptance criteria cannot be fully verified.",
   "missing_requirements": [
     {
-      "id": "REQ-13",
-      "requirement": "Add a UPI QR code image asset (upi-qr-code.dim_400x500.png) — a clean, scannable QR code graphic for UPI ID 76800701@ubin inside a white rounded card with 'SCAN & PAY' heading and BHIM UPI branding label.",
-      "reason": "No image file was added (ADDED FILES: none). The actual image asset upi-qr-code.dim_400x500.png is absent from the added files list. BHIM UPI branding label presence cannot be confirmed as the DonationSection.tsx diff is truncated.",
+      "id": "REQ-37",
+      "requirement": "If the backend returns a genuine error (e.g., duplicate name), it is displayed as a meaningful error message rather than a raw JS error.",
+      "reason": "The backend addDistrict does not check for duplicate names — it simply adds another entry with a new ID. There is no duplicate-name detection or meaningful error return path for this case. The frontend error handling for this specific scenario cannot be confirmed from the truncated diff.",
       "evidence": [
-        "frontend/src/components/DonationSection.tsx"
+        "backend/main.mo"
       ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.78,
+  "hallucinated_features": [
+    {
+      "description": "AdminLoginSection component with Internet Identity login/logout flow added to the Villages tab area.",
+      "reason": "REQ-37 only asks to fix the addDistrict mutation error and make the form work. A full Internet Identity login UI component with login/logout buttons, status display, and queryClient.clear() was added, which was not requested in the build request.",
+      "evidence": [
+        "frontend/src/components/AdminPanel.tsx"
+      ]
+    },
+    {
+      "description": "deleteDistrict and deleteVillage mutation hooks wired in VillagesTab with delete buttons.",
+      "reason": "REQ-37 only requests fixing the Add District and Add Village forms. Adding delete functionality for districts and villages was not part of the requirement.",
+      "evidence": [
+        "frontend/src/components/AdminPanel.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    }
+  ],
+  "confidence": 0.62,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/DonationSection.tsx",
+    "frontend/src/components/AdminPanel.tsx",
+    "frontend/src/hooks/useQueries.ts",
     "project_state.json"
   ]
 }

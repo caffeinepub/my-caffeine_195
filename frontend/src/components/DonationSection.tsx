@@ -107,22 +107,13 @@ export default function DonationSection() {
             </div>
 
             <div className="p-5 flex flex-col items-center">
-              {/* QR Code Card */}
-              <div className="bg-white rounded-2xl p-4 shadow-lg mb-4 w-full max-w-[220px]">
-                <p className="text-center font-black text-sm tracking-widest mb-3" style={{ color: "#1a1a1a" }}>
-                  SCAN &amp; PAY
-                </p>
+              {/* QR Code Image - full official bank QR */}
+              <div className="rounded-2xl overflow-hidden shadow-lg mb-4 w-full max-w-[260px] border-2" style={{ borderColor: "oklch(0.46 0.10 15)" }}>
                 <img
-                  src="/assets/generated/upi-qr-code.dim_400x500.png"
-                  alt="UPI QR Code - Scan to Pay"
-                  className="w-full rounded-xl"
+                  src="/assets/generated/upi-qr-code.dim_500x600.png"
+                  alt="UPI QR Code - Scan to Pay - GAUSIYA ASHRAFIA FOUNDATION"
+                  className="w-full h-auto object-contain"
                 />
-                <p className="text-center text-xs font-semibold mt-3" style={{ color: "#333" }}>
-                  UPI ID: {UPI_ID}
-                </p>
-                <p className="text-center text-xs mt-1 font-bold tracking-wider" style={{ color: "#1a6b3c" }}>
-                  BHIM UPI
-                </p>
               </div>
 
               {/* Copyable UPI ID */}

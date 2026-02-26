@@ -10,21 +10,20 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface Activity {
+export interface District {
   'id' : bigint,
-  'title' : string,
-  'date' : Time,
-  'description' : string,
-  'image' : ExternalBlob,
+  'villages' : Array<Village>,
+  'name' : string,
 }
-export interface Donation {
-  'donorName' : string,
-  'message' : string,
-  'timestamp' : Time,
-  'amount' : bigint,
+export interface UserProfile { 'name' : string }
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
+export interface Village {
+  'id' : bigint,
+  'name' : string,
+  'districtId' : bigint,
 }
-export type ExternalBlob = Uint8Array;
-export type Time = bigint;
 export interface _CaffeineStorageCreateCertificateResult {
   'method' : string,
   'blob_hash' : string,
@@ -52,21 +51,19 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
-  'addContactInquiry' : ActorMethod<[string, string, string], undefined>,
-  'addDonation' : ActorMethod<[string, bigint, string], undefined>,
-  'getActivities' : ActorMethod<[], Array<Activity>>,
-  'getDonations' : ActorMethod<[], Array<Donation>>,
-  'getFoundationInfo' : ActorMethod<
-    [],
-    {
-      'description' : string,
-      'email' : string,
-      'address' : string,
-      'phone' : string,
-      'socialMedia' : Array<string>,
-    }
-  >,
-  'seedActivities' : ActorMethod<[], undefined>,
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addDistrict' : ActorMethod<[string], bigint>,
+  'addVillage' : ActorMethod<[bigint, string], bigint>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'deleteDistrict' : ActorMethod<[bigint], boolean>,
+  'deleteVillage' : ActorMethod<[bigint], boolean>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getDistricts' : ActorMethod<[], Array<District>>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getVillagesByDistrict' : ActorMethod<[bigint], Array<Village>>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

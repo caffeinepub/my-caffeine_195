@@ -1,130 +1,160 @@
 import Map "mo:core/Map";
-import List "mo:core/List";
-import Int "mo:core/Int";
-import Time "mo:core/Time";
-import Text "mo:core/Text";
-import Order "mo:core/Order";
+import Nat "mo:core/Nat";
 import Runtime "mo:core/Runtime";
-import Array "mo:core/Array";
+import Principal "mo:core/Principal";
 import Iter "mo:core/Iter";
-
+import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
-import Storage "blob-storage/Storage";
+import MixinAuthorization "authorization/MixinAuthorization";
 
 actor {
+  // Prefab Access Control
+  let accessControlState = AccessControl.initState();
+  include MixinAuthorization(accessControlState);
+
+  // Prefab Storage
   include MixinStorage();
 
-  type Donation = {
-    donorName : Text;
-    amount : Nat;
-    message : Text;
-    timestamp : Time.Time;
+  // User Profiles
+  public type UserProfile = {
+    name : Text;
   };
 
-  module Donation {
-    func compare(donation1 : Donation, donation2 : Donation) : Order.Order {
-      switch (Int.compare(donation2.timestamp, donation1.timestamp)) {
-        case (#equal) { donation1.message.compare(donation2.message) };
-        case (order) { order };
+  let userProfiles = Map.empty<Principal, UserProfile>();
+
+  // District record
+  public type District = {
+    id : Nat;
+    name : Text;
+    villages : [Village];
+  };
+
+  // Village record
+  public type Village = {
+    id : Nat;
+    name : Text;
+    districtId : Nat;
+  };
+
+  var nextDistrictId = 1;
+  var nextVillageId = 1;
+
+  let districts = Map.empty<Nat, { id : Nat; name : Text }>();
+  let villages = Map.empty<Nat, Village>();
+
+  // ---- User Profile Functions ----
+
+  public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can get their profile");
+    };
+    userProfiles.get(caller);
+  };
+
+  public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
+    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only view your own profile");
+    };
+    userProfiles.get(user);
+  };
+
+  public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can save profiles");
+    };
+    userProfiles.add(caller, profile);
+  };
+
+  // ---- District and Village Functions ----
+
+  // Add new district (admin only)
+  public shared ({ caller }) func addDistrict(name : Text) : async Nat {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can add districts");
+    };
+    let id = nextDistrictId;
+    let district = {
+      id;
+      name;
+    };
+    districts.add(id, district);
+    nextDistrictId += 1;
+    id;
+  };
+
+  // Get all districts with villages (public, no auth required)
+  public query ({ caller }) func getDistricts() : async [District] {
+    let tempDistricts = districts.values().toArray();
+    tempDistricts.map(
+      func({ id; name }) {
+        let districtVillages = villages.values().toArray().filter(
+          func(village) { village.districtId == id }
+        );
+        {
+          id;
+          name;
+          villages = districtVillages;
+        };
+      }
+    );
+  };
+
+  // Add village to district (admin only)
+  public shared ({ caller }) func addVillage(districtId : Nat, villageName : Text) : async Nat {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can add villages");
+    };
+    switch (districts.get(districtId)) {
+      case (null) { 0 };
+      case (?_) {
+        let id = nextVillageId;
+        let village : Village = {
+          id;
+          name = villageName;
+          districtId;
+        };
+        villages.add(id, village);
+        nextVillageId += 1;
+        id;
       };
     };
   };
 
-  type Activity = {
-    id : Nat;
-    title : Text;
-    description : Text;
-    date : Time.Time;
-    image : Storage.ExternalBlob;
+  // Get all villages for a district (public, no auth required)
+  public query ({ caller }) func getVillagesByDistrict(districtId : Nat) : async [Village] {
+    villages.values().toArray().filter(func(village) { village.districtId == districtId });
   };
 
-  type ContactInquiry = {
-    name : Text;
-    email : Text;
-    message : Text;
-    timestamp : Time.Time;
-  };
-
-  let donations = List.empty<Donation>();
-  let activities = Map.empty<Nat, Activity>();
-  let inquiries = List.empty<ContactInquiry>();
-
-  // Seed example activities
-  public shared ({ caller }) func seedActivities() : async () {
-    if (activities.size() > 0) { return };
-    let exampleActivities : [Activity] = [
-      {
-        id = 1;
-        title = "Food Drive";
-        description = "Providing food to the needy";
-        date = Time.now();
-        image = "image1.jpg"; // Placeholder
-      },
-      {
-        id = 2;
-        title = "Education Program";
-        description = "Supporting children's education";
-        date = Time.now();
-        image = "image2.jpg"; // Placeholder
-      },
-      {
-        id = 3;
-        title = "Medical Camp";
-        description = "Free medical checkups";
-        date = Time.now();
-        image = "image3.jpg"; // Placeholder
-      },
-    ];
-
-    let activityValues = exampleActivities.values();
-    for (activity in activityValues) {
-      activities.add(activity.id, activity);
+  // Delete district (admin only)
+  public shared ({ caller }) func deleteDistrict(districtId : Nat) : async Bool {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can delete districts");
     };
-  };
 
-  public shared ({ caller }) func addDonation(donorName : Text, amount : Nat, message : Text) : async () {
-    let timestamp = Time.now();
-    let donation : Donation = {
-      donorName;
-      amount;
-      message;
-      timestamp;
+    // Remove villages for this district
+    let remainingVillages = villages.filter(
+      func(_id, village) { village.districtId != districtId }
+    );
+
+    let districtExists = districts.containsKey(districtId);
+    districts.remove(districtId);
+
+    // Re-add remaining villages to the villages map
+    villages.clear();
+    for ((k, v) in remainingVillages.entries()) {
+      villages.add(k, v);
     };
-    donations.add(donation);
+
+    districtExists;
   };
 
-  public query ({ caller }) func getDonations() : async [Donation] {
-    donations.toArray();
-  };
-
-  public shared ({ caller }) func addContactInquiry(name : Text, email : Text, message : Text) : async () {
-    let timestamp = Time.now();
-    let inquiry : ContactInquiry = {
-      name;
-      email;
-      message;
-      timestamp;
+  // Delete village (admin only)
+  public shared ({ caller }) func deleteVillage(villageId : Nat) : async Bool {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can delete villages");
     };
-    inquiries.add(inquiry);
-  };
-
-  public query ({ caller }) func getActivities() : async [Activity] {
-    activities.values().toArray();
-  };
-
-  public query ({ caller }) func getFoundationInfo() : async {
-    address : Text;
-    phone : Text;
-    email : Text;
-    socialMedia : [Text];
-    description : Text;
-  } {
-    {
-      address = "123 Main Street, City, India";
-      phone = "+91 1234567890";
-      email = "info@foundation.org";
-      socialMedia = ["@foundation_insta", "@foundation_fb"];
-      description = "हमारा मिशन जरूरतमंदों की मदद करना है।";
-    };
+    let villageExists = villages.containsKey(villageId);
+    villages.remove(villageId);
+    villageExists;
   };
 };

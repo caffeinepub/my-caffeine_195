@@ -1,4 +1,4 @@
-import { Heart, Users, BookOpen, Stethoscope, Utensils, Briefcase } from "lucide-react";
+import { Heart, Users, BookOpen, Stethoscope, Utensils, Briefcase, GraduationCap, Ban, HeartPulse, Compass, ShieldAlert } from "lucide-react";
 
 const coreValues = [
   { icon: Heart, title: "सेवा भाव", desc: "निःस्वार्थ सेवा और करुणा के साथ जरूरतमंदों की मदद करना।" },
@@ -7,6 +7,11 @@ const coreValues = [
   { icon: Stethoscope, title: "स्वास्थ्य सेवा", desc: "निःशुल्क चिकित्सा शिविर और स्वास्थ्य जागरूकता कार्यक्रम।" },
   { icon: Utensils, title: "भोजन सहायता", desc: "भूखे और जरूरतमंद परिवारों को नियमित भोजन उपलब्ध कराना।" },
   { icon: Briefcase, title: "कौशल विकास", desc: "युवाओं को रोजगार के लिए कौशल प्रशिक्षण देना।" },
+  { icon: GraduationCap, title: "शिक्षा अभियान", desc: "समाज के हर बच्चे को शिक्षा का अधिकार दिलाने के लिए जागरूकता और सहायता अभियान।" },
+  { icon: Ban, title: "दहेज प्रथा रोकथाम अभियान", desc: "दहेज प्रथा जैसी सामाजिक बुराई को जड़ से खत्म करने के लिए जागरूकता और कानूनी सहायता।" },
+  { icon: HeartPulse, title: "मेडिकल हेल्प", desc: "जरूरतमंद मरीजों को निःशुल्क चिकित्सा सहायता और दवाइयाँ उपलब्ध कराना।" },
+  { icon: Compass, title: "करियर गाइडेंस", desc: "युवाओं को सही करियर चुनने में मार्गदर्शन और व्यावसायिक प्रशिक्षण प्रदान करना।" },
+  { icon: ShieldAlert, title: "मुआशरे में फैली बुराइयों को खत्म करना", desc: "समाज में फैली कुरीतियों और बुराइयों को दूर करने के लिए जागरूकता अभियान चलाना।" },
 ];
 
 export default function AboutSection() {

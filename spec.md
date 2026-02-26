@@ -1,12 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Add a UPI payment panel and Bank Details card to the Donation Section of the Gausiya Ashrafia Foundation website.
+**Goal:** Fix the error in the Admin Panel > Villages tab where attempting to add a district results in a red error message and the district is not saved.
 
 **Planned changes:**
-- Add a UPI payment panel in DonationSection displaying a QR code image with "Scan & Pay" heading, the UPI ID `76800701@ubin` as copyable text with a copy-to-clipboard button, and a note listing supported apps (Paytm, Google Pay, PhonePe, and any UPI app)
-- Add a Bank Details card in DonationSection with individual copy-to-clipboard buttons for: Account Name (Gausiya Ashrafiya Foundation), Account No. (353901010037412), and IFSC Code (UBIN0535397), with a bank icon in the card header
-- Clicking any copy button copies the respective value to clipboard and shows a toast confirmation
-- Style both panels using the existing maroon (#632626) and gold (#dacc96) color palette
+- Diagnose and fix the `addDistrict` mutation failure in the Villages tab (check authorization guards, argument shape, actor initialization, and the `useAddDistrict` hook implementation)
+- Ensure a successful district add call refreshes the districts list and shows a success toast notification
+- Ensure no red error text appears during or after a successful district add operation
+- Display meaningful error messages for genuine backend errors (e.g., duplicate district name) instead of raw JS errors
+- Verify the Add Village form also works correctly without errors when a valid district is selected and a village name is entered
 
-**User-visible outcome:** Visitors to the Donation section can view and copy the UPI ID and bank account details, and scan the QR code to make payments directly via UPI apps.
+**User-visible outcome:** Admin users can add a district in the Villages tab without seeing a red error message; the new district appears in the list immediately and a success toast is shown.

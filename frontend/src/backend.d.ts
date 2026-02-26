@@ -7,38 +7,35 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export class ExternalBlob {
-    getBytes(): Promise<Uint8Array<ArrayBuffer>>;
-    getDirectURL(): string;
-    static fromURL(url: string): ExternalBlob;
-    static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
-    withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
-}
-export interface Donation {
-    donorName: string;
-    message: string;
-    timestamp: Time;
-    amount: bigint;
-}
-export type Time = bigint;
-export interface Activity {
+export interface Village {
     id: bigint;
-    title: string;
-    date: Time;
-    description: string;
-    image: ExternalBlob;
+    name: string;
+    districtId: bigint;
+}
+export interface District {
+    id: bigint;
+    villages: Array<Village>;
+    name: string;
+}
+export interface UserProfile {
+    name: string;
+}
+export enum UserRole {
+    admin = "admin",
+    user = "user",
+    guest = "guest"
 }
 export interface backendInterface {
-    addContactInquiry(name: string, email: string, message: string): Promise<void>;
-    addDonation(donorName: string, amount: bigint, message: string): Promise<void>;
-    getActivities(): Promise<Array<Activity>>;
-    getDonations(): Promise<Array<Donation>>;
-    getFoundationInfo(): Promise<{
-        description: string;
-        email: string;
-        address: string;
-        phone: string;
-        socialMedia: Array<string>;
-    }>;
-    seedActivities(): Promise<void>;
+    addDistrict(name: string): Promise<bigint>;
+    addVillage(districtId: bigint, villageName: string): Promise<bigint>;
+    assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    deleteDistrict(districtId: bigint): Promise<boolean>;
+    deleteVillage(villageId: bigint): Promise<boolean>;
+    getCallerUserProfile(): Promise<UserProfile | null>;
+    getCallerUserRole(): Promise<UserRole>;
+    getDistricts(): Promise<Array<District>>;
+    getUserProfile(user: Principal): Promise<UserProfile | null>;
+    getVillagesByDistrict(districtId: bigint): Promise<Array<Village>>;
+    isCallerAdmin(): Promise<boolean>;
+    saveCallerUserProfile(profile: UserProfile): Promise<void>;
 }
