@@ -1,0 +1,22 @@
+{
+  "backend/main.mo": "Motoko actor defining the backend for the foundation app, managing donations, activities, and contact inquiries with CRUD operations and a blob storage mixin.",
+  "feature_evidence.json": "Feature evidence report mapping three UPI/bank payment panel features to DonationSection.tsx with test IDs and component dependencies.",
+  "frontend-file-summaries.txt": "JSON document summarizing each frontend source file's purpose, covering styling, components, hooks, and the HTML entry point.",
+  "frontend/index.css": "Tailwind base CSS file defining OKLCH-based CSS custom properties for light and dark themes including colors, borders, and sidebar tokens.",
+  "frontend/index.html": "HTML entry point with Hindi language attribute, Google Fonts imports for Devanagari and Cinzel fonts, and a root div for the React app.",
+  "frontend/src/App.tsx": "Root React component that assembles all page sections (Header, Hero, About, Donation, Activities, Contact, Footer) and includes a Sonner toast notification provider.",
+  "frontend/src/components/AboutSection.tsx": "About section component rendering mission/vision cards, foundation history, and a grid of six core value cards with icons using the maroon/gold palette.",
+  "frontend/src/components/ActivitiesSection.tsx": "Activities section that fetches and seeds backend activity data, displays activity cards with date badges and images, and shows impact statistics in a dark maroon block.",
+  "frontend/src/components/ContactSection.tsx": "Renders a contact section with foundation info (address, phone, email, social links) fetched via hook, and a validated Hindi-language inquiry form that submits via `useAddContactInquiry` mutation.",
+  "frontend/src/components/DonationSection.tsx": "Renders a donation section with UPI QR code, copyable bank details, preset amount buttons, and a validated donor form that submits via `useAddDonation` mutation.",
+  "frontend/src/components/Footer.tsx": "Renders the site footer with branding, quick navigation links, a Quranic quote, and a copyright bar with a heart icon.",
+  "frontend/src/components/Header.tsx": "Sticky navigation header with the foundation logo, desktop nav links, a donate CTA button, and a responsive mobile hamburger menu.",
+  "frontend/src/components/HeroSection.tsx": "Full-width hero banner with a background image, overlay, Bismillah text, foundation name, tagline, and CTA buttons linking to donate and about sections.",
+  "frontend/src/hooks/useActor.ts": "Custom hook that creates and caches an ICP backend actor (anonymous or authenticated) using React Query, and invalidates dependent queries whenever the actor changes.",
+  "frontend/src/hooks/useInternetIdentity.ts": "Provides a React context and hook for Internet Identity authentication on the ICP platform, managing login/logout state, identity persistence, and AuthClient creation with configurable options.",
+  "frontend/src/hooks/useQueries.ts": "Defines React Query hooks for fetching and mutating backend data including activities, donations, contact inquiries, and foundation info via the actor interface.",
+  "frontend/src/index.css": "Global stylesheet that imports fonts, sets up Tailwind layers, and defines CSS custom properties for a maroon/gold Islamic-themed color palette with light and dark mode variants plus reusable component utility classes.",
+  "frontend/src/main.tsx": "Application entry point that mounts the React app with QueryClientProvider and InternetIdentityProvider wrappers around the root App component.",
+  "frontend/tailwind.config.js": "Tailwind CSS configuration extending the theme with custom OKLCH-based color scales (maroon, tan, gold, cream), Devanagari/Cinzel font families, and custom border radius and shadow tokens.",
+  "project_state.json": "Tracks the project's current state, version, architectural notes, existing features, and image requirements for the गौसिया अशरफिया फाउंडेशन charitable society app built in Hindi with a maroon/gold color palette."
+}

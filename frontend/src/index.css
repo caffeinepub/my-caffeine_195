@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600&family=Cinzel:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Maroon/Red Islamic palette — Color Hunt #632626 #9d5353 #bf8b67 #dacc96 */
+    --background: oklch(0.97 0.006 60);
+    --foreground: oklch(0.20 0.06 15);
+
+    --card: oklch(0.99 0.003 60);
+    --card-foreground: oklch(0.20 0.06 15);
+
+    --popover: oklch(0.99 0.003 60);
+    --popover-foreground: oklch(0.20 0.06 15);
+
+    /* Primary: Dark maroon #632626 */
+    --primary: oklch(0.30 0.10 15);
+    --primary-foreground: oklch(0.97 0.006 60);
+
+    /* Secondary: Deep red #9d5353 */
+    --secondary: oklch(0.88 0.04 45);
+    --secondary-foreground: oklch(0.30 0.10 15);
+
+    /* Accent: Warm tan #bf8b67 */
+    --accent: oklch(0.64 0.08 45);
+    --accent-foreground: oklch(0.20 0.06 15);
+
+    --muted: oklch(0.93 0.02 60);
+    --muted-foreground: oklch(0.50 0.05 30);
+
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.97 0.006 60);
+
+    --border: oklch(0.86 0.03 45);
+    --input: oklch(0.86 0.03 45);
+    --ring: oklch(0.30 0.10 15);
+
+    --radius: 0.5rem;
+
+    /* Chart colors */
+    --chart-1: oklch(0.30 0.10 15);
+    --chart-2: oklch(0.46 0.10 15);
+    --chart-3: oklch(0.64 0.08 45);
+    --chart-4: oklch(0.84 0.07 85);
+    --chart-5: oklch(0.55 0.09 20);
+  }
+
+  .dark {
+    --background: oklch(0.16 0.06 15);
+    --foreground: oklch(0.93 0.015 60);
+
+    --card: oklch(0.20 0.07 15);
+    --card-foreground: oklch(0.93 0.015 60);
+
+    --popover: oklch(0.20 0.07 15);
+    --popover-foreground: oklch(0.93 0.015 60);
+
+    --primary: oklch(0.55 0.10 15);
+    --primary-foreground: oklch(0.16 0.06 15);
+
+    --secondary: oklch(0.26 0.07 15);
+    --secondary-foreground: oklch(0.88 0.04 45);
+
+    --accent: oklch(0.64 0.08 45);
+    --accent-foreground: oklch(0.16 0.06 15);
+
+    --muted: oklch(0.24 0.06 15);
+    --muted-foreground: oklch(0.65 0.05 30);
+
+    --destructive: oklch(0.55 0.22 25);
+    --destructive-foreground: oklch(0.97 0.006 60);
+
+    --border: oklch(0.30 0.07 15);
+    --input: oklch(0.30 0.07 15);
+    --ring: oklch(0.55 0.10 15);
+
+    --chart-1: oklch(0.55 0.10 15);
+    --chart-2: oklch(0.64 0.08 45);
+    --chart-3: oklch(0.46 0.10 15);
+    --chart-4: oklch(0.84 0.07 85);
+    --chart-5: oklch(0.65 0.08 20);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Noto Sans Devanagari', 'Noto Serif Devanagari', sans-serif;
+  }
+  h1, h2, h3 {
+    font-family: 'Noto Serif Devanagari', 'Cinzel', serif;
+  }
+}
+
+@layer components {
+  .islamic-card {
+    @apply bg-card border border-border rounded-lg shadow-card;
+  }
+
+  .gold-divider {
+    @apply h-0.5 w-24 mx-auto my-4;
+    background: linear-gradient(90deg, transparent, oklch(0.84 0.07 85), transparent);
+  }
+
+  .ornament {
+    @apply text-accent text-2xl text-center my-2;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.2em;
+  }
+
+  .pattern-overlay {
+    background-image: url('/assets/generated/pattern-bg.dim_800x400.png');
+    background-repeat: repeat;
+    background-size: 200px;
+    opacity: 0.06;
+  }
+
+  .section-heading {
+    @apply text-2xl md:text-3xl font-bold text-primary font-serif;
+  }
+
+  .section-subheading {
+    @apply text-muted-foreground text-base md:text-lg;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded font-semibold transition-colors;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 px-6 py-3 rounded font-semibold transition-colors;
+  }
+
+  .teal-gradient {
+    background: linear-gradient(135deg, oklch(0.22 0.09 15) 0%, oklch(0.30 0.10 15) 50%, oklch(0.26 0.10 12) 100%);
+  }
+
+  .gold-text {
+    color: oklch(0.84 0.07 85);
+  }
+
+  .teal-border-top {
+    border-top: 3px solid oklch(0.84 0.07 85);
+  }
+}

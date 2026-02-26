@@ -1,0 +1,86 @@
+{
+  "kind": "build_request",
+  "title": "Add UPI QR Code and Bank Details to Donation Section",
+  "projectName": "Gausiya Ashrafia Foundation",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-11",
+      "text": "Update the DonationSection component to include a UPI payment panel displaying: (1) a UPI QR code image (generated asset) with 'Scan & Pay' heading, (2) the UPI ID '76800701@ubin' as copyable text with a copy-to-clipboard button, (3) a note listing supported apps: Paytm, Google Pay, PhonePe, and any UPI app. Style this panel consistently with the existing maroon/gold palette.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "डोनेशन में एड किया जाए"
+        ]
+      },
+      "acceptanceCriteria": [
+        "DonationSection shows a UPI QR code image for UPI ID 76800701@ubin",
+        "UPI ID '76800701@ubin' is displayed as copyable text with a copy icon button",
+        "Clicking copy button copies the UPI ID to clipboard and shows a toast confirmation",
+        "Supported UPI apps (Paytm, Google Pay, PhonePe) are listed beneath the QR code",
+        "Panel uses the existing maroon (#632626) and gold (#dacc96) color tokens"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Add a Bank Details card to the DonationSection component displaying the following information with individual copy-to-clipboard buttons for each field: Account Name: Gausiya Ashrafiya Foundation, Account No.: 353901010037412, IFSC Code: UBIN0535397 (Union Bank of India). Include a bank icon in the card header. Style consistently with the maroon/gold palette.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "डोनेशन में एड किया जाए"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Bank Details card is visible in the DonationSection below or alongside the UPI panel",
+        "Account Name 'Gausiya Ashrafiya Foundation' is displayed with a copy button",
+        "Account Number '353901010037412' is displayed with a copy button",
+        "IFSC Code 'UBIN0535397' is displayed with a copy button",
+        "Each copy button copies the respective value to clipboard and shows a toast",
+        "Card header includes a bank/building icon and 'Bank Details' label",
+        "Card uses the maroon/gold color palette consistent with the rest of the app"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Add a UPI QR code image asset to the Donation Section. The image should be a clean, scannable QR code graphic for UPI ID 76800701@ubin, displayed inside a white rounded card with 'SCAN & PAY' heading and the BHIM UPI branding label beneath it.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A QR code image is rendered in the UPI payment panel of DonationSection",
+        "The QR code card has a white background with rounded corners",
+        "'SCAN & PAY' heading appears above the QR code",
+        "UPI ID text '76800701@ubin' appears below the QR code image",
+        "BHIM UPI branding label is shown beneath the UPI ID"
+      ]
+    }
+  ],
+  "constraints": [
+    "UPI ID must be exactly: 76800701@ubin",
+    "Account Number must be exactly: 353901010037412",
+    "IFSC Code must be exactly: UBIN0535397",
+    "Account Name must be exactly: Gausiya Ashrafiya Foundation",
+    "Do not modify immutable frontend paths (hooks, main.tsx, ui components)",
+    "All styling must use the existing maroon/gold/tan color palette tokens"
+  ],
+  "nonGoals": [
+    "No actual payment gateway integration (Stripe, Razorpay, etc.)",
+    "No backend changes required for UPI/bank details display",
+    "No changes to the existing donation form fields (name, amount, message)"
+  ],
+  "imageRequirements": {
+    "required": [
+      "UPI QR code graphic encoding UPI ID 76800701@ubin, white rounded card background, 'SCAN & PAY' bold heading at top, BHIM UPI logo at bottom, clean minimalist style (upi-qr-code.dim_400x500.png)"
+    ],
+    "edits": []
+  }
+}

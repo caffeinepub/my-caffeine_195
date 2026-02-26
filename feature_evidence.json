@@ -1,0 +1,62 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-donationsection-component-to-include-a-upi-payment-panel-displaying-1-a-upi-qr-code-image-generated-asset-with-scan-pay-heading-2-the-upi-id-76800701-ubin-as-copyable-text-with-a-copy-to-clipboard-button-3-a-note-listing-supported-apps-paytm-google-pay-phonepe-and-any-upi-app-style-this-panel-consistently-with-the-existing-maroon-gold-palette",
+      "featureTitle": "Update the DonationSection component to include a UPI payment panel displaying: (1) a UPI QR code image (generated asset) with 'Scan & Pay' heading, (2) the UPI ID '76800701@ubin' as copyable text with a copy-to-clipboard button, (3) a note listing supported apps: Paytm, Google Pay, PhonePe, and any UPI app. Style this panel consistently with the existing maroon/gold palette.",
+      "files": [
+        "frontend/src/components/DonationSection.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-bank-details-card-to-the-donationsection-component-displaying-the-following-information-with-individual-copy-to-clipboard-buttons-for-each-field-account-name-gausiya-ashrafiya-foundation-account-no-353901010037412-ifsc-code-ubin0535397-union-bank-of-india-include-a-bank-icon-in-the-card-header-style-consistently-with-the-maroon-gold-palette",
+      "featureTitle": "Add a Bank Details card to the DonationSection component displaying the following information with individual copy-to-clipboard buttons for each field: Account Name: Gausiya Ashrafiya Foundation, Account No.: 353901010037412, IFSC Code: UBIN0535397 (Union Bank of India). Include a bank icon in the card header. Style consistently with the maroon/gold palette.",
+      "files": [
+        "frontend/src/components/DonationSection.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-12"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-upi-qr-code-image-asset-to-the-donation-section-the-image-should-be-a-clean-scannable-qr-code-graphic-for-upi-id-76800701-ubin-displayed-inside-a-white-rounded-card-with-scan-pay-heading-and-the-bhim-upi-branding-label-beneath-it",
+      "featureTitle": "Add a UPI QR code image asset to the Donation Section. The image should be a clean, scannable QR code graphic for UPI ID 76800701@ubin, displayed inside a white rounded card with 'SCAN & PAY' heading and the BHIM UPI branding label beneath it.",
+      "files": [
+        "frontend/src/components/DonationSection.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-13"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 11,
+  "summary": "गौसिया अशरफिया फाउंडेशन के लिए एक आकर्षक चैरिटेबल सोसाइटी ऐप बनाया जा रहा है। ऐप हिंदी में होगा और फाउंडेशन की गतिविधियों, दान, और सामाजिक कार्यों को प्रदर्शित करेगा। यूज़र ने एक नई कलर पैलेट (colorhunt.co/palette/6326269d5353bf8b67dacc96) अप्लाई करने का अनुरोध किया है।",
+  "architectural_notes": [
+    "App is in Hindi language targeting Indian audience for a charitable society named गौसिया अशरफिया फाउंडेशन",
+    "New color palette: #632626 (dark maroon), #9d5353 (deep red), #bf8b67 (warm tan), #dacc96 (light gold) — from colorhunt.co/palette/6326269d5353bf8b67dacc96"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- UPI QR code graphic encoding UPI ID 76800701@ubin, white rounded card background, 'SCAN & PAY' bold heading at top, BHIM UPI logo at bottom, clean minimalist style (upi-qr-code.dim_400x500.png)",
+  "existing_features": [
+    {
+      "id": "feature-create-a-homepage-hero-section-displaying-the-foundation-name-gausiya-ashrafia-foundation-prominently-in-hindi-and-english-with-a-tagline-mission-statement-and-a-call-to-action-button-for-donations",
+      "title": "Create a homepage hero section displaying the foundation name 'Gausiya Ashrafia Foundation' (गौसिया अशरफिया फाउंडेशन) prominently in Hindi and English, with a tagline, mission statement, and a call-to-action button for donations.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-about-us-section-in-hindi-presenting-the-foundation-s-mission-vision-history-and-core-values-with-supporting-text-and-icons",
+      "title": "Create an About Us section in Hindi presenting the foundation's mission, vision, history, and core values with supporting text and icons.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-backend-data-model-and-api-for-storing-donation-records-donor-name-amount-message-timestamp-and-a-frontend-donation-section-where-users-can-submit-a-donation-form-with-name-amount-and-optional-message-fields",
+      "title": "Create a backend data model and API for storing donation records (donor name, amount, message, timestamp) and a frontend Donation section where users can submit a donation form with name, amount, and optional message fields.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-backend-data-model-and-frontend-activities-events-section-displaying-the-foundation-s-charitable-programs-and-events-seed-at-least-3-example-activities-e-g-food-drives-education-programs-medical-camps-with-title-description-date-and-image-placeholder",
+      "title": "Create a backend data model and frontend Activities & Events section displaying the foundation's charitable programs and events. Seed at least 3 example activities (e.g., food drives, education programs, medical camps) with title, description, date, and image placeholder.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-contact-us-section-with-foundation-address-phone-number-email-and-social-media-links-displayed-in-hindi-include-a-contact-inquiry-form-name-email-message-that-stores-submissions-in-the-backend",
+      "title": "Create a Contact Us section with foundation address, phone number, email, and social media links displayed in Hindi. Include a contact inquiry form (name, email, message) that stores submissions in the backend.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-rich-warm-islamic-charitable-visual-theme-using-deep-green-and-gold-as-primary-colors-elegant-arabic-inspired-decorative-motifs-serif-calligraphic-style-headings-for-hindi-text-and-a-consistent-card-based-layout-throughout-the-app-the-overall-aesthetic-should-feel-prestigious-trustworthy-and-culturally-resonant",
+      "title": "Apply a rich, warm Islamic/charitable visual theme using deep green and gold as primary colors, elegant Arabic-inspired decorative motifs, serif/calligraphic-style headings for Hindi text, and a consistent card-based layout throughout the app. The overall aesthetic should feel prestigious, trustworthy, and culturally resonant.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-entire-app-s-color-scheme-to-match-the-reference-website-at-masjid-e-gausia-welfare-committee-9ti-caffeine-xyz-extract-the-primary-secondary-accent-background-and-text-colors-from-that-site-and-apply-them-consistently-across-all-components-header-herosection-aboutsection-donationsection-activitiessection-contactsection-and-footer-update-the-css-custom-properties-in-frontend-src-index-css-and-the-tailwind-theme-in-frontend-tailwind-config-js-to-reflect-the-new-palette-ensure-all-interactive-elements-buttons-links-cards-borders-badges-use-the-new-color-tokens-the-overall-visual-style-and-typography-should-remain-intact-only-the-color-values-should-change",
+      "title": "Update the entire app's color scheme to match the reference website at masjid-e-gausia-welfare-committee-9ti.caffeine.xyz. Extract the primary, secondary, accent, background, and text colors from that site and apply them consistently across all components: Header, HeroSection, AboutSection, DonationSection, ActivitiesSection, ContactSection, and Footer. Update the CSS custom properties in frontend/src/index.css and the Tailwind theme in frontend/tailwind.config.js to reflect the new palette. Ensure all interactive elements (buttons, links, cards, borders, badges) use the new color tokens. The overall visual style and typography should remain intact — only the color values should change.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-tagline-2011-serving-the-community-since-2011-to-the-herosection-component-display-it-as-a-prominent-sub-tagline-or-badge-element-beneath-the-foundation-name-or-existing-tagline-styled-consistently-with-the-current-teal-green-and-gold-islamic-theme-e-g-gold-colored-text-or-a-decorative-badge-ribbon-style",
+      "title": "Add the tagline '2011 से कौम की खिदमत में' (Serving the community since 2011) to the HeroSection component. Display it as a prominent sub-tagline or badge element beneath the foundation name or existing tagline, styled consistently with the current teal-green and gold Islamic theme (e.g., gold-colored text or a decorative badge/ribbon style).",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-css-custom-properties-in-frontend-src-index-css-and-the-tailwind-theme-in-frontend-tailwind-config-js-to-replace-the-current-teal-green-and-gold-palette-with-the-new-color-hunt-palette-dark-maroon-632626-primary-deep-red-9d5353-secondary-warm-tan-bf8b67-accent-and-light-gold-cream-dacc96-highlight-background-accent-define-these-as-named-color-tokens-e-g-primary-secondary-accent-highlight-usable-throughout-the-app",
+      "title": "Update the CSS custom properties in frontend/src/index.css and the Tailwind theme in frontend/tailwind.config.js to replace the current teal-green and gold palette with the new Color Hunt palette: dark maroon #632626 (primary), deep red #9d5353 (secondary), warm tan #bf8b67 (accent), and light gold/cream #dacc96 (highlight/background accent). Define these as named color tokens (e.g., 'primary', 'secondary', 'accent', 'highlight') usable throughout the app.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-the-new-color-palette-consistently-across-all-frontend-components-header-herosection-aboutsection-donationsection-activitiessection-contactsection-and-footer-replace-all-teal-green-backgrounds-borders-icon-circles-badges-and-buttons-with-the-new-dark-maroon-632626-and-deep-red-9d5353-tones-replace-gold-accents-and-highlights-with-warm-tan-bf8b67-and-light-gold-dacc96-ensure-text-contrast-and-readability-are-maintained-throughout",
+      "title": "Apply the new color palette consistently across all frontend components — Header, HeroSection, AboutSection, DonationSection, ActivitiesSection, ContactSection, and Footer. Replace all teal-green backgrounds, borders, icon circles, badges, and buttons with the new dark maroon (#632626) and deep red (#9d5353) tones. Replace gold accents and highlights with warm tan (#bf8b67) and light gold (#dacc96). Ensure text contrast and readability are maintained throughout.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-donationsection-component-to-include-a-upi-payment-panel-displaying-1-a-upi-qr-code-image-generated-asset-with-scan-pay-heading-2-the-upi-id-76800701-ubin-as-copyable-text-with-a-copy-to-clipboard-button-3-a-note-listing-supported-apps-paytm-google-pay-phonepe-and-any-upi-app-style-this-panel-consistently-with-the-existing-maroon-gold-palette",
+      "title": "Update the DonationSection component to include a UPI payment panel displaying: (1) a UPI QR code image (generated asset) with 'Scan & Pay' heading, (2) the UPI ID '76800701@ubin' as copyable text with a copy-to-clipboard button, (3) a note listing supported apps: Paytm, Google Pay, PhonePe, and any UPI app. Style this panel consistently with the existing maroon/gold palette.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-bank-details-card-to-the-donationsection-component-displaying-the-following-information-with-individual-copy-to-clipboard-buttons-for-each-field-account-name-gausiya-ashrafiya-foundation-account-no-353901010037412-ifsc-code-ubin0535397-union-bank-of-india-include-a-bank-icon-in-the-card-header-style-consistently-with-the-maroon-gold-palette",
+      "title": "Add a Bank Details card to the DonationSection component displaying the following information with individual copy-to-clipboard buttons for each field: Account Name: Gausiya Ashrafiya Foundation, Account No.: 353901010037412, IFSC Code: UBIN0535397 (Union Bank of India). Include a bank icon in the card header. Style consistently with the maroon/gold palette.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-upi-qr-code-image-asset-to-the-donation-section-the-image-should-be-a-clean-scannable-qr-code-graphic-for-upi-id-76800701-ubin-displayed-inside-a-white-rounded-card-with-scan-pay-heading-and-the-bhim-upi-branding-label-beneath-it",
+      "title": "Add a UPI QR code image asset to the Donation Section. The image should be a clean, scannable QR code graphic for UPI ID 76800701@ubin, displayed inside a white rounded card with 'SCAN & PAY' heading and the BHIM UPI branding label beneath it.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Foundation homepage with mission, vision, and about section in Hindi",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Donation/charity section to accept or showcase donation options",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Activities and events section showing foundation's charitable work",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Contact us section with address, phone, and social links",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Add tagline '2011 से कौम की खिदमत में' to the hero section",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Apply new color palette from colorhunt.co/palette/6326269d5353bf8b67dacc96 (dark maroon #632626, deep red #9d5353, warm tan #bf8b67, light gold #dacc96) across all app components",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "डोनेशन सेक्शन में ऑनलाइन पेमेंट फीचर जोड़ें (UPI/card/bank transfer support)",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "गौसिया अशरफिया फाउंडेशन",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

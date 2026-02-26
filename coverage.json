@@ -1,0 +1,60 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-26T06:47:27.345Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 3,
+    "items": [
+      {
+        "id": "REQ-11",
+        "summary": "Update the DonationSection component to include a UPI payment panel displaying: (1) a UPI QR code image (generated asset) with 'Scan & Pay' heading, (2) the UPI ID '76800701@ubin' as copyable text with a copy-to-clipboard button, (3) a note listing supported apps: Paytm, Google Pay, PhonePe, and any UPI app. Style this panel consistently with the existing maroon/gold palette.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/DonationSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/DonationSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Add a Bank Details card to the DonationSection component displaying the following information with individual copy-to-clipboard buttons for each field: Account Name: Gausiya Ashrafiya Foundation, Account No.: 353901010037412, IFSC Code: UBIN0535397 (Union Bank of India). Include a bank icon in the card header. Style consistently with the maroon/gold palette.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/DonationSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/DonationSection.tsx"
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "summary": "Add a UPI QR code image asset to the Donation Section. The image should be a clean, scannable QR code graphic for UPI ID 76800701@ubin, displayed inside a white rounded card with 'SCAN & PAY' heading and the BHIM UPI branding label beneath it.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/DonationSection.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/DonationSection.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/public/assets/generated/upi-qr-code.dim_400x500.png",
+    "frontend/src/components/DonationSection.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}
