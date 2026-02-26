@@ -35,6 +35,20 @@ export const District = IDL.Record({
   'villages' : IDL.Vec(Village),
   'name' : IDL.Text,
 });
+export const GalleryImage = IDL.Record({
+  'id' : IDL.Nat,
+  'eventId' : IDL.Nat,
+  'imageData' : IDL.Text,
+  'sortOrder' : IDL.Nat,
+  'caption' : IDL.Text,
+});
+export const GalleryEvent = IDL.Record({
+  'id' : IDL.Nat,
+  'title' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'subtitle' : IDL.Text,
+  'images' : IDL.Vec(GalleryImage),
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -65,13 +79,23 @@ export const idlService = IDL.Service({
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'addDistrict' : IDL.Func([IDL.Text], [IDL.Nat], []),
+  'addGalleryEvent' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+  'addGalleryImage' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [IDL.Nat], []),
   'addVillage' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Nat], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'deleteDistrict' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'deleteGalleryEvent' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'deleteGalleryImage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
   'deleteVillage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getDistricts' : IDL.Func([], [IDL.Vec(District)], ['query']),
+  'getGalleryEvents' : IDL.Func([], [IDL.Vec(GalleryEvent)], ['query']),
+  'getGalleryImagesByEvent' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Vec(GalleryImage)],
+      ['query'],
+    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
@@ -112,6 +136,20 @@ export const idlFactory = ({ IDL }) => {
     'villages' : IDL.Vec(Village),
     'name' : IDL.Text,
   });
+  const GalleryImage = IDL.Record({
+    'id' : IDL.Nat,
+    'eventId' : IDL.Nat,
+    'imageData' : IDL.Text,
+    'sortOrder' : IDL.Nat,
+    'caption' : IDL.Text,
+  });
+  const GalleryEvent = IDL.Record({
+    'id' : IDL.Nat,
+    'title' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'subtitle' : IDL.Text,
+    'images' : IDL.Vec(GalleryImage),
+  });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -142,13 +180,23 @@ export const idlFactory = ({ IDL }) => {
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'addDistrict' : IDL.Func([IDL.Text], [IDL.Nat], []),
+    'addGalleryEvent' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+    'addGalleryImage' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [IDL.Nat], []),
     'addVillage' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Nat], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'deleteDistrict' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'deleteGalleryEvent' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'deleteGalleryImage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'deleteVillage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getDistricts' : IDL.Func([], [IDL.Vec(District)], ['query']),
+    'getGalleryEvents' : IDL.Func([], [IDL.Vec(GalleryEvent)], ['query']),
+    'getGalleryImagesByEvent' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Vec(GalleryImage)],
+        ['query'],
+      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],

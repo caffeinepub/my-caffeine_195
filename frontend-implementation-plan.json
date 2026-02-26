@@ -1,43 +1,273 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add new Admin Meet photos to GallerySection (September 21, 2025)",
+  "title": "Admin Panel with Gallery Management, Village Controls, Passcode Change, and Site Animations",
   "requirements": [
     {
-      "id": "REQ-62",
-      "summary": "Replace existing GallerySection placeholder content with four new Admin Meet photos from September 21, 2025 event, displaying them in a responsive grid within an event card with Hindi title and location subtitle",
+      "id": "REQ-70",
+      "summary": "Create AdminPanel component with passcode login gate using default passcode 'damin1234', styled with cream/maroon palette",
       "acceptanceCriteria": [
-        "All four new uploaded photos (IMG_20250921_150644.jpg, IMG_20250921_150657.jpg, IMG_20250921_150653.jpg, IMG_20250921_133711.jpg) are saved as static assets and rendered in the GallerySection.",
-        "The event card displays the title 'एडमिन पैनल मीटिंग – 21 सितंबर 2025' and subtitle 'मुंबरा (ठाणे), महाराष्ट्र, भारत'.",
-        "The section heading 'गैलेरी' and decorative gold divider are retained.",
-        "The image grid is responsive and styled consistently with the maroon/gold palette.",
-        "No placeholder or old gallery images remain visible."
+        "Entering 'damin1234' and clicking the login button successfully unlocks the Admin Panel",
+        "Entering a wrong passcode shows an error message",
+        "The login gate is styled with cream/maroon palette (bg-[#fdf6e3] background, white card, maroon accents)",
+        "The passcode check trims whitespace before comparison"
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/generated/gallery-admin-meet-1.dim_1200x800.png",
+          "path": "frontend/src/components/AdminPanel.tsx",
           "operation": "create",
-          "description": "Save the processed photo of attendees seated indoors at Admin Meet event (from IMG_20250921_150644.jpg) as a static asset at this exact workspace path. This image will be referenced in the GallerySection component to display the first gallery photo."
-        },
+          "description": "Create new AdminPanel component with a passcode login gate. The gate must use localStorage key 'gaf_admin_passcode' with fallback to 'damin1234'. Implement a centered card layout with bg-[#fdf6e3] page background, white card (bg-white), maroon border, and maroon submit button. The passcode check must trim whitespace and use strict string equality. Show error messages for incorrect passcode. After successful login, render the admin interface (tabs will be added in REQ-73)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-72",
+      "summary": "Add React Query hooks for gallery backend endpoints in useQueries.ts",
+      "acceptanceCriteria": [
+        "useGetGalleryEvents fetches all gallery events",
+        "useAddGalleryEvent mutation creates a new event",
+        "useDeleteGalleryEvent mutation removes an event",
+        "useGetGalleryImagesByEvent is disabled when eventId is null",
+        "useAddGalleryImage mutation uploads image data to the backend",
+        "useDeleteGalleryImage mutation removes an image",
+        "All hooks follow existing patterns in useQueries.ts"
+      ],
+      "file_operations": [
         {
-          "path": "frontend/public/assets/generated/gallery-admin-meet-2.dim_1200x800.png",
-          "operation": "create",
-          "description": "Save the processed wide-angle photo of attendees seated indoors at Admin Meet event (from IMG_20250921_150657.jpg) as a static asset at this exact workspace path. This image will be referenced in the GallerySection component to display the second gallery photo."
-        },
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add six new React Query hooks following existing patterns: useGetGalleryEvents() query hook that fetches all gallery events; useAddGalleryEvent() mutation hook accepting {title: string, subtitle: string} and returning the new event ID; useDeleteGalleryEvent() mutation hook accepting eventId; useGetGalleryImagesByEvent(eventId: number | null) query hook that is disabled when eventId is null; useAddGalleryImage() mutation hook accepting {eventId: bigint, imageData: string, caption: string}; useDeleteGalleryImage() mutation hook accepting imageId. All mutations must invalidate relevant queries on success. Use the anonymous actor (no Internet Identity required)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-73",
+      "summary": "Implement six-tab admin interface with Donations, Memberships, Assistance Requests, Contact Inquiries, Villages management (with bulk import/export), and Gallery Management",
+      "acceptanceCriteria": [
+        "All six tabs render correctly with light cream/white backgrounds and readable dark text",
+        "Donations, Memberships, Assistance Requests, and Contact Inquiries tabs display data in styled tables",
+        "Villages tab: Add District form submits without authorization errors and shows success toast",
+        "Villages tab: Add Village form submits without authorization errors and shows success toast",
+        "Villages tab: Bulk text-paste import parses 'District: Village1, Village2' format correctly and shows count in button label",
+        "Villages tab: Bulk Excel/CSV file upload (SheetJS) processes Column A = District, Column B = Village with sequential async processing",
+        "Villages tab: Export to Excel produces villages-export.xlsx",
+        "Villages tab: Export to PDF produces villages-export.pdf",
+        "Gallery Management tab: Admin can create a new gallery event with title and subtitle",
+        "Gallery Management tab: Admin can upload images (converted to base64) with captions to an event",
+        "Gallery Management tab: Admin can delete events and individual images",
+        "No Internet Identity login requirement gates any form submission — only the passcode gate is required",
+        "The Admin Panel header shows the correct foundation name 'गौसिया अशरफिया फाउंडेशन'"
+      ],
+      "file_operations": [
         {
-          "path": "frontend/public/assets/generated/gallery-admin-meet-3.dim_1200x800.png",
-          "operation": "create",
-          "description": "Save the processed photo showing large group of attendees in two rooms at Admin Meet event (from IMG_20250921_150653.jpg) as a static asset at this exact workspace path. This image will be referenced in the GallerySection component to display the third gallery photo."
-        },
+          "path": "frontend/src/components/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "After the passcode gate (from REQ-70), implement a tabbed interface with six tabs styled with maroon/gold palette: (1) Donations tab displaying a table of donation records using useGetDonations; (2) Memberships tab displaying membership registrations with address/identity proof download links using useGetMemberships; (3) Assistance Requests tab displaying assistance requests using useGetAssistanceRequests; (4) Contact Inquiries tab displaying contact inquiries using useGetContactInquiries; (5) Villages tab with manual district/village add forms (useAddDistrict, useAddVillage), bulk import via text-paste (parsing 'District: Village1, Village2' format with sequential async processing), bulk Excel/CSV file upload via SheetJS (Column A=District, Column B=Village, sequential async processing), export to Excel (villages-export.xlsx) and PDF (villages-export.pdf via jsPDF), and a districts list with delete buttons (useDeleteDistrict, useDeleteVillage); (6) Gallery Management tab with a form to create gallery events (title + subtitle), upload images per event (file input converted to base64, with caption field), and delete events/images. Style: bg-[#fdf6e3] page root, bg-white tab content areas, maroon (#632626) tab bar with gold (#dacc96) active tab text, text-gray-900 body text, maroon section headings, gold borders, cream form inputs with maroon focus border, maroon header row in tables with alternating row colors. Show the foundation name 'गौसिया अशरफिया फाउंडेशन' in the panel header. Remove all Internet Identity checks; passcode gate is the only authentication."
+        }
+      ]
+    },
+    {
+      "id": "REQ-74",
+      "summary": "Add 'Change Passcode' form within AdminPanel with validation (current passcode match, new passcode ≥6 chars, confirmation match)",
+      "acceptanceCriteria": [
+        "Change Passcode form is visible after successful login",
+        "Submitting with correct current passcode, matching new passcode (≥6 chars) updates localStorage and shows success toast",
+        "Entering wrong current passcode shows error message",
+        "Mismatched new passcode and confirmation shows error message",
+        "New passcode shorter than 6 characters shows error message",
+        "After changing passcode, logging out and logging back in with the new passcode succeeds"
+      ],
+      "file_operations": [
         {
-          "path": "frontend/public/assets/generated/gallery-admin-meet-4.dim_1200x800.png",
-          "operation": "create",
-          "description": "Save the processed photo of projector slide showing 'एडमिन पैनल मीटिंग गौसिया अशरफिया फाउंडेशन' with foundation logo (from IMG_20250921_133711.jpg) as a static asset at this exact workspace path. This image will be referenced in the GallerySection component to display the fourth gallery photo."
-        },
+          "path": "frontend/src/components/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "Add a 'Change Passcode' (पासकोड बदलें) section within the AdminPanel, displayed in the panel header or as a settings tab after successful login. Implement a form with three fields: Current Passcode, New Passcode, and Confirm New Passcode. Validate: (1) current passcode matches localStorage 'gaf_admin_passcode'; (2) new passcode is at least 6 characters; (3) new passcode and confirmation match. On successful validation, update localStorage key 'gaf_admin_passcode' and show a success toast. Display inline error messages for validation failures."
+        }
+      ]
+    },
+    {
+      "id": "REQ-75",
+      "summary": "Add Admin Panel route back to App.tsx as #/admin hash route",
+      "acceptanceCriteria": [
+        "Navigating to /#/admin renders the AdminPanel component",
+        "Homepage layout is unaffected",
+        "/#/gallery and /#/villages routes still work"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a hash route for #/admin that renders the AdminPanel component wrapped with the site Header and Footer. The existing homepage layout and other routes (#/gallery, #/villages) must remain intact. Follow the existing hash-based routing pattern in the file."
+        }
+      ]
+    },
+    {
+      "id": "REQ-76",
+      "summary": "Add 'Admin' navigation link to Header component in hamburger/mobile menu only (not desktop nav bar)",
+      "acceptanceCriteria": [
+        "Admin link appears in the hamburger/mobile menu",
+        "Admin link is NOT present in the desktop navigation bar",
+        "Clicking the Admin link navigates to /#/admin",
+        "The hamburger menu closes after clicking the Admin link"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Add an 'Admin' navigation link to the hamburger/mobile menu only (NOT in the desktop navigation bar). Clicking the Admin link should navigate to /#/admin and close the hamburger menu. Follow the existing mobile menu pattern in the component."
+        }
+      ]
+    },
+    {
+      "id": "REQ-77",
+      "summary": "Update GallerySection to dynamically fetch and display gallery events and images from backend",
+      "acceptanceCriteria": [
+        "GallerySection fetches events from the backend via useGetGalleryEvents",
+        "Each event card shows a responsive image grid with all associated images",
+        "Event title and subtitle are displayed as caption below the grid",
+        "Empty state message is shown when no events exist",
+        "Loading state is shown while fetching",
+        "Section heading 'गैलेरी' and gold divider are retained"
+      ],
+      "file_operations": [
         {
           "path": "frontend/src/components/GallerySection.tsx",
           "operation": "modify",
-          "description": "Replace the placeholder content with a functional gallery implementation. Add an event card structure containing the Hindi title 'एडमिन पैनल मीटिंग – 21 सितंबर 2025' and subtitle 'मुंबरा (ठाणे), महाराष्ट्र, भारत'. Implement a responsive 2-column mobile / 4-column desktop image grid displaying the four photos from frontend/public/assets/generated/gallery-admin-meet-1.dim_1200x800.png through gallery-admin-meet-4.dim_1200x800.png. Retain the existing section heading 'गैलेरी' and gold decorative divider. Style the card with maroon borders, white background, rounded corners, and shadow effects consistent with the existing maroon/gold OKLCH palette defined in the global styles. Ensure images are responsive with proper aspect ratios and hover effects."
+          "description": "Replace the placeholder content with dynamic gallery display. Use useGetGalleryEvents to fetch all gallery events. For each event, use useGetGalleryImagesByEvent to fetch associated images. Display each event as a card with a responsive image grid (rendering base64 image data from imageData field), event title, and subtitle caption below the grid. Show a loading state while fetching. If no events exist, display an empty-state message in Hindi (e.g., 'अभी तक कोई फोटो नहीं जोड़ी गई'). Retain the 'गैलेरी' section heading and decorative gold divider. Style consistently with the maroon/gold palette."
+        }
+      ]
+    },
+    {
+      "id": "REQ-78",
+      "summary": "Add scroll-triggered fade-in and slide-in entrance animations to all major page sections using Intersection Observer API",
+      "acceptanceCriteria": [
+        "Each major section fades in and slides up when it enters the viewport while scrolling",
+        "Animations trigger only once per page load (not repeatedly)",
+        "No layout shift occurs during or after animation",
+        "Animations work on both desktop and mobile"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/HeroSection.tsx",
+          "operation": "modify",
+          "description": "Add scroll-triggered fade-in and slide-in entrance animation using the Intersection Observer API (or Tailwind animation utilities). The section should fade in and slide up from slightly below its final position when it enters the viewport. The animation should trigger only once per page load. Ensure no layout shift occurs."
+        },
+        {
+          "path": "frontend/src/components/AboutSection.tsx",
+          "operation": "modify",
+          "description": "Add scroll-triggered fade-in and slide-in entrance animation using the Intersection Observer API. The section should fade in and slide up when it enters the viewport. Trigger only once per page load. Ensure no layout shift."
+        },
+        {
+          "path": "frontend/src/components/DonationSection.tsx",
+          "operation": "modify",
+          "description": "Add scroll-triggered fade-in and slide-in entrance animation using the Intersection Observer API. The section should fade in and slide up when it enters the viewport. Trigger only once per page load. Ensure no layout shift."
+        },
+        {
+          "path": "frontend/src/components/ActivitiesSection.tsx",
+          "operation": "modify",
+          "description": "Add scroll-triggered fade-in and slide-in entrance animation using the Intersection Observer API. The section should fade in and slide up when it enters the viewport. Trigger only once per page load. Ensure no layout shift."
+        },
+        {
+          "path": "frontend/src/components/GovernmentSchemesSection.tsx",
+          "operation": "modify",
+          "description": "Add scroll-triggered fade-in and slide-in entrance animation using the Intersection Observer API. The section should fade in and slide up when it enters the viewport. Trigger only once per page load. Ensure no layout shift."
+        },
+        {
+          "path": "frontend/src/components/MembershipSection.tsx",
+          "operation": "modify",
+          "description": "Add scroll-triggered fade-in and slide-in entrance animation using the Intersection Observer API. The section should fade in and slide up when it enters the viewport. Trigger only once per page load. Ensure no layout shift."
+        },
+        {
+          "path": "frontend/src/components/AssistanceSection.tsx",
+          "operation": "modify",
+          "description": "Add scroll-triggered fade-in and slide-in entrance animation using the Intersection Observer API. The section should fade in and slide up when it enters the viewport. Trigger only once per page load. Ensure no layout shift."
+        },
+        {
+          "path": "frontend/src/components/ContactSection.tsx",
+          "operation": "modify",
+          "description": "Add scroll-triggered fade-in and slide-in entrance animation using the Intersection Observer API. The section should fade in and slide up when it enters the viewport. Trigger only once per page load. Ensure no layout shift."
+        },
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "modify",
+          "description": "Add scroll-triggered fade-in and slide-in entrance animation using the Intersection Observer API. The section should fade in and slide up when it enters the viewport. Trigger only once per page load. Ensure no layout shift."
+        }
+      ]
+    },
+    {
+      "id": "REQ-79",
+      "summary": "Add hover and focus animations to all interactive buttons and card elements (scale-up, shadow, color transitions, CTA glow/pulse, nav underline, card lift)",
+      "acceptanceCriteria": [
+        "All buttons show scale-up and shadow effects on hover with smooth CSS transitions",
+        "HeroSection CTA buttons have a glow or pulse animation",
+        "Navigation links have hover underline animation",
+        "Cards in major sections lift and show increased shadow on hover",
+        "Animations use CSS transitions (not JS-heavy libraries) for performance"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/HeroSection.tsx",
+          "operation": "modify",
+          "description": "Add hover animations to CTA buttons: smooth scale-up (scale-105), subtle shadow increase, and an additional glow or pulse effect. Use CSS transitions for smooth animation."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Add hover underline slide-in animation to navigation links. Use CSS transitions for smooth animation."
+        },
+        {
+          "path": "frontend/src/components/AboutSection.tsx",
+          "operation": "modify",
+          "description": "Add hover animations to cards: lift effect (translate-y and shadow increase) on hover. Use CSS transitions for smooth animation."
+        },
+        {
+          "path": "frontend/src/components/ActivitiesSection.tsx",
+          "operation": "modify",
+          "description": "Add hover animations to activity cards: lift effect (translate-y and shadow increase) on hover. Use CSS transitions for smooth animation."
+        },
+        {
+          "path": "frontend/src/components/GovernmentSchemesSection.tsx",
+          "operation": "modify",
+          "description": "Add hover animations to scheme cards: lift effect (translate-y and shadow increase) on hover. Use CSS transitions for smooth animation."
+        },
+        {
+          "path": "frontend/src/components/MembershipSection.tsx",
+          "operation": "modify",
+          "description": "Add hover animations to buttons: smooth scale-up (scale-105), shadow increase, and color transition. Use CSS transitions for smooth animation."
+        },
+        {
+          "path": "frontend/src/components/DonationSection.tsx",
+          "operation": "modify",
+          "description": "Add hover animations to buttons and preset amount cards: smooth scale-up (scale-105), shadow increase, and color transition. Use CSS transitions for smooth animation."
+        },
+        {
+          "path": "frontend/src/components/AssistanceSection.tsx",
+          "operation": "modify",
+          "description": "Add hover animations to buttons: smooth scale-up (scale-105), shadow increase, and color transition. Use CSS transitions for smooth animation."
+        },
+        {
+          "path": "frontend/src/components/ContactSection.tsx",
+          "operation": "modify",
+          "description": "Add hover animations to buttons: smooth scale-up (scale-105), shadow increase, and color transition. Use CSS transitions for smooth animation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-80",
+      "summary": "Add special entrance animation to HeroSection with staggered fade-in-up for text, scale-in for tagline badge, slide-in for CTA buttons, and subtle background shimmer/parallax",
+      "acceptanceCriteria": [
+        "Foundation name text elements animate in with staggered fade-in-up on page load",
+        "Tagline badge animates in with a scale-in effect",
+        "CTA buttons slide in from below after the text animations",
+        "A subtle background shimmer or overlay animation is present on the hero image",
+        "All animations complete within 2 seconds of page load",
+        "Animations are smooth and do not cause jank on mobile devices"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/HeroSection.tsx",
+          "operation": "modify",
+          "description": "Add special entrance animation to the HeroSection. Implement: (1) staggered fade-in-up animation for the foundation name text elements (Hindi and English appearing one after another); (2) scale-in animation for the tagline badge; (3) slide-in-from-below animation for the CTA buttons (appearing after the text animations); (4) subtle background shimmer or parallax scroll effect on the hero background image overlay. All animations should complete within 2 seconds of page load. Use CSS keyframes or Tailwind animation utilities for smooth, performant animations that do not cause jank on mobile devices."
         }
       ]
     }

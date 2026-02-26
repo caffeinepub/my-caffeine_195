@@ -1,77 +1,111 @@
-import { MapPin, Calendar } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
+import { useGetGalleryEvents } from '../hooks/useQueries';
+import { Loader2, ImageOff } from 'lucide-react';
 
-const adminMeetPhotos = [
-  {
-    src: '/assets/generated/gallery-admin-meet-1.dim_1200x800.png',
-    alt: 'एडमिन पैनल मीटिंग – उपस्थित सदस्य (1)',
-  },
-  {
-    src: '/assets/generated/gallery-admin-meet-2.dim_1200x800.png',
-    alt: 'एडमिन पैनल मीटिंग – उपस्थित सदस्य (2)',
-  },
-  {
-    src: '/assets/generated/gallery-admin-meet-3.dim_1200x800.png',
-    alt: 'एडमिन पैनल मीटिंग – बड़ा समूह',
-  },
-  {
-    src: '/assets/generated/gallery-admin-meet-4.dim_1200x800.png',
-    alt: 'एडमिन पैनल मीटिंग – प्रेजेंटेशन स्लाइड',
-  },
-];
+function useScrollAnimation() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('animate-in');
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
 
 export default function GallerySection() {
+  const sectionRef = useScrollAnimation();
+  const { data: events, isLoading } = useGetGalleryEvents();
+
   return (
-    <section id="gallery" className="py-16 px-4" style={{ background: 'oklch(0.97 0.005 60)' }}>
-      <div className="max-w-6xl mx-auto">
+    <section
+      id="gallery"
+      ref={sectionRef}
+      className="py-16 scroll-animate"
+      style={{ background: '#fdf6e3' }}
+    >
+      <div className="max-w-6xl mx-auto px-4">
         {/* Heading */}
-        <div className="text-center mb-12">
-          <div className="ornament">✦ ✦ ✦</div>
-          <h2 className="section-heading mb-3">गैलेरी</h2>
-          <div className="gold-divider" />
+        <div className="text-center mb-10">
+          <h2
+            className="text-3xl md:text-4xl font-bold mb-3"
+            style={{ color: '#632626', fontFamily: 'Noto Serif Devanagari, serif' }}
+          >
+            गैलेरी
+          </h2>
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-px w-16" style={{ background: '#dacc96' }} />
+            <span className="text-xl" style={{ color: '#dacc96' }}>✦</span>
+            <div className="h-px w-16" style={{ background: '#dacc96' }} />
+          </div>
         </div>
 
-        {/* Event Card */}
-        <div className="bg-white rounded-2xl shadow-card border border-maroon-200 overflow-hidden">
-          {/* Card Header */}
-          <div className="bg-maroon-700 px-6 py-5">
-            <h3 className="text-xl md:text-2xl font-bold text-gold-300 font-serif mb-2">
-              एडमिन पैनल मीटिंग – 21 सितंबर 2025
-            </h3>
-            <div className="flex flex-wrap gap-4 text-gold-400 text-sm">
-              <span className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 flex-shrink-0" />
-                21 सितंबर 2025
-              </span>
-              <span className="flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 flex-shrink-0" />
-                मुंबरा (ठाणे), महाराष्ट्र, भारत
-              </span>
-            </div>
+        {/* Content */}
+        {isLoading ? (
+          <div className="flex justify-center py-16">
+            <Loader2 className="animate-spin w-8 h-8" style={{ color: '#632626' }} />
           </div>
-
-          {/* Image Grid */}
-          <div className="p-4 md:p-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-              {adminMeetPhotos.map((photo, index) => (
-                <div
-                  key={index}
-                  className="group relative overflow-hidden rounded-xl border border-maroon-100 shadow-sm"
-                >
-                  <div className="aspect-[3/4] md:aspect-[4/3] overflow-hidden bg-maroon-50">
-                    <img
-                      src={photo.src}
-                      alt={photo.alt}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                    />
+        ) : !events || events.length === 0 ? (
+          <div className="text-center py-16">
+            <ImageOff className="w-12 h-12 mx-auto mb-4" style={{ color: '#dacc96' }} />
+            <p className="text-lg" style={{ color: '#8b6914' }}>
+              अभी तक कोई फोटो नहीं जोड़ी गई
+            </p>
+            <p className="text-sm mt-1 text-gray-500">
+              एडमिन पैनल से गैलरी में फोटो जोड़ें
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-10">
+            {events.map(event => (
+              <div
+                key={event.id.toString()}
+                className="bg-white rounded-2xl shadow-md overflow-hidden border"
+                style={{ borderColor: '#dacc96' }}
+              >
+                {event.images.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-1 p-1">
+                    {event.images.map(img => (
+                      <div key={img.id.toString()} className="relative overflow-hidden rounded-lg aspect-square group">
+                        <img
+                          src={img.imageData}
+                          alt={img.caption || event.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                        {img.caption && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {img.caption}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-maroon-900/0 group-hover:bg-maroon-900/20 transition-colors duration-300 rounded-xl" />
+                ) : (
+                  <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
+                    इस इवेंट में कोई फोटो नहीं
+                  </div>
+                )}
+                <div className="px-5 py-4 border-t" style={{ borderColor: '#dacc96' }}>
+                  <h3 className="font-bold text-lg" style={{ color: '#632626', fontFamily: 'Noto Serif Devanagari, serif' }}>
+                    {event.title}
+                  </h3>
+                  {event.subtitle && (
+                    <p className="text-sm mt-0.5" style={{ color: '#8b6914' }}>{event.subtitle}</p>
+                  )}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

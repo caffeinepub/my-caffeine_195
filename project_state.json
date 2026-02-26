@@ -1,12 +1,13 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 61,
+  "projectStateVersion": 67,
   "summary": "गौसिया अशरफिया फाउंडेशन के लिए एक आकर्षक चैरिटेबल सोसाइटी ऐप बनाया जा रहा है। ऐप हिंदी में होगा और फाउंडेशन की गतिविधियों, दान, और सामाजिक कार्यों को प्रदर्शित करेगा। यूज़र ने एक नई कलर पैलेट (colorhunt.co/palette/6326269d5353bf8b67dacc96) अप्लाई करने का अनुरोध किया है।",
   "architectural_notes": [
     "App is in Hindi language targeting Indian audience for a charitable society named गौसिया अशरफिया फाउंडेशन",
     "New color palette: #632626 (dark maroon), #9d5353 (deep red), #bf8b67 (warm tan), #dacc96 (light gold) — from colorhunt.co/palette/6326269d5353bf8b67dacc96",
     "Admin panel required for viewing membership, donation, assistance, and contact submissions — needs authentication/access control",
-    "Admin Panel should only be accessible via hamburger menu link, opening on a separate page/route — not embedded on the homepage"
+    "Admin Panel should only be accessible via hamburger menu link, opening on a separate page/route — not embedded on the homepage",
+    "Gallery and VillagesSection should be accessible via dedicated routes (not inline on homepage) — linked from the hamburger/navigation menu only"
   ],
   "known_issues": [
     "Admin Panel > Villages Tab में District Add करने पर लाल रंग का error text दिखता है — district add नहीं हो रहा",
@@ -20,7 +21,6 @@
     "Admin Panel > Villages Tab में individual (Add District/Village) और Bulk Import दोनों काम नहीं कर रहे — Version 26 के बाद भी errors persist हैं"
   ],
   "isFixRequest": false,
-  "imageRequirements": "## Edit Images\n- Replace with uploaded photo of attendees seated indoors at Admin Meet event (IMG_20250921_150644.jpg > gallery-admin-meet-1.dim_1200x800.png)\n- Replace with uploaded photo of attendees seated indoors at Admin Meet event, wide angle (IMG_20250921_150657.jpg > gallery-admin-meet-2.dim_1200x800.png)\n- Replace with uploaded photo of large group of attendees in two rooms at Admin Meet event (IMG_20250921_150653.jpg > gallery-admin-meet-3.dim_1200x800.png)\n- Replace with uploaded photo of projector slide showing 'एडमिन पैनल मीटिंग गौसिया अशरफिया फाउंडेशन' with foundation logo (IMG_20250921_133711.jpg > gallery-admin-meet-4.dim_1200x800.png)",
   "existing_features": [
     {
       "id": "feature-create-a-homepage-hero-section-displaying-the-foundation-name-gausiya-ashrafia-foundation-prominently-in-hindi-and-english-with-a-tagline-mission-statement-and-a-call-to-action-button-for-donations",
@@ -477,6 +477,142 @@
         "REQ-62"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-remove-the-gallerysection-component-from-the-homepage-layout-in-frontend-src-app-tsx-it-must-no-longer-render-as-an-inline-section-on-the-main-page-instead-create-a-dedicated-route-e-g-gallery-that-renders-only-the-gallerysection-with-the-site-header-and-footer-when-that-hash-route-is-active",
+      "title": "Remove the GallerySection component from the homepage layout in frontend/src/App.tsx. It must no longer render as an inline section on the main page. Instead, create a dedicated route (e.g., #/gallery) that renders only the GallerySection (with the site Header and Footer) when that hash route is active.",
+      "reqIds": [
+        "REQ-63"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-villagessection-component-from-the-homepage-layout-in-frontend-src-app-tsx-it-must-no-longer-render-as-an-inline-section-on-the-main-page-instead-create-a-dedicated-route-e-g-villages-that-renders-only-the-villagessection-with-the-site-header-and-footer-when-that-hash-route-is-active",
+      "title": "Remove the VillagesSection component from the homepage layout in frontend/src/App.tsx. It must no longer render as an inline section on the main page. Instead, create a dedicated route (e.g., #/villages) that renders only the VillagesSection (with the site Header and Footer) when that hash route is active.",
+      "reqIds": [
+        "REQ-64"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-header-component-frontend-src-components-header-tsx-so-that-the-navigation-link-in-both-the-desktop-nav-and-the-hamburger-mobile-menu-navigates-to-the-gallery-route-instead-of-scrolling-to-a-section-anchor-similarly-update-the-navigation-link-to-navigate-to-the-villages-route-instead-of-scrolling-to-a-section-anchor",
+      "title": "Update the Header component (frontend/src/components/Header.tsx) so that the 'गैलेरी' navigation link (in both the desktop nav and the hamburger/mobile menu) navigates to the /#/gallery route instead of scrolling to a section anchor. Similarly, update the 'हमसे जुड़े गाँव' navigation link to navigate to the /#/villages route instead of scrolling to a section anchor.",
+      "reqIds": [
+        "REQ-65"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-clear-all-images-from-the-gallerysection-component-frontend-src-components-gallerysection-tsx-remove-all-currently-displayed-event-photo-cards-and-image-assets-including-the-four-admin-meet-september-21-2025-images-gallery-admin-meet-1-png-through-gallery-admin-meet-4-png-the-gallery-grid-should-render-empty-with-no-image-cards-retain-the-section-heading-and-the-decorative-gold-divider",
+      "title": "Clear all images from the GallerySection component (frontend/src/components/GallerySection.tsx). Remove all currently displayed event photo cards and image assets, including the four 'Admin Meet – September 21, 2025' images (gallery-admin-meet-1.png through gallery-admin-meet-4.png). The gallery grid should render empty with no image cards. Retain the 'गैलेरी' section heading and the decorative gold divider.",
+      "reqIds": [
+        "REQ-66"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-delete-the-file-frontend-src-components-adminpanel-tsx-entirely-remove-the-adminpanel-component-from-the-codebase",
+      "title": "Delete the file frontend/src/components/AdminPanel.tsx entirely — remove the AdminPanel component from the codebase.",
+      "reqIds": [
+        "REQ-67"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-admin-hash-route-from-frontend-src-app-tsx-the-router-must-no-longer-render-adminpanel-for-any-route-the-homepage-layout-and-all-other-routes-gallery-villages-must-remain-intact",
+      "title": "Remove the #/admin hash route from frontend/src/App.tsx. The router must no longer render AdminPanel for any route. The homepage layout and all other routes (#/gallery, #/villages) must remain intact.",
+      "reqIds": [
+        "REQ-68"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-admin-navigation-link-from-the-header-component-frontend-src-components-header-tsx-in-both-the-hamburger-mobile-menu-and-any-desktop-nav-no-link-pointing-to-admin-should-remain",
+      "title": "Remove the 'Admin' navigation link from the Header component (frontend/src/components/Header.tsx) in both the hamburger/mobile menu and any desktop nav. No link pointing to /#/admin should remain.",
+      "reqIds": [
+        "REQ-69"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-admin-panel-component-at-frontend-src-components-adminpanel-tsx-with-a-passcode-login-gate-using-the-default-passcode-damin1234-stored-in-localstorage-under-key-gaf-admin-passcode-falling-back-to-damin1234-if-no-stored-value-the-login-gate-must-trim-whitespace-and-use-strict-string-equality-style-the-login-gate-with-a-centered-card-layout-using-the-cream-maroon-palette-bg-fdf6e3-page-bg-white-card-maroon-border-maroon-button",
+      "title": "Create a new Admin Panel component at frontend/src/components/AdminPanel.tsx with a passcode login gate using the default passcode 'damin1234' (stored in localStorage under key 'gaf_admin_passcode', falling back to 'damin1234' if no stored value). The login gate must trim whitespace and use strict string equality. Style the login gate with a centered card layout using the cream/maroon palette (bg-[#fdf6e3] page, bg-white card, maroon border, maroon button).",
+      "reqIds": [
+        "REQ-70"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-react-query-hooks-to-frontend-src-hooks-usequeries-ts-for-the-new-gallery-backend-endpoints-usegetgalleryevents-useaddgalleryevent-mutation-returning-new-event-id-usedeletegalleryevent-mutation-usegetgalleryimagesbyevent-eventid-number-null-disabled-when-eventid-is-null-useaddgalleryimage-mutation-accepting-eventid-imagedata-caption-usedeletegalleryimage-mutation-follow-the-existing-hook-patterns-in-the-file-all-mutations-must-call-backend-actor-methods-without-requiring-authenticated-internet-identity-use-anonymous-actor",
+      "title": "Add React Query hooks to frontend/src/hooks/useQueries.ts for the new gallery backend endpoints: useGetGalleryEvents(), useAddGalleryEvent() (mutation returning new event id), useDeleteGalleryEvent() (mutation), useGetGalleryImagesByEvent(eventId: number | null) (disabled when eventId is null), useAddGalleryImage() (mutation accepting eventId, imageData, caption), useDeleteGalleryImage() (mutation). Follow the existing hook patterns in the file. All mutations must call backend actor methods without requiring authenticated Internet Identity (use anonymous actor).",
+      "reqIds": [
+        "REQ-72"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-new-adminpanel-component-frontend-src-components-adminpanel-tsx-implement-a-tabbed-interface-with-six-tabs-1-donations-table-of-all-donation-records-using-usegetdonations-2-memberships-table-of-all-membership-registrations-using-usegetmemberships-with-address-identity-proof-download-links-3-assistance-requests-table-using-usegetassistancerequests-4-contact-inquiries-table-using-usegetcontactinquiries-5-villages-district-village-management-with-manual-add-forms-useadddistrict-useaddvillage-bulk-import-text-paste-and-excel-csv-file-upload-via-sheetjs-export-to-excel-and-pdf-via-jspdf-and-a-districts-list-with-delete-buttons-usedeletedistrict-usedeletevillage-6-gallery-management-interface-to-create-gallery-events-title-subtitle-form-upload-images-file-input-converted-to-base64-with-caption-field-per-event-and-delete-events-images-style-the-entire-panel-with-the-maroon-gold-palette-bg-fdf6e3-page-root-bg-white-tab-content-areas-maroon-632626-tab-bar-with-gold-dacc96-active-tab-text-text-gray-900-body-text-maroon-section-headings-gold-borders-cream-form-inputs-with-maroon-focus-border-maroon-header-row-in-tables-with-alternating-row-colors-remove-all-internet-identity-isadmin-login-checks-passcode-gate-is-the-only-authentication-layer",
+      "title": "In the new AdminPanel component (frontend/src/components/AdminPanel.tsx), implement a tabbed interface with six tabs: (1) Donations — table of all donation records using useGetDonations; (2) Memberships — table of all membership registrations using useGetMemberships, with address/identity proof download links; (3) Assistance Requests — table using useGetAssistanceRequests; (4) Contact Inquiries — table using useGetContactInquiries; (5) Villages — district/village management with manual add forms (useAddDistrict, useAddVillage), bulk import (text-paste and Excel/CSV file upload via SheetJS), export to Excel and PDF (via jsPDF), and a districts list with delete buttons (useDeleteDistrict, useDeleteVillage); (6) Gallery Management — interface to create gallery events (title + subtitle form), upload images (file input converted to base64, with caption field) per event, and delete events/images. Style the entire panel with the maroon/gold palette: bg-[#fdf6e3] page root, bg-white tab content areas, maroon (#632626) tab bar with gold (#dacc96) active tab text, text-gray-900 body text, maroon section headings, gold borders, cream form inputs with maroon focus border, maroon header row in tables with alternating row colors. Remove all Internet Identity / isAdmin login checks — passcode gate is the only authentication layer.",
+      "reqIds": [
+        "REQ-73"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-change-passcode-section-within-the-admin-panel-frontend-src-components-adminpanel-tsx-displayed-in-the-panel-header-or-as-a-settings-tab-after-login-the-form-has-three-fields-current-passcode-new-passcode-minimum-6-characters-and-confirm-new-passcode-validate-that-the-current-passcode-matches-the-stored-value-that-new-passcode-and-confirmation-match-and-that-new-passcode-meets-minimum-length-on-success-update-localstorage-key-gaf-admin-passcode-and-show-a-success-toast-show-clear-inline-error-messages-on-validation-failure",
+      "title": "Add a 'Change Passcode' (पासकोड बदलें) section within the Admin Panel (frontend/src/components/AdminPanel.tsx), displayed in the panel header or as a settings tab after login. The form has three fields: Current Passcode, New Passcode (minimum 6 characters), and Confirm New Passcode. Validate that the current passcode matches the stored value, that new passcode and confirmation match, and that new passcode meets minimum length. On success, update localStorage key 'gaf_admin_passcode' and show a success toast. Show clear inline error messages on validation failure.",
+      "reqIds": [
+        "REQ-74"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-admin-panel-route-back-to-frontend-src-app-tsx-as-a-hash-route-admin-that-renders-the-new-adminpanel-component-with-the-site-header-and-footer-when-that-hash-is-active-the-homepage-layout-and-other-routes-gallery-villages-must-remain-intact",
+      "title": "Add the Admin Panel route back to frontend/src/App.tsx as a hash route (#/admin) that renders the new AdminPanel component (with the site Header and Footer) when that hash is active. The homepage layout and other routes (#/gallery, #/villages) must remain intact.",
+      "reqIds": [
+        "REQ-75"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-admin-navigation-link-back-to-the-header-component-frontend-src-components-header-tsx-in-the-hamburger-mobile-menu-only-not-in-the-desktop-navigation-bar-clicking-the-admin-link-should-navigate-to-admin-and-close-the-hamburger-menu",
+      "title": "Add an 'Admin' navigation link back to the Header component (frontend/src/components/Header.tsx) in the hamburger/mobile menu only (NOT in the desktop navigation bar). Clicking the Admin link should navigate to /#/admin and close the hamburger menu.",
+      "reqIds": [
+        "REQ-76"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-gallerysection-component-frontend-src-components-gallerysection-tsx-to-dynamically-fetch-and-display-gallery-events-and-their-images-from-the-backend-using-the-usegetgalleryevents-and-usegetgalleryimagesbyevent-hooks-display-each-event-as-a-card-with-a-responsive-image-grid-event-title-and-subtitle-caption-show-a-loading-state-while-fetching-if-no-events-exist-show-an-empty-state-message-e-g-retain-the-section-heading-and-decorative-gold-divider-style-consistently-with-the-existing-maroon-gold-palette",
+      "title": "Update the GallerySection component (frontend/src/components/GallerySection.tsx) to dynamically fetch and display gallery events and their images from the backend using the useGetGalleryEvents and useGetGalleryImagesByEvent hooks. Display each event as a card with a responsive image grid, event title, and subtitle caption. Show a loading state while fetching. If no events exist, show an empty-state message (e.g., 'अभी तक कोई फोटो नहीं जोड़ी गई'). Retain the 'गैलेरी' section heading and decorative gold divider. Style consistently with the existing maroon/gold palette.",
+      "reqIds": [
+        "REQ-77"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-scroll-triggered-fade-in-and-slide-in-entrance-animations-to-all-major-page-sections-herosection-aboutsection-donationsection-activitiessection-governmentschemessection-membershipsection-assistancesection-contactsection-footer-use-the-intersection-observer-api-or-a-lightweight-css-approach-with-tailwind-animation-utilities-to-trigger-animations-when-each-section-enters-the-viewport-each-section-should-animate-once-fading-in-and-sliding-up-from-slightly-below-its-final-position-ensure-animations-do-not-cause-layout-shift-or-affect-performance-negatively",
+      "title": "Add scroll-triggered fade-in and slide-in entrance animations to all major page sections (HeroSection, AboutSection, DonationSection, ActivitiesSection, GovernmentSchemesSection, MembershipSection, AssistanceSection, ContactSection, Footer). Use the Intersection Observer API (or a lightweight CSS approach with Tailwind animation utilities) to trigger animations when each section enters the viewport. Each section should animate once — fading in and sliding up from slightly below its final position. Ensure animations do not cause layout shift or affect performance negatively.",
+      "reqIds": [
+        "REQ-78"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-hover-and-focus-animations-to-all-interactive-buttons-and-card-elements-throughout-the-app-buttons-should-have-a-smooth-scale-up-e-g-scale-105-and-subtle-shadow-increase-on-hover-plus-a-color-transition-cta-buttons-in-herosection-should-have-an-additional-glow-pulse-effect-navigation-links-should-have-an-underline-slide-in-animation-on-hover-cards-in-aboutsection-activitiessection-governmentschemessection-and-membershipsection-should-lift-slightly-translate-y-and-shadow-increase-on-hover",
+      "title": "Add hover and focus animations to all interactive buttons and card elements throughout the app. Buttons should have a smooth scale-up (e.g., scale-105) and subtle shadow increase on hover, plus a color transition. CTA buttons in HeroSection should have an additional glow/pulse effect. Navigation links should have an underline slide-in animation on hover. Cards in AboutSection, ActivitiesSection, GovernmentSchemesSection, and MembershipSection should lift slightly (translate-y and shadow increase) on hover.",
+      "reqIds": [
+        "REQ-79"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-special-entrance-animation-to-the-herosection-component-the-foundation-name-in-hindi-english-should-animate-in-with-a-staggered-fade-in-up-sequence-each-text-element-appearing-one-after-another-the-tagline-badge-should-appear-with-a-scale-in-animation-the-cta-buttons-should-slide-in-from-below-include-a-subtle-background-shimmer-or-parallax-scroll-effect-on-the-hero-background-image-overlay-all-animations-should-complete-within-2-seconds-of-page-load",
+      "title": "Add a special entrance animation to the HeroSection component. The foundation name in Hindi/English should animate in with a staggered fade-in-up sequence (each text element appearing one after another). The tagline badge should appear with a scale-in animation. The CTA buttons should slide in from below. Include a subtle background shimmer or parallax scroll effect on the hero background image overlay. All animations should complete within 2 seconds of page load.",
+      "reqIds": [
+        "REQ-80"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -686,6 +822,58 @@
       "id": "AR-36",
       "summary": "गैलेरी सेक्शन में 'एडमिन मीट 21 सितंबर 2025' इमेज/इवेंट कार्ड जोड़ें",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "गैलेरी सेक्शन को फ्रंट पेज से हटाएं — सिर्फ मेनू में लिंक रखें, क्लिक करने पर अलग पेज/रूट पर खुले (dedicated route, not inline on homepage)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "हमसे जुड़े गाँव (VillagesSection) को फ्रंट पेज से हटाएं — सिर्फ मेनू में लिंक रखें, क्लिक करने पर अलग पेज/रूट पर खुले (dedicated route, not inline on homepage)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "गैलेरी से सभी मौजूदा फोटो/इमेज डिलीट करें — GallerySection को empty करें (no images shown)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-40",
+      "summary": "मौजूदा Admin Panel को पूरी तरह डिलीट/हटा दें — AdminPanel component और उसका route हटाएं",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-41",
+      "summary": "नया Admin Panel बनाएं जिसमें: Gallery Management टैब (इमेज अपलोड, कैप्शन/इवेंट टाइटल), गाँव जोड़ने/हटाने का ऑप्शन, पासकोड बदलने का ऑप्शन — डिफ़ॉल्ट पासकोड 'damin1234'",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-42",
+      "summary": "वेबसाइट में एनिमेशन जोड़ें: स्क्रॉल पर fade-in/slide-in, बटन पर hover effect, Hero Section में खास एनिमेशन",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-44",
+      "summary": "Add a backend Motoko data model and API for managing gallery events. Each GalleryEvent record should have: id (auto-incremented Nat), title (Text), subtitle (Text), createdAt (Int timestamp), and a list of associated GalleryImage records. Each GalleryImage record should have: id (Nat), eventId (Nat), imageData (Text — base64 data URI), caption (Text), sortOrder (Nat). Expose: addGalleryEvent(title: Text, subtitle: Text): async Nat, getGalleryEvents(): async [GalleryEvent], deleteGalleryEvent(eventId: Nat): async Bool, addGalleryImage(eventId: Nat, imageData: Text, caption: Text): async Nat, getGalleryImagesByEvent(eventId: Nat): async [GalleryImage], deleteGalleryImage(imageId: Nat): async Bool. Store all data in stable variables.",
+      "reqIds": [
+        "REQ-71"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-54",
+      "summary": "In backend/main.mo, ensure the addGalleryEvent, getGalleryEvents, deleteGalleryEvent, addGalleryImage, getGalleryImagesByEvent, and deleteGalleryImage functions have no caller-identity or admin-only guards — they must accept calls from any caller (anonymous or authenticated). This is consistent with the existing pattern applied to addDistrict, addVillage, deleteDistrict, and deleteVillage.",
+      "reqIds": [
+        "REQ-81"
+      ],
       "status": "pending"
     }
   ],

@@ -1,31 +1,86 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T15:43:16.219Z",
-  "summary": "The diff modifies GallerySection.tsx to display four Admin Meet photos with the correct event title and subtitle, and updates project_state.json and frontend-file-summaries.txt. However, the image filenames used in the component differ from what was specified in the requirements: the component references '.dim_1200x800.png' suffixed filenames instead of the plain '.png' filenames required. Additionally, there is no evidence in the diff of the actual image files being saved as static assets.",
+  "generatedAt": "2026-02-26T16:43:27.164Z",
+  "summary": "The diff implements most of the requested requirements (REQ-70 through REQ-81), including the AdminPanel with passcode gate, backend gallery API, React Query hooks, tabbed admin interface, change passcode feature, routing, header admin link, dynamic GallerySection, scroll animations, hover animations, and hero entrance animations. However, several specific requirements have gaps or are only partially implemented based on the available evidence.",
   "missing_requirements": [
     {
-      "id": "REQ-62",
-      "requirement": "Save the new images as static assets at frontend/public/assets/generated/ with filenames: gallery-admin-meet-1.png, gallery-admin-meet-2.png, gallery-admin-meet-3.png, gallery-admin-meet-4.png.",
-      "reason": "The diff shows no added files under frontend/public/assets/generated/. The image files themselves are not present in the diff. Furthermore, the component references '.dim_1200x800.png' filenames (e.g., 'gallery-admin-meet-1.dim_1200x800.png') instead of the required plain '.png' filenames (e.g., 'gallery-admin-meet-1.png').",
+      "id": "REQ-75",
+      "requirement": "Admin Panel route (#/admin) must render AdminPanel with site Header and Footer wrapped around it",
+      "reason": "In App.tsx, the #/admin route renders only AdminPanel and Toaster — Header and Footer are NOT included, contrary to REQ-75 which specifies 'with the site Header and Footer'.",
+      "evidence": [
+        "frontend/src/App.tsx"
+      ]
+    },
+    {
+      "id": "REQ-77",
+      "requirement": "GallerySection must use useGetGalleryImagesByEvent hook to fetch images per event",
+      "reason": "GallerySection.tsx only imports and uses useGetGalleryEvents. It renders event.images directly from the event object. The useGetGalleryImagesByEvent hook is not used in GallerySection, so images are not separately fetched per event as specified in REQ-77.",
       "evidence": [
         "frontend/src/components/GallerySection.tsx"
+      ]
+    },
+    {
+      "id": "REQ-73",
+      "requirement": "Villages tab bulk Excel/CSV file upload via SheetJS with sequential async processing",
+      "reason": "AdminPanel.tsx is truncated and the visible portion does not confirm SheetJS is imported or used for Excel/CSV bulk import. The requirement explicitly calls for SheetJS library usage.",
+      "evidence": [
+        "frontend/src/components/AdminPanel.tsx"
+      ]
+    },
+    {
+      "id": "REQ-73",
+      "requirement": "Villages tab export to Excel producing villages-export.xlsx",
+      "reason": "AdminPanel.tsx is truncated. No evidence of Excel export implementation using SheetJS XLSX write is visible in the truncated diff.",
+      "evidence": [
+        "frontend/src/components/AdminPanel.tsx"
+      ]
+    },
+    {
+      "id": "REQ-73",
+      "requirement": "Villages tab export to PDF producing villages-export.pdf via jsPDF",
+      "reason": "AdminPanel.tsx is truncated. No evidence of jsPDF import or PDF export implementation is visible in the truncated diff.",
+      "evidence": [
+        "frontend/src/components/AdminPanel.tsx"
+      ]
+    },
+    {
+      "id": "REQ-78",
+      "requirement": "Scroll-triggered fade-in animations must be added to Footer component",
+      "reason": "Footer.tsx is not listed in the modified files as having scroll animation added. REQ-78 lists Footer as one of the sections requiring scroll-triggered animation.",
+      "evidence": [
+        "frontend-file-summaries.txt"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Image filenames use a '.dim_1200x800.png' naming convention (e.g., 'gallery-admin-meet-1.dim_1200x800.png') instead of the specified plain '.png' filenames.",
-      "reason": "The build request explicitly specifies filenames as gallery-admin-meet-1.png through gallery-admin-meet-4.png. The '.dim_1200x800' dimension suffix was not requested.",
+      "description": "A separate migration.mo file was added as a data migration module",
+      "reason": "The build request does not specify creating a separate migration.mo file. The constraints state all backend logic must remain in the single main actor file (backend/main.mo). Adding a separate migration module was not requested.",
       "evidence": [
-        "frontend/src/components/GallerySection.tsx"
+        "backend/migration.mo"
       ]
     }
   ],
-  "confidence": 0.85,
+  "confidence": 0.62,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AboutSection.tsx",
+    "frontend/src/components/ActivitiesSection.tsx",
+    "frontend/src/components/AdminPanel.tsx",
+    "frontend/src/components/AssistanceSection.tsx",
+    "frontend/src/components/ContactSection.tsx",
+    "frontend/src/components/DonationSection.tsx",
     "frontend/src/components/GallerySection.tsx",
+    "frontend/src/components/GovernmentSchemesSection.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/components/HeroSection.tsx",
+    "frontend/src/components/MembershipSection.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
     "project_state.json"
   ]
 }

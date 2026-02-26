@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { HandHeart, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -7,21 +7,42 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddAssistanceRequest } from "@/hooks/useQueries";
 
+function useScrollAnimation() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('animate-in');
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
 interface FormState {
   fullName: string;
-  mobileNumber: string;
+  mobile: string;
   city: string;
   assistanceType: string;
 }
 
 const initialForm: FormState = {
   fullName: "",
-  mobileNumber: "",
+  mobile: "",
   city: "",
   assistanceType: "",
 };
 
 export default function AssistanceSection() {
+  const sectionRef = useScrollAnimation();
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<Partial<FormState>>({});
   const addAssistanceRequest = useAddAssistanceRequest();
@@ -29,10 +50,10 @@ export default function AssistanceSection() {
   function validate(): boolean {
     const newErrors: Partial<FormState> = {};
     if (!form.fullName.trim()) newErrors.fullName = "पूरा नाम आवश्यक है";
-    if (!form.mobileNumber.trim()) {
-      newErrors.mobileNumber = "मोबाइल नंबर आवश्यक है";
-    } else if (!/^\d{10}$/.test(form.mobileNumber.trim())) {
-      newErrors.mobileNumber = "10 अंकों का मोबाइल नंबर दर्ज करें";
+    if (!form.mobile.trim()) {
+      newErrors.mobile = "मोबाइल नंबर आवश्यक है";
+    } else if (!/^\d{10}$/.test(form.mobile.trim())) {
+      newErrors.mobile = "10 अंकों का मोबाइल नंबर दर्ज करें";
     }
     if (!form.city.trim()) newErrors.city = "शहर आवश्यक है";
     if (!form.assistanceType.trim()) newErrors.assistanceType = "सहायता का विवरण आवश्यक है";
@@ -55,7 +76,7 @@ export default function AssistanceSection() {
     addAssistanceRequest.mutate(
       {
         fullName: form.fullName.trim(),
-        mobileNumber: form.mobileNumber.trim(),
+        mobile: form.mobile.trim(),
         city: form.city.trim(),
         assistanceType: form.assistanceType.trim(),
       },
@@ -73,7 +94,12 @@ export default function AssistanceSection() {
   }
 
   return (
-    <section id="assistance" className="py-16 px-4" style={{ background: "oklch(0.94 0.010 58)" }}>
+    <section
+      id="assistance"
+      ref={sectionRef}
+      className="py-16 px-4 scroll-animate"
+      style={{ background: "oklch(0.94 0.010 58)" }}
+    >
       <div className="max-w-2xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-10">
@@ -138,24 +164,24 @@ export default function AssistanceSection() {
 
             {/* Mobile Number */}
             <div className="space-y-1.5">
-              <Label htmlFor="asst-mobileNumber" style={{ color: "oklch(0.30 0.08 15)" }}>
+              <Label htmlFor="asst-mobile" style={{ color: "oklch(0.30 0.08 15)" }}>
                 मोबाइल नंबर <span style={{ color: "oklch(0.50 0.18 25)" }}>*</span>
               </Label>
               <Input
-                id="asst-mobileNumber"
-                name="mobileNumber"
+                id="asst-mobile"
+                name="mobile"
                 type="tel"
-                value={form.mobileNumber}
+                value={form.mobile}
                 onChange={handleChange}
                 placeholder="10 अंकों का मोबाइल नंबर"
                 maxLength={10}
                 className="border focus-visible:ring-1"
                 style={{
-                  borderColor: errors.mobileNumber ? "oklch(0.50 0.18 25)" : "oklch(0.80 0.04 45)",
+                  borderColor: errors.mobile ? "oklch(0.50 0.18 25)" : "oklch(0.80 0.04 45)",
                 }}
               />
-              {errors.mobileNumber && (
-                <p className="text-xs" style={{ color: "oklch(0.50 0.18 25)" }}>{errors.mobileNumber}</p>
+              {errors.mobile && (
+                <p className="text-xs" style={{ color: "oklch(0.50 0.18 25)" }}>{errors.mobile}</p>
               )}
             </div>
 
@@ -206,7 +232,7 @@ export default function AssistanceSection() {
             <Button
               type="submit"
               disabled={addAssistanceRequest.isPending}
-              className="w-full font-semibold text-base py-5 rounded-xl transition-all"
+              className="w-full font-semibold text-base py-5 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg"
               style={{
                 background: "oklch(0.45 0.12 25)",
                 color: "oklch(0.95 0.04 80)",

@@ -1,14 +1,40 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MapPin, Phone, Mail, Loader2 } from "lucide-react";
 import { SiFacebook, SiInstagram } from "react-icons/si";
-import { useGetFoundationInfo, useAddContactInquiry } from "@/hooks/useQueries";
+import { useAddContactInquiry } from "@/hooks/useQueries";
+
+function useScrollAnimation() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('animate-in');
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
+const CONTACT_INFO = {
+  address: "गौसिया अशरफिया फाउंडेशन, उत्तर प्रदेश, भारत",
+  phone: "+91 XXXXX XXXXX",
+  email: "info@gausiyaashrafia.org",
+};
 
 export default function ContactSection() {
-  const { data: info } = useGetFoundationInfo();
+  const sectionRef = useScrollAnimation();
   const addInquiry = useAddContactInquiry();
 
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
+  const [form, setForm] = useState({ name: "", email: "", mobile: "", message: "" });
+  const [errors, setErrors] = useState<{ name?: string; email?: string; mobile?: string; message?: string }>({});
   const [submitted, setSubmitted] = useState(false);
 
   const validate = () => {
@@ -24,16 +50,26 @@ export default function ContactSection() {
     e.preventDefault();
     if (!validate()) return;
     try {
-      await addInquiry.mutateAsync(form);
+      await addInquiry.mutateAsync({
+        name: form.name,
+        email: form.email,
+        mobile: form.mobile,
+        message: form.message,
+      });
       setSubmitted(true);
-      setForm({ name: "", email: "", message: "" });
+      setForm({ name: "", email: "", mobile: "", message: "" });
     } catch {
       // handled by mutation
     }
   };
 
   return (
-    <section id="contact" className="py-16 px-4" style={{ background: "oklch(0.97 0.006 60)" }}>
+    <section
+      id="contact"
+      ref={sectionRef}
+      className="py-16 px-4 scroll-animate"
+      style={{ background: "oklch(0.97 0.006 60)" }}
+    >
       <div className="max-w-6xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-12">
@@ -52,39 +88,42 @@ export default function ContactSection() {
               संपर्क जानकारी
             </h3>
             <div className="space-y-4 mb-8">
-              {info?.address && (
-                <div className="flex gap-3 items-start">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "oklch(0.93 0.03 30)" }}>
-                    <MapPin className="w-4 h-4" style={{ color: "oklch(0.46 0.10 15)" }} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold mb-0.5" style={{ color: "oklch(0.50 0.05 30)" }}>पता</div>
-                    <div className="text-sm" style={{ color: "oklch(0.30 0.07 18)" }}>{info.address}</div>
-                  </div>
+              <div className="flex gap-3 items-start">
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: "oklch(0.93 0.03 30)" }}
+                >
+                  <MapPin className="w-4 h-4" style={{ color: "oklch(0.46 0.10 15)" }} />
                 </div>
-              )}
-              {info?.phone && (
-                <div className="flex gap-3 items-start">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "oklch(0.93 0.03 30)" }}>
-                    <Phone className="w-4 h-4" style={{ color: "oklch(0.46 0.10 15)" }} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold mb-0.5" style={{ color: "oklch(0.50 0.05 30)" }}>फोन</div>
-                    <div className="text-sm" style={{ color: "oklch(0.30 0.07 18)" }}>{info.phone}</div>
-                  </div>
+                <div>
+                  <div className="text-xs font-semibold mb-0.5" style={{ color: "oklch(0.50 0.05 30)" }}>पता</div>
+                  <div className="text-sm" style={{ color: "oklch(0.30 0.07 18)" }}>{CONTACT_INFO.address}</div>
                 </div>
-              )}
-              {info?.email && (
-                <div className="flex gap-3 items-start">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "oklch(0.93 0.03 30)" }}>
-                    <Mail className="w-4 h-4" style={{ color: "oklch(0.46 0.10 15)" }} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold mb-0.5" style={{ color: "oklch(0.50 0.05 30)" }}>ईमेल</div>
-                    <div className="text-sm" style={{ color: "oklch(0.30 0.07 18)" }}>{info.email}</div>
-                  </div>
+              </div>
+              <div className="flex gap-3 items-start">
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: "oklch(0.93 0.03 30)" }}
+                >
+                  <Phone className="w-4 h-4" style={{ color: "oklch(0.46 0.10 15)" }} />
                 </div>
-              )}
+                <div>
+                  <div className="text-xs font-semibold mb-0.5" style={{ color: "oklch(0.50 0.05 30)" }}>फोन</div>
+                  <div className="text-sm" style={{ color: "oklch(0.30 0.07 18)" }}>{CONTACT_INFO.phone}</div>
+                </div>
+              </div>
+              <div className="flex gap-3 items-start">
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: "oklch(0.93 0.03 30)" }}
+                >
+                  <Mail className="w-4 h-4" style={{ color: "oklch(0.46 0.10 15)" }} />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold mb-0.5" style={{ color: "oklch(0.50 0.05 30)" }}>ईमेल</div>
+                  <div className="text-sm" style={{ color: "oklch(0.30 0.07 18)" }}>{CONTACT_INFO.email}</div>
+                </div>
+              </div>
             </div>
 
             {/* Social Media */}
@@ -93,7 +132,7 @@ export default function ContactSection() {
               <div className="flex gap-3">
                 <a
                   href="#"
-                  className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
                   style={{ background: "oklch(0.46 0.10 15)", color: "oklch(0.97 0.006 60)" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "oklch(0.64 0.08 45)")}
                   onMouseLeave={e => (e.currentTarget.style.background = "oklch(0.46 0.10 15)")}
@@ -102,7 +141,7 @@ export default function ContactSection() {
                 </a>
                 <a
                   href="#"
-                  className="w-9 h-9 rounded-full flex items-center justify-center transition-colors"
+                  className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
                   style={{ background: "oklch(0.46 0.10 15)", color: "oklch(0.97 0.006 60)" }}
                   onMouseEnter={e => (e.currentTarget.style.background = "oklch(0.64 0.08 45)")}
                   onMouseLeave={e => (e.currentTarget.style.background = "oklch(0.46 0.10 15)")}
@@ -116,7 +155,10 @@ export default function ContactSection() {
           {/* Contact Form */}
           <div>
             {submitted ? (
-              <div className="rounded-xl p-8 text-center border" style={{ background: "oklch(0.93 0.03 30)", borderColor: "oklch(0.84 0.07 85)" }}>
+              <div
+                className="rounded-xl p-8 text-center border"
+                style={{ background: "oklch(0.93 0.03 30)", borderColor: "oklch(0.84 0.07 85)" }}
+              >
                 <div className="text-4xl mb-4">✉️</div>
                 <h3 className="text-lg font-bold font-serif mb-2" style={{ color: "oklch(0.24 0.09 15)" }}>
                   संदेश भेजा गया!
@@ -125,7 +167,7 @@ export default function ContactSection() {
                   हम जल्द ही आपसे संपर्क करेंगे।
                 </p>
                 <button
-                  className="mt-4 px-5 py-2 rounded font-semibold text-sm transition-colors"
+                  className="mt-4 px-5 py-2 rounded font-semibold text-sm transition-all duration-200 hover:scale-105"
                   style={{ background: "oklch(0.46 0.10 15)", color: "oklch(0.97 0.006 60)" }}
                   onClick={() => setSubmitted(false)}
                 >
@@ -134,6 +176,7 @@ export default function ContactSection() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Name */}
                 <div>
                   <label className="block text-sm font-semibold mb-1" style={{ color: "oklch(0.35 0.06 20)" }}>
                     नाम *
@@ -152,6 +195,8 @@ export default function ContactSection() {
                   />
                   {errors.name && <p className="text-xs mt-1" style={{ color: "oklch(0.55 0.22 25)" }}>{errors.name}</p>}
                 </div>
+
+                {/* Email */}
                 <div>
                   <label className="block text-sm font-semibold mb-1" style={{ color: "oklch(0.35 0.06 20)" }}>
                     ईमेल *
@@ -170,6 +215,28 @@ export default function ContactSection() {
                   />
                   {errors.email && <p className="text-xs mt-1" style={{ color: "oklch(0.55 0.22 25)" }}>{errors.email}</p>}
                 </div>
+
+                {/* Mobile (optional) */}
+                <div>
+                  <label className="block text-sm font-semibold mb-1" style={{ color: "oklch(0.35 0.06 20)" }}>
+                    मोबाइल नंबर <span className="font-normal text-xs" style={{ color: "oklch(0.55 0.05 30)" }}>(वैकल्पिक)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    value={form.mobile}
+                    onChange={e => setForm(f => ({ ...f, mobile: e.target.value }))}
+                    placeholder="मोबाइल नंबर"
+                    maxLength={10}
+                    className="w-full px-4 py-2.5 rounded border text-sm outline-none transition-colors"
+                    style={{
+                      background: "oklch(0.99 0.003 60)",
+                      borderColor: "oklch(0.86 0.03 45)",
+                      color: "oklch(0.20 0.06 15)",
+                    }}
+                  />
+                </div>
+
+                {/* Message */}
                 <div>
                   <label className="block text-sm font-semibold mb-1" style={{ color: "oklch(0.35 0.06 20)" }}>
                     संदेश *
@@ -188,10 +255,11 @@ export default function ContactSection() {
                   />
                   {errors.message && <p className="text-xs mt-1" style={{ color: "oklch(0.55 0.22 25)" }}>{errors.message}</p>}
                 </div>
+
                 <button
                   type="submit"
                   disabled={addInquiry.isPending}
-                  className="w-full py-3 rounded font-bold text-sm flex items-center justify-center gap-2 transition-colors disabled:opacity-60"
+                  className="w-full py-3 rounded font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-60"
                   style={{ background: "oklch(0.46 0.10 15)", color: "oklch(0.97 0.006 60)" }}
                   onMouseEnter={e => { if (!addInquiry.isPending) (e.currentTarget as HTMLButtonElement).style.background = "oklch(0.30 0.10 15)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "oklch(0.46 0.10 15)"; }}
@@ -199,7 +267,7 @@ export default function ContactSection() {
                   {addInquiry.isPending ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> भेजा जा रहा है...</>
                   ) : (
-                    "संदेश भेजें"
+                    "संदेश भेजें ✉️"
                   )}
                 </button>
               </form>

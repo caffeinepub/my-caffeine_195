@@ -1,67 +1,86 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import AboutSection from './components/AboutSection';
-import DonationSection from './components/DonationSection';
 import ActivitiesSection from './components/ActivitiesSection';
-import GallerySection from './components/GallerySection';
-import GovernmentSchemesSection from './components/GovernmentSchemesSection';
-import VillagesSection from './components/VillagesSection';
+import DonationSection from './components/DonationSection';
 import MembershipSection from './components/MembershipSection';
 import AssistanceSection from './components/AssistanceSection';
+import GovernmentSchemesSection from './components/GovernmentSchemesSection';
 import ContactSection from './components/ContactSection';
-import AdminPanel from './components/AdminPanel';
 import Footer from './components/Footer';
-import { Toaster } from '@/components/ui/sonner';
+import GallerySection from './components/GallerySection';
+import VillagesSection from './components/VillagesSection';
+import AdminPanel from './components/AdminPanel';
+import { Toaster } from './components/ui/sonner';
 
-function getRoute(): string {
-  return window.location.hash;
+function getHash() {
+  return window.location.hash.replace('#', '').split('?')[0];
 }
 
-export default function App() {
-  const [route, setRoute] = useState<string>(getRoute);
+function App() {
+  const [hash, setHash] = React.useState(getHash);
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      setRoute(getRoute());
-    };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+  React.useEffect(() => {
+    const onHashChange = () => setHash(getHash());
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  const isAdminRoute = route === '#/admin';
-
-  if (isAdminRoute) {
+  if (hash === '/gallery') {
     return (
-      <div className="min-h-screen flex flex-col">
+      <>
         <Header />
-        <main className="flex-1">
-          <AdminPanel />
+        <main>
+          <GallerySection />
         </main>
-        <Toaster richColors position="top-center" />
-      </div>
+        <Footer />
+        <Toaster />
+      </>
+    );
+  }
+
+  if (hash === '/villages') {
+    return (
+      <>
+        <Header />
+        <main>
+          <VillagesSection />
+        </main>
+        <Footer />
+        <Toaster />
+      </>
+    );
+  }
+
+  if (hash === '/admin') {
+    return (
+      <>
+        <AdminPanel />
+        <Toaster />
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
       <Header />
-      <main className="flex-1">
-        <section id="home">
-          <HeroSection />
-        </section>
+      <main>
+        <HeroSection />
         <AboutSection />
-        <DonationSection />
         <ActivitiesSection />
-        <GallerySection />
         <GovernmentSchemesSection />
-        <VillagesSection />
+        <DonationSection />
         <MembershipSection />
         <AssistanceSection />
+        <GallerySection />
+        <VillagesSection />
         <ContactSection />
       </main>
       <Footer />
-      <Toaster richColors position="top-center" />
-    </div>
+      <Toaster />
+    </>
   );
 }
+
+export default App;

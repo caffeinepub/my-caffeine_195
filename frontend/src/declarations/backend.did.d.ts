@@ -15,6 +15,20 @@ export interface District {
   'villages' : Array<Village>,
   'name' : string,
 }
+export interface GalleryEvent {
+  'id' : bigint,
+  'title' : string,
+  'createdAt' : bigint,
+  'subtitle' : string,
+  'images' : Array<GalleryImage>,
+}
+export interface GalleryImage {
+  'id' : bigint,
+  'eventId' : bigint,
+  'imageData' : string,
+  'sortOrder' : bigint,
+  'caption' : string,
+}
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
@@ -53,13 +67,19 @@ export interface _SERVICE {
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'addDistrict' : ActorMethod<[string], bigint>,
+  'addGalleryEvent' : ActorMethod<[string, string], bigint>,
+  'addGalleryImage' : ActorMethod<[bigint, string, string], bigint>,
   'addVillage' : ActorMethod<[bigint, string], bigint>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'deleteDistrict' : ActorMethod<[bigint], boolean>,
+  'deleteGalleryEvent' : ActorMethod<[bigint], boolean>,
+  'deleteGalleryImage' : ActorMethod<[bigint], boolean>,
   'deleteVillage' : ActorMethod<[bigint], boolean>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getDistricts' : ActorMethod<[], Array<District>>,
+  'getGalleryEvents' : ActorMethod<[], Array<GalleryEvent>>,
+  'getGalleryImagesByEvent' : ActorMethod<[bigint], Array<GalleryImage>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'getVillagesByDistrict' : ActorMethod<[bigint], Array<Village>>,
   'isCallerAdmin' : ActorMethod<[], boolean>,

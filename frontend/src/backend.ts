@@ -94,17 +94,31 @@ export interface Village {
     name: string;
     districtId: bigint;
 }
+export interface GalleryImage {
+    id: bigint;
+    eventId: bigint;
+    imageData: string;
+    sortOrder: bigint;
+    caption: string;
+}
+export interface _CaffeineStorageRefillInformation {
+    proposed_top_up_amount?: bigint;
+}
 export interface District {
     id: bigint;
     villages: Array<Village>;
     name: string;
 }
-export interface _CaffeineStorageRefillInformation {
-    proposed_top_up_amount?: bigint;
-}
 export interface _CaffeineStorageCreateCertificateResult {
     method: string;
     blob_hash: string;
+}
+export interface GalleryEvent {
+    id: bigint;
+    title: string;
+    createdAt: bigint;
+    subtitle: string;
+    images: Array<GalleryImage>;
 }
 export interface UserProfile {
     name: string;
@@ -127,13 +141,19 @@ export interface backendInterface {
     _caffeineStorageUpdateGatewayPrincipals(): Promise<void>;
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     addDistrict(name: string): Promise<bigint>;
+    addGalleryEvent(title: string, subtitle: string): Promise<bigint>;
+    addGalleryImage(eventId: bigint, imageData: string, caption: string): Promise<bigint>;
     addVillage(districtId: bigint, villageName: string): Promise<bigint>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     deleteDistrict(districtId: bigint): Promise<boolean>;
+    deleteGalleryEvent(eventId: bigint): Promise<boolean>;
+    deleteGalleryImage(imageId: bigint): Promise<boolean>;
     deleteVillage(villageId: bigint): Promise<boolean>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getDistricts(): Promise<Array<District>>;
+    getGalleryEvents(): Promise<Array<GalleryEvent>>;
+    getGalleryImagesByEvent(eventId: bigint): Promise<Array<GalleryImage>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     getVillagesByDistrict(districtId: bigint): Promise<Array<Village>>;
     isCallerAdmin(): Promise<boolean>;
@@ -254,6 +274,34 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async addGalleryEvent(arg0: string, arg1: string): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addGalleryEvent(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addGalleryEvent(arg0, arg1);
+            return result;
+        }
+    }
+    async addGalleryImage(arg0: bigint, arg1: string, arg2: string): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addGalleryImage(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addGalleryImage(arg0, arg1, arg2);
+            return result;
+        }
+    }
     async addVillage(arg0: bigint, arg1: string): Promise<bigint> {
         if (this.processError) {
             try {
@@ -293,6 +341,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.deleteDistrict(arg0);
+            return result;
+        }
+    }
+    async deleteGalleryEvent(arg0: bigint): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteGalleryEvent(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteGalleryEvent(arg0);
+            return result;
+        }
+    }
+    async deleteGalleryImage(arg0: bigint): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteGalleryImage(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteGalleryImage(arg0);
             return result;
         }
     }
@@ -349,6 +425,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getDistricts();
+            return result;
+        }
+    }
+    async getGalleryEvents(): Promise<Array<GalleryEvent>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getGalleryEvents();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getGalleryEvents();
+            return result;
+        }
+    }
+    async getGalleryImagesByEvent(arg0: bigint): Promise<Array<GalleryImage>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getGalleryImagesByEvent(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getGalleryImagesByEvent(arg0);
             return result;
         }
     }

@@ -1,81 +1,120 @@
-import { Heart, Users, BookOpen, Stethoscope, Utensils, Briefcase, GraduationCap, Ban, HeartPulse, Compass, ShieldAlert } from "lucide-react";
+import React, { useRef, useEffect } from 'react';
+import { Heart, BookOpen, Users, Shield, Star, Lightbulb, GraduationCap, Ban, Stethoscope, Briefcase, AlertTriangle } from 'lucide-react';
+
+function useScrollAnimation() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('animate-in');
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
 
 const coreValues = [
-  { icon: Heart, title: "सेवा भाव", desc: "निःस्वार्थ सेवा और करुणा के साथ जरूरतमंदों की मदद करना।" },
-  { icon: Users, title: "सामुदायिक एकता", desc: "समाज के सभी वर्गों को एकजुट करके मजबूत समुदाय बनाना।" },
-  { icon: BookOpen, title: "शिक्षा", desc: "बच्चों और युवाओं को गुणवत्तापूर्ण शिक्षा प्रदान करना।" },
-  { icon: Stethoscope, title: "स्वास्थ्य सेवा", desc: "निःशुल्क चिकित्सा शिविर और स्वास्थ्य जागरूकता कार्यक्रम।" },
-  { icon: Utensils, title: "भोजन सहायता", desc: "भूखे और जरूरतमंद परिवारों को नियमित भोजन उपलब्ध कराना।" },
-  { icon: Briefcase, title: "कौशल विकास", desc: "युवाओं को रोजगार के लिए कौशल प्रशिक्षण देना।" },
-  { icon: GraduationCap, title: "शिक्षा अभियान", desc: "समाज के हर बच्चे को शिक्षा का अधिकार दिलाने के लिए जागरूकता और सहायता अभियान।" },
-  { icon: Ban, title: "दहेज प्रथा रोकथाम अभियान", desc: "दहेज प्रथा जैसी सामाजिक बुराई को जड़ से खत्म करने के लिए जागरूकता और कानूनी सहायता।" },
-  { icon: HeartPulse, title: "मेडिकल हेल्प", desc: "जरूरतमंद मरीजों को निःशुल्क चिकित्सा सहायता और दवाइयाँ उपलब्ध कराना।" },
-  { icon: Compass, title: "करियर गाइडेंस", desc: "युवाओं को सही करियर चुनने में मार्गदर्शन और व्यावसायिक प्रशिक्षण प्रदान करना।" },
-  { icon: ShieldAlert, title: "मुआशरे में फैली बुराइयों को खत्म करना", desc: "समाज में फैली कुरीतियों और बुराइयों को दूर करने के लिए जागरूकता अभियान चलाना।" },
+  { icon: Heart, title: 'सेवा भाव', desc: 'निःस्वार्थ सेवा और समर्पण' },
+  { icon: BookOpen, title: 'शिक्षा', desc: 'ज्ञान और शिक्षा का प्रसार' },
+  { icon: Users, title: 'एकता', desc: 'समाज में एकता और भाईचारा' },
+  { icon: Shield, title: 'सुरक्षा', desc: 'कमजोर वर्गों की सुरक्षा' },
+  { icon: Star, title: 'उत्कृष्टता', desc: 'हर कार्य में श्रेष्ठता' },
+  { icon: Lightbulb, title: 'नवाचार', desc: 'नई सोच और समाधान' },
+  { icon: GraduationCap, title: 'शिक्षा अभियान', desc: 'बच्चों को शिक्षित करना' },
+  { icon: Ban, title: 'दहेज प्रथा रोकथाम', desc: 'दहेज प्रथा के विरुद्ध अभियान' },
+  { icon: Stethoscope, title: 'मेडिकल हेल्प', desc: 'स्वास्थ्य सेवाएं और सहायता' },
+  { icon: Briefcase, title: 'करियर गाइडेंस', desc: 'युवाओं को करियर मार्गदर्शन' },
+  { icon: AlertTriangle, title: 'सामाजिक बुराइयाँ', desc: 'समाज की बुराइयों को खत्म करना' },
 ];
 
 export default function AboutSection() {
+  const sectionRef = useScrollAnimation();
+
   return (
-    <section id="about" className="py-16 px-4" style={{ background: "oklch(0.97 0.006 60)" }}>
-      <div className="max-w-6xl mx-auto">
-        {/* Heading */}
-        <div className="text-center mb-12">
-          <div className="ornament">✦ ✦ ✦</div>
-          <h2 className="section-heading mb-3">हमारे बारे में</h2>
-          <div className="gold-divider" />
-          <p className="section-subheading mt-4 max-w-2xl mx-auto">
-            गौसिया अशरफिया फाउंडेशन एक सामाजिक कल्याण संस्था है जो समाज के कमजोर वर्गों की सेवा के लिए समर्पित है।
-          </p>
+    <section
+      id="about"
+      ref={sectionRef}
+      className="py-16 scroll-animate"
+      style={{ background: '#fff' }}
+    >
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="text-center mb-10">
+          <h2
+            className="text-3xl md:text-4xl font-bold mb-3"
+            style={{ color: '#632626', fontFamily: 'Noto Serif Devanagari, serif' }}
+          >
+            हमारे बारे में
+          </h2>
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-px w-16" style={{ background: '#dacc96' }} />
+            <span className="text-xl" style={{ color: '#dacc96' }}>✦</span>
+            <div className="h-px w-16" style={{ background: '#dacc96' }} />
+          </div>
         </div>
 
         {/* Mission & Vision */}
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
-          <div className="islamic-card p-6 border-t-4" style={{ borderTopColor: "oklch(0.30 0.10 15)" }}>
-            <h3 className="text-xl font-bold font-serif mb-3" style={{ color: "oklch(0.30 0.10 15)" }}>
-              🎯 हमारा मिशन
-            </h3>
-            <p className="leading-relaxed" style={{ color: "oklch(0.35 0.06 20)" }}>
-              समाज के हर जरूरतमंद व्यक्ति तक शिक्षा, स्वास्थ्य और आर्थिक सहायता पहुँचाना। हम विश्वास करते हैं कि हर इंसान को सम्मानजनक जीवन जीने का अधिकार है।
+        <div className="grid md:grid-cols-2 gap-6 mb-10">
+          <div
+            className="rounded-2xl p-6 border-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+            style={{ background: '#fdf6e3', borderColor: '#dacc96' }}
+          >
+            <h3 className="text-xl font-bold mb-3" style={{ color: '#632626' }}>🎯 हमारा मिशन</h3>
+            <p className="text-gray-700 leading-relaxed">
+              गौसिया अशरफिया फाउंडेशन का मिशन है समाज के हर वर्ग को शिक्षा, स्वास्थ्य और आर्थिक सहायता प्रदान करना। हम 2011 से निरंतर सेवा कार्य में लगे हैं।
             </p>
           </div>
-          <div className="islamic-card p-6 border-t-4" style={{ borderTopColor: "oklch(0.84 0.07 85)" }}>
-            <h3 className="text-xl font-bold font-serif mb-3" style={{ color: "oklch(0.46 0.10 15)" }}>
-              🌟 हमारी दृष्टि
-            </h3>
-            <p className="leading-relaxed" style={{ color: "oklch(0.35 0.06 20)" }}>
-              एक ऐसा समाज बनाना जहाँ कोई भी भूखा न सोए, हर बच्चा पढ़ सके और हर परिवार स्वस्थ रह सके। इस्लामी मूल्यों पर आधारित सेवा और भाईचारे का संदेश फैलाना।
+          <div
+            className="rounded-2xl p-6 border-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+            style={{ background: '#fdf6e3', borderColor: '#dacc96' }}
+          >
+            <h3 className="text-xl font-bold mb-3" style={{ color: '#632626' }}>🌟 हमारा विजन</h3>
+            <p className="text-gray-700 leading-relaxed">
+              एक ऐसे समाज का निर्माण जहाँ हर व्यक्ति को समान अवसर मिले, कोई भूखा न सोए, हर बच्चा शिक्षित हो और हर परिवार खुशहाल हो।
             </p>
           </div>
         </div>
 
-        {/* Foundation History */}
-        <div className="rounded-xl p-6 mb-12 border" style={{ background: "oklch(0.93 0.03 30)", borderColor: "oklch(0.86 0.05 30)" }}>
-          <h3 className="text-xl font-bold font-serif mb-3" style={{ color: "oklch(0.24 0.09 15)" }}>
-            📖 हमारा इतिहास
-          </h3>
-          <p className="leading-relaxed" style={{ color: "oklch(0.30 0.07 18)" }}>
-            गौसिया अशरफिया फाउंडेशन की स्थापना समाज सेवा की भावना से प्रेरित होकर की गई थी। वर्षों से हम हजारों परिवारों की मदद कर चुके हैं और आज भी निरंतर सेवा में लगे हैं। हमारी संस्था इस्लामी शिक्षाओं और मानवीय मूल्यों पर आधारित है।
+        {/* History */}
+        <div
+          className="rounded-2xl p-6 mb-10 border-2"
+          style={{ background: '#fdf6e3', borderColor: '#dacc96' }}
+        >
+          <h3 className="text-xl font-bold mb-3" style={{ color: '#632626' }}>📜 फाउंडेशन का इतिहास</h3>
+          <p className="text-gray-700 leading-relaxed">
+            गौसिया अशरफिया फाउंडेशन की स्थापना 2011 में हुई थी। तब से लेकर आज तक हमने हजारों परिवारों की मदद की है। हमारी संस्था ने शिक्षा, स्वास्थ्य, और सामाजिक कल्याण के क्षेत्र में अनेक महत्वपूर्ण कार्य किए हैं।
           </p>
         </div>
 
         {/* Core Values */}
-        <div>
-          <h3 className="text-xl font-bold font-serif text-center mb-8" style={{ color: "oklch(0.30 0.10 15)" }}>
-            हमारे मूल मूल्य
-          </h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {coreValues.map((val, i) => (
-              <div key={i} className="islamic-card p-5 flex gap-4 items-start hover:shadow-card-hover transition-shadow">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "oklch(0.93 0.03 30)" }}>
-                  <val.icon className="w-5 h-5" style={{ color: "oklch(0.46 0.10 15)" }} />
+        <h3 className="text-xl font-bold mb-6 text-center" style={{ color: '#632626' }}>हमारे मूल्य</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {coreValues.map((val, i) => {
+            const Icon = val.icon;
+            return (
+              <div
+                key={i}
+                className="rounded-xl p-4 text-center border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                style={{ background: '#fdf6e3', borderColor: '#dacc96' }}
+              >
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-2"
+                  style={{ background: '#632626' }}
+                >
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
-                <div>
-                  <div className="font-bold font-serif mb-1" style={{ color: "oklch(0.24 0.09 15)" }}>{val.title}</div>
-                  <div className="text-sm leading-relaxed" style={{ color: "oklch(0.50 0.05 30)" }}>{val.desc}</div>
-                </div>
+                <h4 className="font-semibold text-sm mb-1" style={{ color: '#632626' }}>{val.title}</h4>
+                <p className="text-xs text-gray-600">{val.desc}</p>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -1,99 +1,100 @@
-import { useEffect } from "react";
-import { Calendar } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useGetActivities, useSeedActivities } from "@/hooks/useQueries";
+import React, { useRef, useEffect } from 'react';
+import { Heart, BookOpen, Utensils, Home, Stethoscope, Users } from 'lucide-react';
 
-const impactStats = [
-  { value: "0", label: "परिवारों की मदद" },
-  { value: "0", label: "वर्षों की सेवा" },
-  { value: "0", label: "कार्यक्रम प्रतिवर्ष" },
-  { value: "0", label: "स्वयंसेवक" },
-];
-
-function formatDate(timestamp: bigint) {
-  const ms = Number(timestamp) / 1_000_000;
-  return new Date(ms).toLocaleDateString("hi-IN", { year: "numeric", month: "long", day: "numeric" });
+function useScrollAnimation() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('animate-in');
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
 }
 
-export default function ActivitiesSection() {
-  const { data: activities, isLoading } = useGetActivities();
-  const seedActivities = useSeedActivities();
+const activities = [
+  { icon: BookOpen, title: 'शिक्षा सहायता', desc: 'गरीब बच्चों को मुफ्त शिक्षा और किताबें प्रदान करना।' },
+  { icon: Utensils, title: 'भोजन वितरण', desc: 'जरूरतमंदों को नियमित भोजन और राशन वितरण।' },
+  { icon: Stethoscope, title: 'स्वास्थ्य शिविर', desc: 'मुफ्त चिकित्सा शिविर और दवाइयों का वितरण।' },
+  { icon: Home, title: 'आवास सहायता', desc: 'बेघर परिवारों को आवास निर्माण में सहायता।' },
+  { icon: Heart, title: 'विधवा सहायता', desc: 'विधवा महिलाओं को आर्थिक और सामाजिक सहायता।' },
+  { icon: Users, title: 'युवा विकास', desc: 'युवाओं को कौशल विकास और रोजगार में मदद।' },
+];
 
-  useEffect(() => {
-    seedActivities.mutate();
-  }, []);
+const stats = [
+  { value: '0', label: 'परिवारों की मदद' },
+  { value: '0', label: 'शिक्षा लाभार्थी' },
+  { value: '0', label: 'स्वास्थ्य शिविर' },
+  { value: '0', label: 'गाँव कवर' },
+];
+
+export default function ActivitiesSection() {
+  const sectionRef = useScrollAnimation();
 
   return (
-    <section id="activities" className="py-16 px-4" style={{ background: "oklch(0.94 0.010 58)" }}>
-      <div className="max-w-6xl mx-auto">
-        {/* Heading */}
-        <div className="text-center mb-12">
-          <div className="ornament">✦ ✦ ✦</div>
-          <h2 className="section-heading mb-3">हमारी गतिविधियाँ</h2>
-          <div className="gold-divider" />
-          <p className="section-subheading mt-4 max-w-2xl mx-auto">
-            हम निरंतर समाज सेवा में लगे हैं। यहाँ हमारी कुछ प्रमुख गतिविधियाँ देखें।
-          </p>
-        </div>
-
-        {/* Activity Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
-          {isLoading
-            ? Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="rounded-xl overflow-hidden border" style={{ background: "oklch(0.99 0.003 60)", borderColor: "oklch(0.86 0.03 45)" }}>
-                  <Skeleton className="h-44 w-full" />
-                  <div className="p-4">
-                    <Skeleton className="h-5 w-3/4 mb-2" />
-                    <Skeleton className="h-4 w-full mb-1" />
-                    <Skeleton className="h-4 w-2/3" />
-                  </div>
-                </div>
-              ))
-            : (activities ?? []).map((activity) => (
-                <div
-                  key={String(activity.id)}
-                  className="rounded-xl overflow-hidden border shadow-card hover:shadow-card-hover transition-shadow"
-                  style={{ background: "oklch(0.99 0.003 60)", borderColor: "oklch(0.86 0.03 45)" }}
-                >
-                  <div className="relative h-44 overflow-hidden" style={{ background: "oklch(0.93 0.03 30)" }}>
-                    <img
-                      src={activity.image.getDirectURL()}
-                      alt={activity.title}
-                      className="w-full h-full object-cover"
-                      onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
-                    />
-                    {/* Date badge */}
-                    <div
-                      className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold"
-                      style={{ background: "oklch(0.24 0.09 15)", color: "oklch(0.84 0.07 85)" }}
-                    >
-                      <Calendar className="w-3 h-3" />
-                      {formatDate(activity.date)}
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-bold font-serif mb-1" style={{ color: "oklch(0.24 0.09 15)" }}>{activity.title}</h3>
-                    <p className="text-sm leading-relaxed" style={{ color: "oklch(0.50 0.05 30)" }}>{activity.description}</p>
-                  </div>
-                </div>
-              ))}
-        </div>
-
-        {/* Impact Stats */}
-        <div className="rounded-2xl p-8" style={{ background: "oklch(0.24 0.09 15)" }}>
-          <h3 className="text-center text-xl font-bold font-serif mb-8" style={{ color: "oklch(0.84 0.07 85)" }}>
-            हमारा प्रभाव
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {impactStats.map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-3xl font-bold font-serif mb-1" style={{ color: "oklch(0.84 0.07 85)" }}>
-                  {stat.value}
-                </div>
-                <div className="text-sm" style={{ color: "oklch(0.80 0.05 45)" }}>{stat.label}</div>
-              </div>
-            ))}
+    <section
+      id="activities"
+      ref={sectionRef}
+      className="py-16 scroll-animate"
+      style={{ background: '#fdf6e3' }}
+    >
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="text-center mb-10">
+          <h2
+            className="text-3xl md:text-4xl font-bold mb-3"
+            style={{ color: '#632626', fontFamily: 'Noto Serif Devanagari, serif' }}
+          >
+            हमारी गतिविधियाँ
+          </h2>
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-px w-16" style={{ background: '#dacc96' }} />
+            <span className="text-xl" style={{ color: '#dacc96' }}>✦</span>
+            <div className="h-px w-16" style={{ background: '#dacc96' }} />
           </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
+          {activities.map((act, i) => {
+            const Icon = act.icon;
+            return (
+              <div
+                key={i}
+                className="bg-white rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+                style={{ borderColor: '#dacc96' }}
+              >
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
+                  style={{ background: '#632626' }}
+                >
+                  <Icon className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-bold text-lg mb-2" style={{ color: '#632626' }}>{act.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{act.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Stats */}
+        <div
+          className="rounded-2xl p-8 grid grid-cols-2 md:grid-cols-4 gap-6"
+          style={{ background: '#632626' }}
+        >
+          {stats.map((stat, i) => (
+            <div key={i} className="text-center">
+              <div className="text-3xl font-bold mb-1" style={{ color: '#dacc96' }}>{stat.value}</div>
+              <div className="text-sm" style={{ color: 'rgba(218,204,150,0.8)' }}>{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
