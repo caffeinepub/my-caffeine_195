@@ -1,42 +1,38 @@
 {
   "kind": "build_request",
-  "title": "Fix Admin Panel Villages Tab — District Add Error",
+  "title": "Fix VillagesSection not appearing in production (live) build",
   "projectName": "Gausiya Ashrafia Foundation",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-37",
-      "text": "Investigate and fix the error occurring in the Admin Panel > Villages tab when attempting to add a district. The red error text visible on the UI indicates the `addDistrict` mutation is failing. Diagnose whether the issue is: (1) a backend authorization/permission check rejecting the call (admin-only guard), (2) a mismatch between the frontend mutation arguments and the backend `addDistrict(name: Text)` function signature, (3) an actor initialization issue causing the mutation to fail silently, or (4) an error in the `useAddDistrict` React Query mutation hook (wrong method name, incorrect argument shape, or missing actor reference). Fix the root cause so that submitting the Add District form in the Villages tab successfully calls the backend, adds the district, invalidates the districts query, and shows a success toast instead of a red error message.",
+      "id": "REQ-49",
+      "text": "Investigate and fix the VillagesSection component not rendering in the production/live build while it correctly appears in the draft build. The screenshots confirm: (1) in the live tab, the 'हमसे जुड़े गाँव' section renders but shows 'अभी तक कोई जिला नहीं जोड़ा गया' — meaning the section renders but district data added in draft is not persisting/syncing to production; OR (2) the section itself is missing from the production bundle. Check whether the issue is: (a) the VillagesSection component is included in App.tsx but the production canister has stale/empty stable state (districts added via the draft environment are not present in the production canister), (b) a build/bundle difference between draft and production that causes the section to be omitted, or (c) a backend stable variable migration issue where the production canister's district/village data was reset on upgrade. Ensure that: the VillagesSection is present and rendered in App.tsx for the production route, the backend stable variables for districts and villages are correctly preserved across canister upgrades using stable var declarations, and the production canister's data is not silently reset. After the fix, the 'हमसे जुड़े गाँव' section must appear on the live site with the same district/village data visible in the draft.",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-5"
+          "msg-1"
         ],
         "quotes": [
-          "एडमिन पैनल में प्रॉब्लम है लाल रंग का टेक्स्ट दिखता है",
-          "Admin Panel > Villages Tab में District Add करने पर लाल रंग का error text दिखता है — district add नहीं हो रहा"
+          "हमसे जुड़े गांव ड्राफ्ट में तो दिख रहा है लेकिन लाइव में नही दिख रहा है"
         ]
       },
       "acceptanceCriteria": [
-        "Entering a district name in the Admin Panel > Villages tab and clicking the submit button successfully calls the backend `addDistrict` endpoint without throwing an error.",
-        "After a successful district add, the districts list in the Admin Panel refreshes and shows the newly added district.",
-        "A success toast notification is shown after successfully adding a district.",
-        "No red error text is displayed on the Admin Panel Villages tab during or after a district add operation.",
-        "If the backend returns a genuine error (e.g., duplicate name), it is displayed as a meaningful error message rather than a raw JS error.",
-        "The Add Village form similarly works without errors when a valid district is selected and a village name is entered."
+        "The 'हमसे जुड़े गाँव' (VillagesSection) is visible on the live/production site at the correct position between GovernmentSchemesSection and MembershipSection.",
+        "Districts and villages added via the Admin Panel in draft are available (or re-enterable) in production without data loss on canister upgrade.",
+        "Backend stable variables for districts and villages use `stable var` declarations so data survives canister upgrades.",
+        "The section heading, accordion district cards, and village chips all render correctly in the production build.",
+        "No regression in draft — the section continues to display correctly there as well."
       ]
     }
   ],
   "constraints": [
-    "Do not change the backend district/village data model or API signatures.",
-    "Do not modify files listed under frontend.immutablePaths.",
-    "Admin passcode gate and tab structure of AdminPanel.tsx must remain intact."
+    "Do not change the VillagesSection UI design or behavior — only fix the production availability issue.",
+    "Backend stable variable declarations must not cause a breaking migration that wipes existing data."
   ],
   "nonGoals": [
-    "Adding new admin panel tabs or features.",
-    "Changing the visual theme or color palette.",
-    "Modifying any section other than the Villages tab error handling."
+    "Adding new districts or villages as seed data.",
+    "Changing the VillagesSection visual design or accordion interaction.",
+    "Modifying any other section or component unrelated to this bug."
   ],
   "imageRequirements": {
     "required": [],

@@ -67,7 +67,6 @@ export function useSeedActivities() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      // stubbed — no-op
       return;
     },
     onSuccess: () => {
@@ -87,7 +86,6 @@ export function useAddDonation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (_params: { donorName: string; amount: bigint; message: string }) => {
-      // stubbed — no-op
       return;
     },
     onSuccess: () => {
@@ -115,7 +113,6 @@ export function useAddMembership() {
       addressProofFile: ExternalBlob | null;
       identityProofFile: ExternalBlob | null;
     }) => {
-      // stubbed — no-op
       return;
     },
     onSuccess: () => {
@@ -140,7 +137,6 @@ export function useAddAssistanceRequest() {
       city: string;
       assistanceType: string;
     }) => {
-      // stubbed — no-op
       return;
     },
     onSuccess: () => {
@@ -160,7 +156,6 @@ export function useAddContactInquiry() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (_params: { name: string; email: string; message: string }) => {
-      // stubbed — no-op
       return;
     },
     onSuccess: () => {
@@ -191,9 +186,15 @@ export function useGetDistricts() {
     queryKey: ['districts'],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getDistricts();
+      const result = await actor.getDistricts();
+      return result;
     },
     enabled: !!actor && !isFetching,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
   });
 }
 
@@ -207,17 +208,22 @@ export function useGetVillagesByDistrict(districtId: bigint) {
       return actor.getVillagesByDistrict(districtId);
     },
     enabled: !!actor && !isFetching,
+    staleTime: 0,
+    refetchOnMount: true,
+    retry: 3,
   });
 }
 
 export function useAddDistrict() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (name: string) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.addDistrict(name);
+      if (!actor || isFetching) throw new Error('कनेक्शन तैयार नहीं है — कृपया कुछ सेकंड बाद पुनः प्रयास करें');
+      const trimmed = name.trim();
+      if (!trimmed) throw new Error('जिले का नाम खाली नहीं हो सकता');
+      return actor.addDistrict(trimmed);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['districts'] });
@@ -225,23 +231,25 @@ export function useAddDistrict() {
     },
     onError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error);
-      if (message.includes('Unauthorized') || message.includes('admin')) {
-        toast.error('अनुमति नहीं है। केवल एडमिन ही जिला जोड़ सकते हैं। कृपया लॉगिन करें।');
+      if (message.includes('तैयार नहीं') || message.includes('not available')) {
+        toast.error('कनेक्शन तैयार नहीं है। कृपया कुछ सेकंड बाद पुनः प्रयास करें।');
       } else {
-        toast.error('जिला जोड़ने में समस्या हुई। कृपया पुनः प्रयास करें।');
+        toast.error(`जिला जोड़ने में समस्या हुई: ${message}`);
       }
     },
   });
 }
 
 export function useAddVillage() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ districtId, villageName }: { districtId: bigint; villageName: string }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.addVillage(districtId, villageName);
+      if (!actor || isFetching) throw new Error('कनेक्शन तैयार नहीं है — कृपया कुछ सेकंड बाद पुनः प्रयास करें');
+      const trimmed = villageName.trim();
+      if (!trimmed) throw new Error('गाँव का नाम खाली नहीं हो सकता');
+      return actor.addVillage(districtId, trimmed);
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['districts'] });
@@ -250,22 +258,22 @@ export function useAddVillage() {
     },
     onError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error);
-      if (message.includes('Unauthorized') || message.includes('admin')) {
-        toast.error('अनुमति नहीं है। केवल एडमिन ही गाँव जोड़ सकते हैं। कृपया लॉगिन करें।');
+      if (message.includes('तैयार नहीं') || message.includes('not available')) {
+        toast.error('कनेक्शन तैयार नहीं है। कृपया कुछ सेकंड बाद पुनः प्रयास करें।');
       } else {
-        toast.error('गाँव जोड़ने में समस्या हुई। कृपया पुनः प्रयास करें।');
+        toast.error(`गाँव जोड़ने में समस्या हुई: ${message}`);
       }
     },
   });
 }
 
 export function useDeleteDistrict() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (districtId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor || isFetching) throw new Error('कनेक्शन तैयार नहीं है — कृपया कुछ सेकंड बाद पुनः प्रयास करें');
       return actor.deleteDistrict(districtId);
     },
     onSuccess: () => {
@@ -274,22 +282,18 @@ export function useDeleteDistrict() {
     },
     onError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error);
-      if (message.includes('Unauthorized') || message.includes('admin')) {
-        toast.error('अनुमति नहीं है। केवल एडमिन ही जिला हटा सकते हैं। कृपया लॉगिन करें।');
-      } else {
-        toast.error('जिला हटाने में समस्या हुई। कृपया पुनः प्रयास करें।');
-      }
+      toast.error(`जिला हटाने में समस्या हुई: ${message}`);
     },
   });
 }
 
 export function useDeleteVillage() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (villageId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor || isFetching) throw new Error('कनेक्शन तैयार नहीं है — कृपया कुछ सेकंड बाद पुनः प्रयास करें');
       return actor.deleteVillage(villageId);
     },
     onSuccess: () => {
@@ -298,11 +302,20 @@ export function useDeleteVillage() {
     },
     onError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error);
-      if (message.includes('Unauthorized') || message.includes('admin')) {
-        toast.error('अनुमति नहीं है। केवल एडमिन ही गाँव हटा सकते हैं। कृपया लॉगिन करें।');
-      } else {
-        toast.error('गाँव हटाने में समस्या हुई। कृपया पुनः प्रयास करें।');
-      }
+      toast.error(`गाँव हटाने में समस्या हुई: ${message}`);
     },
+  });
+}
+
+export function useIsCallerAdmin() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<boolean>({
+    queryKey: ['isCallerAdmin'],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isCallerAdmin();
+    },
+    enabled: !!actor && !isFetching,
   });
 }

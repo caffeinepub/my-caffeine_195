@@ -1,13 +1,21 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T08:54:56.249Z",
-  "summary": "The diff modifies the backend (main.mo) to implement addDistrict/addVillage with admin-only guards, and updates the frontend useQueries.ts with fully wired district/village CRUD hooks including Hindi toast error handling, and AdminPanel.tsx with the VillagesTab implementation. The changes appear to address REQ-37 by fixing the mutation hooks, wiring the actor correctly, and showing toast notifications. However, due to truncation, some acceptance criteria cannot be fully verified.",
+  "generatedAt": "2026-02-26T11:45:13.558Z",
+  "summary": "The diff addresses REQ-49 by: (1) adding stable var declarations for nextDistrictId and nextVillageId in backend/main.mo, (2) adding a migration.mo module, (3) confirming VillagesSection is present in App.tsx between GovernmentSchemes and Membership, and (4) adding aggressive refetch options to useGetDistricts and useGetVillagesByDistrict hooks. However, the actual districts and villages Maps are declared with let (non-stable), meaning map contents will be wiped on canister upgrade. Only the ID counters are stable, not the data itself.",
   "missing_requirements": [
     {
-      "id": "REQ-37",
-      "requirement": "If the backend returns a genuine error (e.g., duplicate name), it is displayed as a meaningful error message rather than a raw JS error.",
-      "reason": "The backend addDistrict does not check for duplicate names — it simply adds another entry with a new ID. There is no duplicate-name detection or meaningful error return path for this case. The frontend error handling for this specific scenario cannot be confirmed from the truncated diff.",
+      "id": "REQ-49",
+      "requirement": "Backend stable variables for districts and villages use stable var declarations so data survives canister upgrades — the actual district and village map data must persist across upgrades.",
+      "reason": "In backend/main.mo, the districts and villages maps are declared with let (not stable var), meaning their contents are heap-allocated and will be wiped on canister upgrade. Only the ID counters nextDistrictId and nextVillageId are declared stable var. The actual district/village data will not survive upgrades, so the acceptance criteria requiring no data loss on canister upgrade is not met.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-49",
+      "requirement": "The production canister's district and village data must not be silently reset on upgrade.",
+      "reason": "Since the districts and villages maps are non-stable (let declarations), upgrading the production canister will reset all district and village data to empty, directly contradicting the requirement that data is not silently reset on upgrade.",
       "evidence": [
         "backend/main.mo"
       ]
@@ -15,24 +23,24 @@
   ],
   "hallucinated_features": [
     {
-      "description": "AdminLoginSection component with Internet Identity login/logout flow added to the Villages tab area.",
-      "reason": "REQ-37 only asks to fix the addDistrict mutation error and make the form work. A full Internet Identity login UI component with login/logout buttons, status display, and queryClient.clear() was added, which was not requested in the build request.",
+      "description": "A migration.mo module was added that only passes through nextDistrictId and nextVillageId counter values, providing no actual data migration logic for district or village map contents.",
+      "reason": "The migration module was not requested in the build request and does not solve the data persistence problem since the maps themselves are non-stable. It adds complexity without fulfilling the stated requirement.",
       "evidence": [
-        "frontend/src/components/AdminPanel.tsx"
+        "backend/migration.mo"
       ]
     },
     {
-      "description": "deleteDistrict and deleteVillage mutation hooks wired in VillagesTab with delete buttons.",
-      "reason": "REQ-37 only requests fixing the Add District and Add Village forms. Adding delete functionality for districts and villages was not part of the requirement.",
+      "description": "A bulk import modal with textarea-based text parsing was added to AdminPanel, allowing batch import of districts and villages via a formatted text format.",
+      "reason": "The build request explicitly lists adding new districts or villages as seed data as a non-goal. No requirement requested a bulk import UI feature.",
       "evidence": [
-        "frontend/src/components/AdminPanel.tsx",
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/components/AdminPanel.tsx"
       ]
     }
   ],
-  "confidence": 0.62,
+  "confidence": 0.82,
   "changed_files": [
     "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
     "frontend/src/components/AdminPanel.tsx",
     "frontend/src/hooks/useQueries.ts",

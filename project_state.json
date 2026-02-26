@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 27,
+  "projectStateVersion": 45,
   "summary": "गौसिया अशरफिया फाउंडेशन के लिए एक आकर्षक चैरिटेबल सोसाइटी ऐप बनाया जा रहा है। ऐप हिंदी में होगा और फाउंडेशन की गतिविधियों, दान, और सामाजिक कार्यों को प्रदर्शित करेगा। यूज़र ने एक नई कलर पैलेट (colorhunt.co/palette/6326269d5353bf8b67dacc96) अप्लाई करने का अनुरोध किया है।",
   "architectural_notes": [
     "App is in Hindi language targeting Indian audience for a charitable society named गौसिया अशरफिया फाउंडेशन",
@@ -9,7 +9,13 @@
     "Admin Panel should only be accessible via hamburger menu link, opening on a separate page/route — not embedded on the homepage"
   ],
   "known_issues": [
-    "Admin Panel > Villages Tab में District Add करने पर लाल रंग का error text दिखता है — district add नहीं हो रहा"
+    "Admin Panel > Villages Tab में District Add करने पर लाल रंग का error text दिखता है — district add नहीं हो रहा",
+    "Admin Panel page has dark black background making all text invisible — likely a CSS/Tailwind class conflict or missing background color override on the admin route",
+    "Admin Panel passcode 'admin1234' is not working — login gate rejecting correct passcode, needs investigation and fix",
+    "Admin Panel > Villages Tab में Manual Add और Bulk Add बटन क्लिक नहीं हो रहे — buttons are unresponsive/disabled",
+    "Admin Panel > Villages Tab में गाँव जोड़ने पर error आ रहा है (Version 19 के बाद भी) — addVillage mutation failing",
+    "Foundation name is incorrectly spelled somewhere on the UI (circled by user) — needs to be corrected to the proper spelling गौसिया अशरफिया फाउंडेशन",
+    "हमसे जुड़े गाँव (VillagesSection) ड्राफ्ट में दिख रहा है लेकिन लाइव/प्रोडक्शन में नहीं दिख रहा — production build में section missing है"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -276,6 +282,102 @@
         "REQ-37"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-fix-the-admin-panel-page-frontend-src-components-adminpanel-tsx-which-currently-renders-with-a-dark-black-background-that-makes-all-text-invisible-audit-the-component-s-root-container-and-all-tab-panel-wrapper-elements-for-any-tailwind-dark-mode-classes-e-g-dark-bg-bg-gray-900-bg-black-or-css-variable-overrides-from-frontend-src-index-css-dark-mode-block-that-are-being-incorrectly-applied-replace-all-problematic-background-classes-with-explicit-light-mode-background-colors-consistent-with-the-existing-maroon-gold-palette-use-white-or-cream-light-backgrounds-e-g-bg-white-bg-fdf6e3-or-bg-highlight-for-the-page-root-and-card-containers-and-ensure-all-text-uses-dark-readable-colors-e-g-text-gray-900-text-primary-verify-that-the-fix-applies-to-all-five-tabs-donations-memberships-assistance-requests-contact-inquiries-and-villages-the-admin-panel-must-be-fully-readable-at-the-admin-route-without-any-black-or-near-black-background-regions-obscuring-text",
+      "title": "Fix the Admin Panel page (frontend/src/components/AdminPanel.tsx) which currently renders with a dark/black background that makes all text invisible. Audit the component's root container and all tab panel wrapper elements for any Tailwind dark-mode classes (e.g., `dark:bg-*`, `bg-gray-900`, `bg-black`) or CSS variable overrides (from frontend/src/index.css dark-mode block) that are being incorrectly applied. Replace all problematic background classes with explicit light-mode background colors consistent with the existing maroon/gold palette — use white or cream/light backgrounds (e.g., `bg-white`, `bg-[#fdf6e3]`, or `bg-highlight`) for the page root and card containers, and ensure all text uses dark readable colors (e.g., `text-gray-900`, `text-primary`). Verify that the fix applies to all five tabs: Donations, Memberships, Assistance Requests, Contact Inquiries, and Villages. The admin panel must be fully readable at the `#/admin` route without any black or near-black background regions obscuring text.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-diagnose-and-fix-the-error-shown-in-the-admin-panel-villages-tab-when-submitting-the-add-district-form-the-fix-must-address-the-root-cause-which-is-most-likely-one-of-1-the-backend-adddistrict-function-has-an-admin-only-caller-check-that-rejects-unauthenticated-or-non-owner-calls-2-the-useadddistrict-mutation-hook-in-frontend-src-hooks-usequeries-ts-passes-arguments-in-the-wrong-shape-or-calls-the-wrong-method-name-3-the-actor-reference-used-in-the-mutation-is-null-undefined-at-the-time-of-the-call-audit-the-backend-adddistrict-function-signature-and-any-caller-identity-guard-then-audit-the-useadddistrict-hook-implementation-and-how-it-obtains-the-actor-ensure-the-mutation-correctly-calls-actor-adddistrict-name-with-a-plain-text-argument-that-the-actor-is-properly-initialized-before-the-call-and-that-any-backend-authorization-check-either-passes-for-the-admin-panel-user-or-is-removed-relaxed-appropriately-after-the-fix-submitting-a-district-name-e-g-in-the-add-district-form-must-succeed-add-the-district-to-the-backend-invalidate-the-districts-query-show-a-success-toast-and-display-the-new-district-in-the-list",
+      "title": "Diagnose and fix the 'जिला जोड़ने में समस्या हुई। कृपया पुनः प्रयास करें।' error shown in the Admin Panel > Villages tab when submitting the Add District form. The fix must address the root cause — which is most likely one of: (1) the backend `addDistrict` function has an admin-only caller check that rejects unauthenticated or non-owner calls; (2) the `useAddDistrict` mutation hook in `frontend/src/hooks/useQueries.ts` passes arguments in the wrong shape or calls the wrong method name; (3) the actor reference used in the mutation is null/undefined at the time of the call. Audit the backend `addDistrict` function signature and any caller-identity guard, then audit the `useAddDistrict` hook implementation and how it obtains the actor. Ensure the mutation correctly calls `actor.addDistrict(name)` with a plain `Text` argument, that the actor is properly initialized before the call, and that any backend authorization check either passes for the admin panel user or is removed/relaxed appropriately. After the fix, submitting a district name (e.g., 'जौनपुर') in the Add District form must succeed, add the district to the backend, invalidate the districts query, show a success toast, and display the new district in the 'जिले और गाँव' list.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-admin-authentication-flow-in-adminpanel-tsx-and-the-backend-the-screenshots-show-two-problems-1-after-logging-in-via-internet-identity-the-panel-still-shows-your-account-is-not-admin-even-though-the-user-is-authenticated-the-admin-role-check-is-incorrectly-rejecting-a-legitimate-logged-in-user-2-the-warning-prevents-district-village-add-forms-from-submitting-the-root-cause-is-that-the-frontend-s-isadmin-check-compares-the-logged-in-internet-identity-principal-against-a-hardcoded-owner-principal-stored-in-the-backend-but-the-current-user-s-principal-does-not-match-fix-this-by-a-in-the-backend-main-mo-remove-or-relax-the-admin-only-caller-identity-guard-on-adddistrict-addvillage-deletedistrict-and-deletevillage-so-that-any-authenticated-internet-identity-principal-can-call-these-functions-no-owner-principal-check-or-store-the-first-caller-s-principal-as-the-admin-owner-on-first-call-b-in-adminpanel-tsx-update-the-isadmin-role-verification-logic-to-treat-any-successfully-logged-in-internet-identity-user-as-admin-remove-the-principal-comparison-check-so-the-green-banner-correctly-grants-access-and-the-warning-message-is-not-shown-c-ensure-that-after-login-the-add-district-and-add-village-form-submit-buttons-become-active-and-the-warning-messages-are-hidden-d-ensure-the-useadddistrict-and-useaddvillage-mutation-hooks-in-usequeries-ts-call-the-backend-actor-methods-with-the-correct-argument-shape-and-that-the-actor-is-authenticated-uses-the-logged-in-identity-not-anonymous",
+      "title": "Fix the admin authentication flow in AdminPanel.tsx and the backend. The screenshots show two problems: (1) After logging in via Internet Identity, the panel still shows 'आपका अकाउंट एडमिन नहीं है' (your account is not admin) even though the user is authenticated — the admin role check is incorrectly rejecting a legitimate logged-in user; (2) The 'जिला जोड़ने के लिए एडमिन लॉगिन आवश्यक है' warning prevents district/village add forms from submitting. The root cause is that the frontend's isAdmin check compares the logged-in Internet Identity principal against a hardcoded owner principal stored in the backend, but the current user's principal does not match. Fix this by: (a) In the backend main.mo, remove or relax the admin-only caller identity guard on addDistrict, addVillage, deleteDistrict, and deleteVillage so that any authenticated Internet Identity principal can call these functions (no owner-principal check), OR store the first caller's principal as the admin owner on first call; (b) In AdminPanel.tsx, update the isAdmin / role-verification logic to treat any successfully logged-in Internet Identity user as admin (remove the principal comparison check), so the green 'लॉगिन हैं' banner correctly grants access and the warning message is not shown; (c) Ensure that after login the add-district and add-village form submit buttons become active and the warning messages are hidden; (d) Ensure the useAddDistrict and useAddVillage mutation hooks in useQueries.ts call the backend actor methods with the correct argument shape and that the actor is authenticated (uses the logged-in identity, not anonymous).",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-admin-panel-s-villages-tab-frontend-src-components-adminpanel-tsx-add-a-bulk-upload-section-that-allows-the-admin-to-upload-an-excel-xlsx-xls-or-csv-file-containing-district-and-village-data-the-file-should-follow-a-two-column-format-column-a-district-name-column-b-village-name-parse-the-uploaded-file-entirely-on-the-frontend-using-a-library-such-as-sheetjs-xlsx-do-not-route-file-data-through-the-backend-blob-storage-for-each-unique-district-found-in-the-file-call-useadddistrict-to-create-it-if-it-does-not-already-exist-then-call-useaddvillage-for-each-village-row-under-that-district-show-a-progress-indicator-while-processing-and-display-a-summary-toast-on-completion-e-g-x-districts-and-y-villages-added-successfully-show-row-level-errors-for-any-failed-entries-style-the-upload-panel-consistently-with-the-existing-maroon-gold-admin-panel-palette",
+      "title": "In the Admin Panel's 'Villages' tab (frontend/src/components/AdminPanel.tsx), add a 'Bulk Upload' section that allows the admin to upload an Excel (.xlsx, .xls) or CSV file containing district and village data. The file should follow a two-column format: Column A = District Name, Column B = Village Name. Parse the uploaded file entirely on the frontend (using a library such as SheetJS/xlsx) — do NOT route file data through the backend blob storage. For each unique district found in the file, call `useAddDistrict` to create it if it does not already exist, then call `useAddVillage` for each village row under that district. Show a progress indicator while processing, and display a summary toast on completion (e.g., 'X districts and Y villages added successfully'). Show row-level errors for any failed entries. Style the upload panel consistently with the existing maroon/gold Admin Panel palette.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-admin-panel-s-villages-tab-frontend-src-components-adminpanel-tsx-add-an-export-section-with-two-buttons-export-to-excel-and-export-to-pdf-both-buttons-should-export-the-complete-list-of-all-districts-and-their-associated-villages-fetched-via-usegetdistricts-and-usegetvillagesbydistrict-the-excel-export-should-produce-a-xlsx-file-with-columns-district-name-village-name-one-row-per-village-the-pdf-export-should-produce-a-formatted-pdf-document-listing-districts-as-headings-and-their-villages-as-a-bulleted-indented-list-beneath-each-heading-both-exports-must-be-generated-entirely-on-the-frontend-e-g-using-sheetjs-for-excel-and-jspdf-for-pdf-without-any-backend-changes-the-exported-file-should-be-named-villages-export-xlsx-villages-export-pdf-respectively-style-the-export-buttons-consistently-with-the-existing-maroon-gold-admin-panel-palette",
+      "title": "In the Admin Panel's 'Villages' tab (frontend/src/components/AdminPanel.tsx), add an 'Export' section with two buttons: 'Export to Excel' and 'Export to PDF'. Both buttons should export the complete list of all districts and their associated villages fetched via `useGetDistricts` and `useGetVillagesByDistrict`. The Excel export should produce a .xlsx file with columns: District Name, Village Name (one row per village). The PDF export should produce a formatted PDF document listing districts as headings and their villages as a bulleted/indented list beneath each heading. Both exports must be generated entirely on the frontend (e.g., using SheetJS for Excel and jsPDF for PDF) without any backend changes. The exported file should be named 'villages-export.xlsx' / 'villages-export.pdf' respectively. Style the export buttons consistently with the existing maroon/gold Admin Panel palette.",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-admin-panel-passcode-authentication-gate-in-frontend-src-components-adminpanel-tsx-the-current-hardcoded-passcode-comparison-is-failing-even-when-the-correct-passcode-admin1234-is-entered-likely-due-to-a-whitespace-trim-issue-incorrect-string-comparison-or-the-passcode-value-being-out-of-sync-audit-the-passcode-check-logic-ensure-the-comparison-trims-whitespace-and-uses-strict-string-equality-and-verify-the-hardcoded-passcode-value-is-exactly-admin1234-after-the-fix-entering-admin1234-in-the-passcode-field-and-clicking-must-successfully-unlock-the-admin-panel",
+      "title": "Fix the Admin Panel passcode authentication gate in `frontend/src/components/AdminPanel.tsx`. The current hardcoded passcode comparison is failing even when the correct passcode ('admin1234') is entered — likely due to a whitespace trim issue, incorrect string comparison, or the passcode value being out of sync. Audit the passcode check logic, ensure the comparison trims whitespace and uses strict string equality, and verify the hardcoded passcode value is exactly 'admin1234'. After the fix, entering 'admin1234' in the passcode field and clicking 'प्रवेश करें' must successfully unlock the Admin Panel.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-change-passcode-feature-to-the-admin-panel-frontend-src-components-adminpanel-tsx-once-the-admin-is-logged-in-display-a-change-passcode-button-or-section-e-g-in-the-panel-header-or-as-a-settings-tab-this-opens-a-small-form-with-three-fields-current-passcode-new-passcode-minimum-6-characters-and-confirm-new-passcode-on-submission-validate-that-the-current-passcode-matches-that-the-new-passcode-and-confirmation-match-and-that-the-new-passcode-meets-the-minimum-length-if-valid-update-the-stored-passcode-persisted-in-localstorage-under-a-key-such-as-gaf-admin-passcode-falling-back-to-the-hardcoded-default-admin1234-if-no-stored-value-exists-show-a-success-toast-on-successful-change-and-a-clear-error-message-on-validation-failure-style-consistently-with-the-existing-maroon-gold-admin-panel-palette",
+      "title": "Add a 'Change Passcode' (पासकोड बदलें) feature to the Admin Panel (`frontend/src/components/AdminPanel.tsx`). Once the admin is logged in, display a 'Change Passcode' button or section (e.g., in the panel header or as a settings tab). This opens a small form with three fields: Current Passcode (वर्तमान पासकोड), New Passcode (नया पासकोड, minimum 6 characters), and Confirm New Passcode (पासकोड दोबारा दर्ज करें). On submission, validate that the current passcode matches, that the new passcode and confirmation match, and that the new passcode meets the minimum length. If valid, update the stored passcode (persisted in `localStorage` under a key such as `gaf_admin_passcode`, falling back to the hardcoded default 'admin1234' if no stored value exists). Show a success toast on successful change and a clear error message on validation failure. Style consistently with the existing maroon/gold Admin Panel palette.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-unresponsive-add-district-and-add-village-manual-add-form-submit-buttons-in-the-admin-panel-villages-tab-frontend-src-components-adminpanel-tsx-the-buttons-are-currently-not-clickable-responding-to-click-events-audit-for-1-a-z-index-or-overlay-element-sitting-on-top-of-the-buttons-and-intercepting-pointer-events-e-g-a-transparent-div-modal-backdrop-or-progress-overlay-left-in-a-non-hidden-state-2-css-pointer-events-none-being-applied-to-the-buttons-or-a-parent-container-3-a-disabled-true-or-disabled-condition-tied-to-a-state-variable-e-g-isloading-isprocessing-isbulkuploading-that-is-stuck-in-a-truthy-state-4-any-conditional-render-or-react-state-that-hides-or-disables-the-form-submit-buttons-ensure-both-the-add-district-submit-button-and-the-add-village-submit-button-are-always-clickable-when-the-admin-is-authenticated-the-input-fields-are-non-empty-and-no-upload-is-in-progress-after-the-fix-clicking-the-add-district-button-with-a-district-name-entered-must-trigger-the-useadddistrict-mutation-and-clicking-add-village-with-a-district-selected-and-village-name-entered-must-trigger-the-useaddvillage-mutation",
+      "title": "Investigate and fix the unresponsive 'Add District' and 'Add Village' manual add form submit buttons in the Admin Panel > Villages tab (frontend/src/components/AdminPanel.tsx). The buttons are currently not clickable/responding to click events. Audit for: (1) a z-index or overlay element sitting on top of the buttons and intercepting pointer events (e.g., a transparent div, modal backdrop, or progress overlay left in a non-hidden state), (2) CSS pointer-events:none being applied to the buttons or a parent container, (3) a disabled={true} or disabled condition tied to a state variable (e.g., isLoading, isProcessing, isBulkUploading) that is stuck in a truthy state, (4) any conditional render or React state that hides or disables the form submit buttons. Ensure both the 'Add District' submit button and the 'Add Village' submit button are always clickable when the admin is authenticated, the input fields are non-empty, and no upload is in progress. After the fix, clicking the 'Add District' button with a district name entered must trigger the useAddDistrict mutation, and clicking 'Add Village' with a district selected and village name entered must trigger the useAddVillage mutation.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-unresponsive-bulk-upload-submit-process-button-in-the-admin-panel-villages-tab-frontend-src-components-adminpanel-tsx-the-bulk-upload-trigger-button-which-starts-processing-the-uploaded-excel-csv-file-is-not-responding-to-click-events-audit-for-1-a-z-index-or-overlay-element-blocking-pointer-events-on-the-bulk-upload-section-2-a-disabled-condition-tied-to-a-state-variable-e-g-isbulkprocessing-isuploading-no-file-selected-check-that-is-incorrectly-evaluating-to-true-even-when-a-file-is-selected-3-css-pointer-events-none-on-the-button-or-a-parent-container-4-a-progress-overlay-rendered-during-a-previous-upload-that-was-never-dismissed-and-is-now-blocking-the-section-ensure-the-bulk-upload-process-button-is-clickable-whenever-a-valid-file-has-been-selected-by-the-user-and-no-upload-is-currently-in-progress-after-the-fix-selecting-a-valid-xlsx-xls-csv-file-and-clicking-the-process-upload-button-must-begin-parsing-the-file-and-calling-the-district-village-mutation-hooks",
+      "title": "Investigate and fix the unresponsive Bulk Upload submit/process button in the Admin Panel > Villages tab (frontend/src/components/AdminPanel.tsx). The bulk upload trigger button (which starts processing the uploaded Excel/CSV file) is not responding to click events. Audit for: (1) a z-index or overlay element blocking pointer events on the bulk upload section, (2) a disabled condition tied to a state variable (e.g., isBulkProcessing, isUploading, no file selected check) that is incorrectly evaluating to true even when a file is selected, (3) CSS pointer-events:none on the button or a parent container, (4) a progress overlay rendered during a previous upload that was never dismissed and is now blocking the section. Ensure the bulk upload process button is clickable whenever a valid file has been selected by the user and no upload is currently in progress. After the fix, selecting a valid .xlsx/.xls/.csv file and clicking the process/upload button must begin parsing the file and calling the district/village mutation hooks.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-unauthorized-only-authenticated-users-can-add-districts-error-shown-in-the-admin-panel-villages-tab-when-submitting-the-add-district-and-add-village-forms-the-screenshot-confirms-the-backend-is-rejecting-the-call-with-an-authentication-check-the-fix-must-a-in-backend-main-mo-remove-the-authenticated-caller-guard-on-adddistrict-addvillage-deletedistrict-and-deletevillage-these-functions-must-accept-calls-from-any-caller-anonymous-or-authenticated-since-the-admin-panel-is-already-protected-by-the-passcode-gate-on-the-frontend-b-in-frontend-src-hooks-usequeries-ts-ensure-the-useadddistrict-and-useaddvillage-mutation-hooks-obtain-the-actor-without-requiring-an-authenticated-internet-identity-use-the-anonymous-actor-or-the-actor-instance-regardless-of-login-state-so-the-mutations-are-never-blocked-by-identity-state-c-in-frontend-src-components-adminpanel-tsx-remove-any-isadmin-internet-identity-login-requirement-that-gates-the-add-district-and-add-village-form-submissions-the-passcode-gate-is-the-only-authentication-layer-needed-after-the-fix-entering-a-district-name-e-g-and-clicking-must-succeed-add-the-district-to-the-backend-invalidate-the-districts-query-show-a-success-toast-and-display-the-new-district-in-the-list-similarly-adding-a-village-must-succeed-without-any-authorization-error",
+      "title": "Fix the 'Unauthorized: Only authenticated users can add districts' error shown in the Admin Panel > Villages tab when submitting the Add District and Add Village forms. The screenshot confirms the backend is rejecting the call with an authentication check. The fix must: (a) In backend/main.mo, remove the authenticated-caller guard on addDistrict, addVillage, deleteDistrict, and deleteVillage — these functions must accept calls from any caller (anonymous or authenticated) since the Admin Panel is already protected by the passcode gate on the frontend; (b) In frontend/src/hooks/useQueries.ts, ensure the useAddDistrict and useAddVillage mutation hooks obtain the actor WITHOUT requiring an authenticated Internet Identity — use the anonymous actor (or the actor instance regardless of login state) so the mutations are never blocked by identity state; (c) In frontend/src/components/AdminPanel.tsx, remove any isAdmin / Internet Identity login requirement that gates the Add District and Add Village form submissions — the passcode gate is the only authentication layer needed. After the fix, entering a district name (e.g., 'जौनपुर') and clicking 'जिला जोड़ें' must succeed, add the district to the backend, invalidate the districts query, show a success toast, and display the new district in the list. Similarly, adding a village must succeed without any authorization error.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-admin-panel-component-frontend-src-components-adminpanel-tsx-correct-the-foundation-name-displayed-in-the-panel-header-branding-area-the-circled-text-currently-reads-change-it-to-the-correct-name-gausiya-ashrafia-foundation-ensure-this-matches-the-name-displayed-in-the-main-site-header-and-herosection",
+      "title": "In the Admin Panel component (frontend/src/components/AdminPanel.tsx), correct the foundation name displayed in the panel header/branding area. The circled text currently reads 'गौस-ए-आज़म फाउंडेशन' — change it to the correct name 'गौसिया अशरफिया फाउंडेशन' (Gausiya Ashrafia Foundation). Ensure this matches the name displayed in the main site Header and HeroSection.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-investigate-and-fix-the-villagessection-component-not-rendering-in-the-production-live-build-while-it-correctly-appears-in-the-draft-build-the-screenshots-confirm-1-in-the-live-tab-the-section-renders-but-shows-meaning-the-section-renders-but-district-data-added-in-draft-is-not-persisting-syncing-to-production-or-2-the-section-itself-is-missing-from-the-production-bundle-check-whether-the-issue-is-a-the-villagessection-component-is-included-in-app-tsx-but-the-production-canister-has-stale-empty-stable-state-districts-added-via-the-draft-environment-are-not-present-in-the-production-canister-b-a-build-bundle-difference-between-draft-and-production-that-causes-the-section-to-be-omitted-or-c-a-backend-stable-variable-migration-issue-where-the-production-canister-s-district-village-data-was-reset-on-upgrade-ensure-that-the-villagessection-is-present-and-rendered-in-app-tsx-for-the-production-route-the-backend-stable-variables-for-districts-and-villages-are-correctly-preserved-across-canister-upgrades-using-stable-var-declarations-and-the-production-canister-s-data-is-not-silently-reset-after-the-fix-the-section-must-appear-on-the-live-site-with-the-same-district-village-data-visible-in-the-draft",
+      "title": "Investigate and fix the VillagesSection component not rendering in the production/live build while it correctly appears in the draft build. The screenshots confirm: (1) in the live tab, the 'हमसे जुड़े गाँव' section renders but shows 'अभी तक कोई जिला नहीं जोड़ा गया' — meaning the section renders but district data added in draft is not persisting/syncing to production; OR (2) the section itself is missing from the production bundle. Check whether the issue is: (a) the VillagesSection component is included in App.tsx but the production canister has stale/empty stable state (districts added via the draft environment are not present in the production canister), (b) a build/bundle difference between draft and production that causes the section to be omitted, or (c) a backend stable variable migration issue where the production canister's district/village data was reset on upgrade. Ensure that: the VillagesSection is present and rendered in App.tsx for the production route, the backend stable variables for districts and villages are correctly preserved across canister upgrades using stable var declarations, and the production canister's data is not silently reset. After the fix, the 'हमसे जुड़े गाँव' section must appear on the live site with the same district/village data visible in the draft.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -434,6 +536,30 @@
     {
       "id": "AR-28",
       "summary": "Admin Panel को फ्रंट पेज से हटाएं — सिर्फ हैमबर्गर मेनू में Admin लिंक रखें, क्लिक करने पर एक अलग पेज/रूट पर खुले (not inline on homepage)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "हमसे जुड़े गाँव (Villages) में बल्क अपलोड का ऑप्शन जोड़ें — Excel/PDF फाइल अपलोड करके एक साथ कई जिले/गाँव जोड़े जा सकें (Admin Panel में)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "हमसे जुड़े गाँव (Villages) डेटा को Excel/PDF में एक्सपोर्ट करने का ऑप्शन जोड़ें (Admin Panel में)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Admin panel passcode fix — passcode 'admin1234' not working, fix the authentication gate so correct passcode grants access",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Admin panel में password reset करने का option जोड़ें — admin passcode बदलने की सुविधा",
       "reqIds": [],
       "status": "pending"
     }

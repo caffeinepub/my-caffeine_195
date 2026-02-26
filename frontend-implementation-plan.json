@@ -1,39 +1,38 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix Admin Panel Villages Tab — District Add Error",
+  "title": "Fix VillagesSection data persistence in production build",
   "requirements": [
     {
-      "id": "REQ-37",
-      "summary": "Fix the addDistrict mutation error in the Admin Panel Villages tab by correcting the mutation hook to properly call the backend addDistrict method with the correct argument shape, add proper error handling, and ensure the districts query invalidates after successful addition",
+      "id": "REQ-49",
+      "summary": "Ensure VillagesSection component renders with district and village data in the production build by verifying component wiring in App.tsx and ensuring the frontend correctly fetches and displays backend district data",
       "acceptanceCriteria": [
-        "Entering a district name in the Admin Panel > Villages tab and clicking the submit button successfully calls the backend `addDistrict` endpoint without throwing an error.",
-        "After a successful district add, the districts list in the Admin Panel refreshes and shows the newly added district.",
-        "A success toast notification is shown after successfully adding a district.",
-        "No red error text is displayed on the Admin Panel Villages tab during or after a district add operation.",
-        "If the backend returns a genuine error (e.g., duplicate name), it is displayed as a meaningful error message rather than a raw JS error.",
-        "The Add Village form similarly works without errors when a valid district is selected and a village name is entered."
+        "The 'हमसे जुड़े गाँव' (VillagesSection) is visible on the live/production site at the correct position between GovernmentSchemesSection and MembershipSection.",
+        "Districts and villages added via the Admin Panel in draft are available (or re-enterable) in production without data loss on canister upgrade.",
+        "Backend stable variables for districts and villages use `stable var` declarations so data survives canister upgrades.",
+        "The section heading, accordion district cards, and village chips all render correctly in the production build.",
+        "No regression in draft — the section continues to display correctly there as well."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Fix the useAddDistrict mutation hook to correctly call actor.addDistrict(name) with a single string argument (not an object). Update the mutationFn to pass the district name directly as a string parameter. Ensure the onSuccess callback properly invalidates the 'districts' query key to trigger a refetch. Add proper error handling in onError to display meaningful error messages via toast notifications instead of allowing raw errors to propagate to the UI."
+          "description": "Verify that VillagesSection is imported and rendered in the correct position in the homepage section stack (between GovernmentSchemesSection and MembershipSection). Ensure there are no conditional rendering statements that would prevent VillagesSection from appearing in production. Confirm the component is rendered on the default route (non-admin routes)."
+        },
+        {
+          "path": "frontend/src/components/VillagesSection.tsx",
+          "operation": "modify",
+          "description": "Review the component to ensure it correctly handles empty state when no districts are available. Verify that the component uses the useGetDistricts hook correctly and that the empty state message 'अभी तक कोई जिला नहीं जोड़ा गया' is only shown when the backend returns an empty array (not when loading or on error). Add error handling for backend failures and ensure loading states are properly managed. Confirm that district expansion correctly triggers useGetVillagesByDistrict for lazy-loading villages."
         },
         {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Fix the useAddVillage mutation hook to correctly call actor.addVillage(districtId, villageName) with two separate arguments (bigint and string). Update the mutationFn to destructure the variables object and pass districtId and villageName as individual parameters. Ensure the onSuccess callback invalidates both 'districts' and the specific district's villages query. Add proper error handling in onError with toast notifications for user-friendly error display."
+          "description": "Ensure useGetDistricts correctly calls actor.getDistricts() and returns the full array of District objects with proper TypeScript typing. Verify that useGetVillagesByDistrict correctly fetches villages for a given districtId using actor.getVillagesByDistrict(districtId). Ensure both hooks have proper error handling, retry logic, and React Query configuration (queryKey, enabled flags). Confirm that these hooks are not no-ops and actually invoke the backend methods defined in backend.d.ts."
         },
         {
           "path": "frontend/src/components/AdminPanel.tsx",
           "operation": "modify",
-          "description": "Update the Villages tab district form submission handler to pass the district name as a plain string (not wrapped in an object) to the addDistrict mutation. Remove any object wrapping like {name: districtName} and pass districtName directly. Ensure the form clears the input field after successful submission. Add visual feedback (loading state on submit button) during the mutation. Verify that error states from the mutation hook are properly displayed to the user without showing raw error objects."
-        },
-        {
-          "path": "frontend/src/components/AdminPanel.tsx",
-          "operation": "modify",
-          "description": "Update the Villages tab village form submission handler to pass districtId and villageName as an object {districtId, villageName} to the addVillage mutation, ensuring districtId is converted to bigint if needed. Ensure the form clears after successful submission and displays proper loading states. Add error boundary handling to catch and display authorization errors (admin-only guards) in a user-friendly format rather than showing red error text."
+          "description": "Review the districts/villages management tab to ensure that addDistrict and addVillage mutations correctly call the backend methods and invalidate the relevant React Query cache keys (['districts'], ['villages', districtId]). Verify that after adding a district or village in the admin panel, the changes are immediately reflected in the VillagesSection on the public site. Ensure that deleteDistrict and deleteVillage also invalidate the correct query keys."
         }
       ]
     }

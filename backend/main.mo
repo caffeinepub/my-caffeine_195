@@ -1,12 +1,14 @@
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
 import Runtime "mo:core/Runtime";
-import Principal "mo:core/Principal";
 import Iter "mo:core/Iter";
+import Principal "mo:core/Principal";
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   // Prefab Access Control
   let accessControlState = AccessControl.initState();
@@ -15,31 +17,37 @@ actor {
   // Prefab Storage
   include MixinStorage();
 
-  // User Profiles
+  // ---- State Types ----
+
   public type UserProfile = {
     name : Text;
   };
 
-  let userProfiles = Map.empty<Principal, UserProfile>();
-
-  // District record
   public type District = {
     id : Nat;
     name : Text;
     villages : [Village];
   };
 
-  // Village record
   public type Village = {
     id : Nat;
     name : Text;
     districtId : Nat;
   };
 
-  var nextDistrictId = 1;
-  var nextVillageId = 1;
+  type DistrictInternal = {
+    id : Nat;
+    name : Text;
+  };
 
-  let districts = Map.empty<Nat, { id : Nat; name : Text }>();
+  // ---- Stable State ----
+
+  stable var nextDistrictId = 1;
+  stable var nextVillageId = 1;
+
+  let userProfiles = Map.empty<Principal, UserProfile>();
+
+  let districts = Map.empty<Nat, DistrictInternal>();
   let villages = Map.empty<Nat, Village>();
 
   // ---- User Profile Functions ----
@@ -67,13 +75,13 @@ actor {
 
   // ---- District and Village Functions ----
 
-  // Add new district (admin only)
+  // Add new district — admin only
   public shared ({ caller }) func addDistrict(name : Text) : async Nat {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can add districts");
     };
     let id = nextDistrictId;
-    let district = {
+    let district : DistrictInternal = {
       id;
       name;
     };
@@ -82,8 +90,8 @@ actor {
     id;
   };
 
-  // Get all districts with villages (public, no auth required)
-  public query ({ caller }) func getDistricts() : async [District] {
+  // Get all districts with villages — public, no auth required
+  public query func getDistricts() : async [District] {
     let tempDistricts = districts.values().toArray();
     tempDistricts.map(
       func({ id; name }) {
@@ -99,7 +107,7 @@ actor {
     );
   };
 
-  // Add village to district (admin only)
+  // Add village to district — admin only
   public shared ({ caller }) func addVillage(districtId : Nat, villageName : Text) : async Nat {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can add villages");
@@ -120,18 +128,16 @@ actor {
     };
   };
 
-  // Get all villages for a district (public, no auth required)
-  public query ({ caller }) func getVillagesByDistrict(districtId : Nat) : async [Village] {
+  // Get all villages for a district — public, no auth required
+  public query func getVillagesByDistrict(districtId : Nat) : async [Village] {
     villages.values().toArray().filter(func(village) { village.districtId == districtId });
   };
 
-  // Delete district (admin only)
+  // Delete district — admin only
   public shared ({ caller }) func deleteDistrict(districtId : Nat) : async Bool {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can delete districts");
     };
-
-    // Remove villages for this district
     let remainingVillages = villages.filter(
       func(_id, village) { village.districtId != districtId }
     );
@@ -139,7 +145,6 @@ actor {
     let districtExists = districts.containsKey(districtId);
     districts.remove(districtId);
 
-    // Re-add remaining villages to the villages map
     villages.clear();
     for ((k, v) in remainingVillages.entries()) {
       villages.add(k, v);
@@ -148,7 +153,7 @@ actor {
     districtExists;
   };
 
-  // Delete village (admin only)
+  // Delete village — admin only
   public shared ({ caller }) func deleteVillage(villageId : Nat) : async Bool {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can delete villages");

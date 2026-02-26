@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T08:54:56.254Z",
+  "generatedAt": "2026-02-26T11:45:13.563Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,19 +11,17 @@
     "implemented": 1,
     "items": [
       {
-        "id": "REQ-37",
-        "summary": "Investigate and fix the error occurring in the Admin Panel > Villages tab when attempting to add a district. The red error text visible on the UI indicates the `addDistrict` mutation is failing. Diagnose whether the issue is: (1) a backend authorization/permission check rejecting the call (admin-only guard), (2) a mismatch between the frontend mutation arguments and the backend `addDistrict(name: Text)` function signature, (3) an actor initialization issue causing the mutation to fail silently, or (4) an error in the `useAddDistrict` React Query mutation hook (wrong method name, incorrect argument shape, or missing actor reference). Fix the root cause so that submitting the Add District form in the Villages tab successfully calls the backend, adds the district, invalidates the districts query, and shows a success toast instead of a red error message.",
+        "id": "REQ-49",
+        "summary": "Investigate and fix the VillagesSection component not rendering in the production/live build while it correctly appears in the draft build. The screenshots confirm: (1) in the live tab, the 'हमसे जुड़े गाँव' section renders but shows 'अभी तक कोई जिला नहीं जोड़ा गया' — meaning the section renders but district data added in draft is not persisting/syncing to production; OR (2) the section itself is missing from the production bundle. Check whether the issue is: (a) the VillagesSection component is included in App.tsx but the production canister has stale/empty stable state (districts added via the draft environment are not present in the production canister), (b) a build/bundle difference between draft and production that causes the section to be omitted, or (c) a backend stable variable migration issue where the production canister's district/village data was reset on upgrade. Ensure that: the VillagesSection is present and rendered in App.tsx for the production route, the backend stable variables for districts and villages are correctly preserved across canister upgrades using stable var declarations, and the production canister's data is not silently reset. After the fix, the 'हमसे जुड़े गाँव' section must appear on the live site with the same district/village data visible in the draft.",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/VillagesSection.tsx",
           "frontend/src/hooks/useQueries.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/AdminPanel.tsx",
           "frontend/src/components/AdminPanel.tsx"
         ],
         "matchedFiles": [
           "frontend/src/hooks/useQueries.ts",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/AdminPanel.tsx",
           "frontend/src/components/AdminPanel.tsx"
         ]
       }
@@ -31,6 +29,7 @@
   },
   "changedFiles": [
     "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
