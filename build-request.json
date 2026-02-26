@@ -1,66 +1,46 @@
 {
   "kind": "build_request",
-  "title": "Fix Canister Stopped Error Blocking District/Village Add Operations",
+  "title": "Add new Admin Meet photos to GallerySection (September 21, 2025)",
   "projectName": "Gausiya Ashrafia Foundation",
-  "priority": "high",
+  "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-57",
-      "text": "The backend canister (oxgjl-hqaaa-aaaai-q6r4a-cai) is returning IC0508 error 'Canister is stopped', which causes all addDistrict, addVillage, deleteDistrict, and deleteVillage calls to fail with a replica rejection (Reject code 5). Investigate why the canister enters a stopped state and ensure the backend actor is always running and accepting calls. Review the backend main.mo for any explicit canister stop/shutdown logic, heartbeat errors, or upgrade hooks that may be halting the canister. Ensure the actor compiles cleanly without any trapping pre/post-upgrade hooks that would leave the canister stopped after a failed upgrade. Fix any such issues so the canister remains in a 'running' state and all district/village mutation calls succeed.",
-      "target": "backend",
+      "id": "REQ-62",
+      "text": "Update the GallerySection component (frontend/src/components/GallerySection.tsx) to replace the existing four Admin Meet gallery images with the four newly uploaded photos from the September 21, 2025 Admin Meet event. Save the new images as static assets at frontend/public/assets/generated/ with filenames: gallery-admin-meet-1.png, gallery-admin-meet-2.png, gallery-admin-meet-3.png, gallery-admin-meet-4.png. Display them in a responsive image grid inside an event card with the title 'एडमिन पैनल मीटिंग – 21 सितंबर 2025' and subtitle 'मुंबरा (ठाणे), महाराष्ट्र, भारत'. Retain the existing section heading 'गैलेरी' and decorative gold divider. Style consistently with the existing maroon/gold palette and card-based layout.",
+      "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "The replica returned a rejection error: Request ID: 1a0fad928f8cb4d8d7ced9eb51871ca6bbc97f35ddf953feb8b68936527c5435 Reject code: 5 Reject text: Canister oxgjl-hqaaa-aaaai-q6r4a-cai is stopped Error code: IC0508"
+          "रेडिप्लोय"
         ]
       },
       "acceptanceCriteria": [
-        "The backend canister is in 'running' state and does not return IC0508 errors.",
-        "Calling addDistrict with a district name (e.g., 'जौनपुर') succeeds and returns a district ID.",
-        "Calling addVillage with a valid districtId and village name succeeds and returns a village ID.",
-        "No pre/post-upgrade hooks in main.mo trap or cause the canister to stop.",
-        "The canister remains running after redeployment/upgrade."
-      ]
-    },
-    {
-      "id": "REQ-58",
-      "text": "After fixing the canister stopped issue, perform an end-to-end verification of the Admin Panel Villages tab: (1) Manually adding a district via the 'नया जिला जोड़ें' form must succeed, show a success toast, and display the new district in the list. (2) Manually adding a village via the 'नया गाँव जोड़ें' form must succeed, show a success toast, and display the village under the correct district. (3) Bulk importing districts and villages via Excel/CSV file upload must process all rows without errors, show a progress indicator, and display a summary toast on completion. (4) The text-paste bulk import (टेक्स्ट से आयात) must correctly parse 'District: Village1, Village2' format and import all entries. Ensure all four operations work without any IC0508, authorization, or mutation errors.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Error Persist , neither can add individual nor can add in bulk"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Adding a district individually via the form succeeds and the district appears in the list.",
-        "Adding a village individually via the form succeeds and the village appears under the correct district.",
-        "Uploading an Excel/CSV file with district-village rows processes all entries and shows a summary toast.",
-        "Text-paste bulk import correctly parses and imports district/village data.",
-        "No red error messages appear in the Villages tab after any of these operations.",
-        "Success toasts are shown for all successful add operations."
+        "All four new uploaded photos (IMG_20250921_150644.jpg, IMG_20250921_150657.jpg, IMG_20250921_150653.jpg, IMG_20250921_133711.jpg) are saved as static assets and rendered in the GallerySection.",
+        "The event card displays the title 'एडमिन पैनल मीटिंग – 21 सितंबर 2025' and subtitle 'मुंबरा (ठाणे), महाराष्ट्र, भारत'.",
+        "The section heading 'गैलेरी' and decorative gold divider are retained.",
+        "The image grid is responsive and styled consistently with the maroon/gold palette.",
+        "No placeholder or old gallery images remain visible."
       ]
     }
   ],
   "constraints": [
-    "Do not change the frontend passcode authentication gate — it must remain as the sole admin authentication layer.",
-    "Do not add any new authorization/principal checks to addDistrict, addVillage, deleteDistrict, or deleteVillage in the backend.",
-    "All district/village backend functions must accept calls from any caller (anonymous or authenticated).",
-    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui."
+    "Do not modify any files listed in frontend.immutablePaths.",
+    "Images must be saved as static assets at frontend/public/assets/generated/ — do not route through the backend."
   ],
   "nonGoals": [
-    "Changing the visual design or layout of the Admin Panel.",
-    "Adding new tabs or features to the Admin Panel.",
-    "Modifying any frontend components other than what is necessary to fix the canister stopped error.",
-    "Changing the passcode authentication logic.",
-    "Modifying the Export (Excel/PDF) functionality."
+    "Adding new gallery events beyond the September 21, 2025 Admin Meet.",
+    "Backend changes of any kind.",
+    "Modifying any other frontend section or component."
   ],
   "imageRequirements": {
     "required": [],
-    "edits": []
+    "edits": [
+      "Replace with uploaded photo of attendees seated indoors at Admin Meet event (IMG_20250921_150644.jpg > gallery-admin-meet-1.dim_1200x800.png)",
+      "Replace with uploaded photo of attendees seated indoors at Admin Meet event, wide angle (IMG_20250921_150657.jpg > gallery-admin-meet-2.dim_1200x800.png)",
+      "Replace with uploaded photo of large group of attendees in two rooms at Admin Meet event (IMG_20250921_150653.jpg > gallery-admin-meet-3.dim_1200x800.png)",
+      "Replace with uploaded photo of projector slide showing 'एडमिन पैनल मीटिंग गौसिया अशरफिया फाउंडेशन' with foundation logo (IMG_20250921_133711.jpg > gallery-admin-meet-4.dim_1200x800.png)"
+    ]
   }
 }

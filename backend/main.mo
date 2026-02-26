@@ -73,11 +73,8 @@ actor {
 
   // ---- District and Village Functions ----
 
-  // Add new district - admin only
+  // Add new district (public)
   public shared ({ caller }) func addDistrict(name : Text) : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add districts");
-    };
     let id = nextDistrictId;
     let district : DistrictInternal = {
       id;
@@ -105,11 +102,8 @@ actor {
     );
   };
 
-  // Add village to a district - admin only
+  // Add village to a district (public)
   public shared ({ caller }) func addVillage(districtId : Nat, villageName : Text) : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add villages");
-    };
     switch (districts.get(districtId)) {
       case (null) { 0 };
       case (?_) {
@@ -131,11 +125,8 @@ actor {
     villages.values().toArray().filter(func(village) { village.districtId == districtId });
   };
 
-  // Delete district and corresponding villages - admin only
+  // Delete district and corresponding villages (public)
   public shared ({ caller }) func deleteDistrict(districtId : Nat) : async Bool {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can delete districts");
-    };
     let remainingVillages = villages.filter(
       func(_id, village) { village.districtId != districtId }
     );
@@ -151,11 +142,8 @@ actor {
     districtExists;
   };
 
-  // Delete village - admin only
+  // Delete village (public)
   public shared ({ caller }) func deleteVillage(villageId : Nat) : async Bool {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can delete villages");
-    };
     let villageExists = villages.containsKey(villageId);
     villages.remove(villageId);
     villageExists;

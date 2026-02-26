@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 55,
+  "projectStateVersion": 61,
   "summary": "गौसिया अशरफिया फाउंडेशन के लिए एक आकर्षक चैरिटेबल सोसाइटी ऐप बनाया जा रहा है। ऐप हिंदी में होगा और फाउंडेशन की गतिविधियों, दान, और सामाजिक कार्यों को प्रदर्शित करेगा। यूज़र ने एक नई कलर पैलेट (colorhunt.co/palette/6326269d5353bf8b67dacc96) अप्लाई करने का अनुरोध किया है।",
   "architectural_notes": [
     "App is in Hindi language targeting Indian audience for a charitable society named गौसिया अशरफिया फाउंडेशन",
@@ -19,7 +19,8 @@
     "Admin Panel > Villages Tab में Bulk Import (Excel/CSV अपलोड) काम नहीं कर रहा — file upload या processing में issue है",
     "Admin Panel > Villages Tab में individual (Add District/Village) और Bulk Import दोनों काम नहीं कर रहे — Version 26 के बाद भी errors persist हैं"
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
+  "imageRequirements": "## Edit Images\n- Replace with uploaded photo of attendees seated indoors at Admin Meet event (IMG_20250921_150644.jpg > gallery-admin-meet-1.dim_1200x800.png)\n- Replace with uploaded photo of attendees seated indoors at Admin Meet event, wide angle (IMG_20250921_150657.jpg > gallery-admin-meet-2.dim_1200x800.png)\n- Replace with uploaded photo of large group of attendees in two rooms at Admin Meet event (IMG_20250921_150653.jpg > gallery-admin-meet-3.dim_1200x800.png)\n- Replace with uploaded photo of projector slide showing 'एडमिन पैनल मीटिंग गौसिया अशरफिया फाउंडेशन' with foundation logo (IMG_20250921_133711.jpg > gallery-admin-meet-4.dim_1200x800.png)",
   "existing_features": [
     {
       "id": "feature-create-a-homepage-hero-section-displaying-the-foundation-name-gausiya-ashrafia-foundation-prominently-in-hindi-and-english-with-a-tagline-mission-statement-and-a-call-to-action-button-for-donations",
@@ -444,6 +445,38 @@
         "REQ-58"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-remove-all-placeholder-existing-images-from-the-gallerysection-component-frontend-src-components-gallerysection-tsx-the-gallery-grid-should-render-empty-no-image-cards-displayed-after-the-change-if-the-section-heading-and-decorative-divider-are-still-present-retain-them-only-the-image-cards-and-their-captions-must-be-removed",
+      "title": "Remove all placeholder/existing images from the GallerySection component (frontend/src/components/GallerySection.tsx). The gallery grid should render empty (no image cards displayed) after the change. If the section heading 'गैलेरी' and decorative divider are still present, retain them; only the image cards and their captions must be removed.",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-unauthorized-only-admins-can-delete-districts-error-shown-in-the-admin-panel-villages-tab-when-attempting-to-delete-a-district-in-backend-main-mo-remove-the-admin-only-caller-identity-guard-on-the-deletedistrict-and-deletevillage-functions-so-they-accept-calls-from-any-caller-anonymous-or-authenticated-consistent-with-the-existing-fix-applied-to-adddistrict-and-addvillage-after-the-fix-clicking-the-delete-button-on-a-district-or-village-in-the-admin-panel-must-succeed-without-any-authorization-error",
+      "title": "Fix the 'Unauthorized: Only admins can delete districts' error shown in the Admin Panel > Villages tab when attempting to delete a district. In backend/main.mo, remove the admin-only caller-identity guard on the deleteDistrict and deleteVillage functions so they accept calls from any caller (anonymous or authenticated), consistent with the existing fix applied to addDistrict and addVillage. After the fix, clicking the delete button on a district or village in the Admin Panel must succeed without any authorization error.",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-gallerysection-component-frontend-src-components-gallerysection-tsx-to-display-an-event-photo-gallery-card-for-admin-meet-september-21-2025-21-2025-the-card-should-show-all-four-uploaded-images-gallery-admin-meet-1-png-gallery-admin-meet-2-png-gallery-admin-meet-3-png-gallery-admin-meet-4-png-saved-as-static-assets-at-frontend-public-assets-generated-display-them-as-a-responsive-image-grid-with-the-event-title-21-2025-and-the-subtitle-as-a-caption-beneath-the-grid-style-consistently-with-the-existing-maroon-gold-palette-and-card-based-layout-retain-the-existing-section-heading-and-decorative-gold-divider",
+      "title": "Update the GallerySection component (frontend/src/components/GallerySection.tsx) to display an event photo gallery card for 'Admin Meet – September 21, 2025' (एडमिन मीट – 21 सितंबर 2025). The card should show all four uploaded images (gallery-admin-meet-1.png, gallery-admin-meet-2.png, gallery-admin-meet-3.png, gallery-admin-meet-4.png) saved as static assets at frontend/public/assets/generated/. Display them as a responsive image grid with the event title 'एडमिन पैनल मीटिंग – 21 सितंबर 2025' and the subtitle 'मुंबरा (ठाणे), महाराष्ट्र, भारत' as a caption beneath the grid. Style consistently with the existing maroon/gold palette and card-based layout. Retain the existing section heading 'गैलेरी' and decorative gold divider.",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-gallerysection-component-frontend-src-components-gallerysection-tsx-to-replace-the-existing-four-admin-meet-gallery-images-with-the-four-newly-uploaded-photos-from-the-september-21-2025-admin-meet-event-save-the-new-images-as-static-assets-at-frontend-public-assets-generated-with-filenames-gallery-admin-meet-1-png-gallery-admin-meet-2-png-gallery-admin-meet-3-png-gallery-admin-meet-4-png-display-them-in-a-responsive-image-grid-inside-an-event-card-with-the-title-21-2025-and-subtitle-retain-the-existing-section-heading-and-decorative-gold-divider-style-consistently-with-the-existing-maroon-gold-palette-and-card-based-layout",
+      "title": "Update the GallerySection component (frontend/src/components/GallerySection.tsx) to replace the existing four Admin Meet gallery images with the four newly uploaded photos from the September 21, 2025 Admin Meet event. Save the new images as static assets at frontend/public/assets/generated/ with filenames: gallery-admin-meet-1.png, gallery-admin-meet-2.png, gallery-admin-meet-3.png, gallery-admin-meet-4.png. Display them in a responsive image grid inside an event card with the title 'एडमिन पैनल मीटिंग – 21 सितंबर 2025' and subtitle 'मुंबरा (ठाणे), महाराष्ट्र, भारत'. Retain the existing section heading 'गैलेरी' and decorative gold divider. Style consistently with the existing maroon/gold palette and card-based layout.",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -641,6 +674,18 @@
       "reqIds": [
         "REQ-57"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-35",
+      "summary": "Gallery section की images delete करें — GallerySection से placeholder/existing images हटाएं",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-36",
+      "summary": "गैलेरी सेक्शन में 'एडमिन मीट 21 सितंबर 2025' इमेज/इवेंट कार्ड जोड़ें",
+      "reqIds": [],
       "status": "pending"
     }
   ],

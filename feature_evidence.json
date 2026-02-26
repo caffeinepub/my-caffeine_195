@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-after-fixing-the-canister-stopped-issue-perform-an-end-to-end-verification-of-the-admin-panel-villages-tab-1-manually-adding-a-district-via-the-form-must-succeed-show-a-success-toast-and-display-the-new-district-in-the-list-2-manually-adding-a-village-via-the-form-must-succeed-show-a-success-toast-and-display-the-village-under-the-correct-district-3-bulk-importing-districts-and-villages-via-excel-csv-file-upload-must-process-all-rows-without-errors-show-a-progress-indicator-and-display-a-summary-toast-on-completion-4-the-text-paste-bulk-import-must-correctly-parse-district-village1-village2-format-and-import-all-entries-ensure-all-four-operations-work-without-any-ic0508-authorization-or-mutation-errors",
-      "featureTitle": "After fixing the canister stopped issue, perform an end-to-end verification of the Admin Panel Villages tab: (1) Manually adding a district via the 'नया जिला जोड़ें' form must succeed, show a success toast, and display the new district in the list. (2) Manually adding a village via the 'नया गाँव जोड़ें' form must succeed, show a success toast, and display the village under the correct district. (3) Bulk importing districts and villages via Excel/CSV file upload must process all rows without errors, show a progress indicator, and display a summary toast on completion. (4) The text-paste bulk import (टेक्स्ट से आयात) must correctly parse 'District: Village1, Village2' format and import all entries. Ensure all four operations work without any IC0508, authorization, or mutation errors.",
+      "featureId": "feature-update-the-gallerysection-component-frontend-src-components-gallerysection-tsx-to-replace-the-existing-four-admin-meet-gallery-images-with-the-four-newly-uploaded-photos-from-the-september-21-2025-admin-meet-event-save-the-new-images-as-static-assets-at-frontend-public-assets-generated-with-filenames-gallery-admin-meet-1-png-gallery-admin-meet-2-png-gallery-admin-meet-3-png-gallery-admin-meet-4-png-display-them-in-a-responsive-image-grid-inside-an-event-card-with-the-title-21-2025-and-subtitle-retain-the-existing-section-heading-and-decorative-gold-divider-style-consistently-with-the-existing-maroon-gold-palette-and-card-based-layout",
+      "featureTitle": "Update the GallerySection component (frontend/src/components/GallerySection.tsx) to replace the existing four Admin Meet gallery images with the four newly uploaded photos from the September 21, 2025 Admin Meet event. Save the new images as static assets at frontend/public/assets/generated/ with filenames: gallery-admin-meet-1.png, gallery-admin-meet-2.png, gallery-admin-meet-3.png, gallery-admin-meet-4.png. Display them in a responsive image grid inside an event card with the title 'एडमिन पैनल मीटिंग – 21 सितंबर 2025' and subtitle 'मुंबरा (ठाणे), महाराष्ट्र, भारत'. Retain the existing section heading 'गैलेरी' and decorative gold divider. Style consistently with the existing maroon/gold palette and card-based layout.",
       "files": [
-        "frontend/src/components/AdminPanel.tsx"
+        "frontend/src/components/GallerySection.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -17,7 +17,7 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-58"
+        "REQ-62"
       ],
       "confidence": "high"
     }
