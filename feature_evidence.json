@@ -2,11 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-investigate-and-fix-the-villagessection-component-not-rendering-in-the-production-live-build-while-it-correctly-appears-in-the-draft-build-the-screenshots-confirm-1-in-the-live-tab-the-section-renders-but-shows-meaning-the-section-renders-but-district-data-added-in-draft-is-not-persisting-syncing-to-production-or-2-the-section-itself-is-missing-from-the-production-bundle-check-whether-the-issue-is-a-the-villagessection-component-is-included-in-app-tsx-but-the-production-canister-has-stale-empty-stable-state-districts-added-via-the-draft-environment-are-not-present-in-the-production-canister-b-a-build-bundle-difference-between-draft-and-production-that-causes-the-section-to-be-omitted-or-c-a-backend-stable-variable-migration-issue-where-the-production-canister-s-district-village-data-was-reset-on-upgrade-ensure-that-the-villagessection-is-present-and-rendered-in-app-tsx-for-the-production-route-the-backend-stable-variables-for-districts-and-villages-are-correctly-preserved-across-canister-upgrades-using-stable-var-declarations-and-the-production-canister-s-data-is-not-silently-reset-after-the-fix-the-section-must-appear-on-the-live-site-with-the-same-district-village-data-visible-in-the-draft",
-      "featureTitle": "Investigate and fix the VillagesSection component not rendering in the production/live build while it correctly appears in the draft build. The screenshots confirm: (1) in the live tab, the 'हमसे जुड़े गाँव' section renders but shows 'अभी तक कोई जिला नहीं जोड़ा गया' — meaning the section renders but district data added in draft is not persisting/syncing to production; OR (2) the section itself is missing from the production bundle. Check whether the issue is: (a) the VillagesSection component is included in App.tsx but the production canister has stale/empty stable state (districts added via the draft environment are not present in the production canister), (b) a build/bundle difference between draft and production that causes the section to be omitted, or (c) a backend stable variable migration issue where the production canister's district/village data was reset on upgrade. Ensure that: the VillagesSection is present and rendered in App.tsx for the production route, the backend stable variables for districts and villages are correctly preserved across canister upgrades using stable var declarations, and the production canister's data is not silently reset. After the fix, the 'हमसे जुड़े गाँव' section must appear on the live site with the same district/village data visible in the draft.",
+      "featureId": "feature-after-fixing-the-canister-stopped-issue-perform-an-end-to-end-verification-of-the-admin-panel-villages-tab-1-manually-adding-a-district-via-the-form-must-succeed-show-a-success-toast-and-display-the-new-district-in-the-list-2-manually-adding-a-village-via-the-form-must-succeed-show-a-success-toast-and-display-the-village-under-the-correct-district-3-bulk-importing-districts-and-villages-via-excel-csv-file-upload-must-process-all-rows-without-errors-show-a-progress-indicator-and-display-a-summary-toast-on-completion-4-the-text-paste-bulk-import-must-correctly-parse-district-village1-village2-format-and-import-all-entries-ensure-all-four-operations-work-without-any-ic0508-authorization-or-mutation-errors",
+      "featureTitle": "After fixing the canister stopped issue, perform an end-to-end verification of the Admin Panel Villages tab: (1) Manually adding a district via the 'नया जिला जोड़ें' form must succeed, show a success toast, and display the new district in the list. (2) Manually adding a village via the 'नया गाँव जोड़ें' form must succeed, show a success toast, and display the village under the correct district. (3) Bulk importing districts and villages via Excel/CSV file upload must process all rows without errors, show a progress indicator, and display a summary toast on completion. (4) The text-paste bulk import (टेक्स्ट से आयात) must correctly parse 'District: Village1, Village2' format and import all entries. Ensure all four operations work without any IC0508, authorization, or mutation errors.",
       "files": [
-        "frontend/src/components/AdminPanel.tsx",
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/components/AdminPanel.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -18,7 +17,7 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-49"
+        "REQ-58"
       ],
       "confidence": "high"
     }

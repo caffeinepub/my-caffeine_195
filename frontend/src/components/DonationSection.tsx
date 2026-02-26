@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Heart, Loader2, Copy, Check, Building2, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { useAddDonation } from "@/hooks/useQueries";
+import { copyToClipboard } from "@/utils/clipboard";
 
 const presetAmounts = [101, 251, 501, 1001, 2501, 5001];
 
@@ -16,12 +17,12 @@ function CopyButton({ value, label }: { value: string; label: string }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
+    const success = await copyToClipboard(value);
+    if (success) {
       setCopied(true);
       toast.success(`${label} कॉपी हो गया!`);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } else {
       toast.error("कॉपी नहीं हो सका। कृपया मैन्युअली कॉपी करें।");
     }
   };

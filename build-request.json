@@ -1,38 +1,63 @@
 {
   "kind": "build_request",
-  "title": "Fix VillagesSection not appearing in production (live) build",
+  "title": "Fix Canister Stopped Error Blocking District/Village Add Operations",
   "projectName": "Gausiya Ashrafia Foundation",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-49",
-      "text": "Investigate and fix the VillagesSection component not rendering in the production/live build while it correctly appears in the draft build. The screenshots confirm: (1) in the live tab, the 'हमसे जुड़े गाँव' section renders but shows 'अभी तक कोई जिला नहीं जोड़ा गया' — meaning the section renders but district data added in draft is not persisting/syncing to production; OR (2) the section itself is missing from the production bundle. Check whether the issue is: (a) the VillagesSection component is included in App.tsx but the production canister has stale/empty stable state (districts added via the draft environment are not present in the production canister), (b) a build/bundle difference between draft and production that causes the section to be omitted, or (c) a backend stable variable migration issue where the production canister's district/village data was reset on upgrade. Ensure that: the VillagesSection is present and rendered in App.tsx for the production route, the backend stable variables for districts and villages are correctly preserved across canister upgrades using stable var declarations, and the production canister's data is not silently reset. After the fix, the 'हमसे जुड़े गाँव' section must appear on the live site with the same district/village data visible in the draft.",
+      "id": "REQ-57",
+      "text": "The backend canister (oxgjl-hqaaa-aaaai-q6r4a-cai) is returning IC0508 error 'Canister is stopped', which causes all addDistrict, addVillage, deleteDistrict, and deleteVillage calls to fail with a replica rejection (Reject code 5). Investigate why the canister enters a stopped state and ensure the backend actor is always running and accepting calls. Review the backend main.mo for any explicit canister stop/shutdown logic, heartbeat errors, or upgrade hooks that may be halting the canister. Ensure the actor compiles cleanly without any trapping pre/post-upgrade hooks that would leave the canister stopped after a failed upgrade. Fix any such issues so the canister remains in a 'running' state and all district/village mutation calls succeed.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "The replica returned a rejection error: Request ID: 1a0fad928f8cb4d8d7ced9eb51871ca6bbc97f35ddf953feb8b68936527c5435 Reject code: 5 Reject text: Canister oxgjl-hqaaa-aaaai-q6r4a-cai is stopped Error code: IC0508"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The backend canister is in 'running' state and does not return IC0508 errors.",
+        "Calling addDistrict with a district name (e.g., 'जौनपुर') succeeds and returns a district ID.",
+        "Calling addVillage with a valid districtId and village name succeeds and returns a village ID.",
+        "No pre/post-upgrade hooks in main.mo trap or cause the canister to stop.",
+        "The canister remains running after redeployment/upgrade."
+      ]
+    },
+    {
+      "id": "REQ-58",
+      "text": "After fixing the canister stopped issue, perform an end-to-end verification of the Admin Panel Villages tab: (1) Manually adding a district via the 'नया जिला जोड़ें' form must succeed, show a success toast, and display the new district in the list. (2) Manually adding a village via the 'नया गाँव जोड़ें' form must succeed, show a success toast, and display the village under the correct district. (3) Bulk importing districts and villages via Excel/CSV file upload must process all rows without errors, show a progress indicator, and display a summary toast on completion. (4) The text-paste bulk import (टेक्स्ट से आयात) must correctly parse 'District: Village1, Village2' format and import all entries. Ensure all four operations work without any IC0508, authorization, or mutation errors.",
       "target": "both",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "हमसे जुड़े गांव ड्राफ्ट में तो दिख रहा है लेकिन लाइव में नही दिख रहा है"
+          "Error Persist , neither can add individual nor can add in bulk"
         ]
       },
       "acceptanceCriteria": [
-        "The 'हमसे जुड़े गाँव' (VillagesSection) is visible on the live/production site at the correct position between GovernmentSchemesSection and MembershipSection.",
-        "Districts and villages added via the Admin Panel in draft are available (or re-enterable) in production without data loss on canister upgrade.",
-        "Backend stable variables for districts and villages use `stable var` declarations so data survives canister upgrades.",
-        "The section heading, accordion district cards, and village chips all render correctly in the production build.",
-        "No regression in draft — the section continues to display correctly there as well."
+        "Adding a district individually via the form succeeds and the district appears in the list.",
+        "Adding a village individually via the form succeeds and the village appears under the correct district.",
+        "Uploading an Excel/CSV file with district-village rows processes all entries and shows a summary toast.",
+        "Text-paste bulk import correctly parses and imports district/village data.",
+        "No red error messages appear in the Villages tab after any of these operations.",
+        "Success toasts are shown for all successful add operations."
       ]
     }
   ],
   "constraints": [
-    "Do not change the VillagesSection UI design or behavior — only fix the production availability issue.",
-    "Backend stable variable declarations must not cause a breaking migration that wipes existing data."
+    "Do not change the frontend passcode authentication gate — it must remain as the sole admin authentication layer.",
+    "Do not add any new authorization/principal checks to addDistrict, addVillage, deleteDistrict, or deleteVillage in the backend.",
+    "All district/village backend functions must accept calls from any caller (anonymous or authenticated).",
+    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui."
   ],
   "nonGoals": [
-    "Adding new districts or villages as seed data.",
-    "Changing the VillagesSection visual design or accordion interaction.",
-    "Modifying any other section or component unrelated to this bug."
+    "Changing the visual design or layout of the Admin Panel.",
+    "Adding new tabs or features to the Admin Panel.",
+    "Modifying any frontend components other than what is necessary to fix the canister stopped error.",
+    "Changing the passcode authentication logic.",
+    "Modifying the Export (Excel/PDF) functionality."
   ],
   "imageRequirements": {
     "required": [],

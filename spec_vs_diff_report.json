@@ -1,49 +1,56 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T11:45:13.558Z",
-  "summary": "The diff addresses REQ-49 by: (1) adding stable var declarations for nextDistrictId and nextVillageId in backend/main.mo, (2) adding a migration.mo module, (3) confirming VillagesSection is present in App.tsx between GovernmentSchemes and Membership, and (4) adding aggressive refetch options to useGetDistricts and useGetVillagesByDistrict hooks. However, the actual districts and villages Maps are declared with let (non-stable), meaning map contents will be wiped on canister upgrade. Only the ID counters are stable, not the data itself.",
+  "generatedAt": "2026-02-26T13:46:04.631Z",
+  "summary": "The diff shows modifications to backend/main.mo and frontend/src/components/AdminPanel.tsx. However, the backend changes actually ADD authorization checks (admin-only guards) to addDistrict, addVillage, deleteDistrict, and deleteVillage — which directly violates the build request constraints. The root cause of IC0508 (canister stopped) is not addressed in the diff (no removal of trapping upgrade hooks, heartbeat errors, or shutdown logic). The frontend shows Internet Identity integration for write operations, but the constraints say not to add new authorization/principal checks and all functions must accept calls from any caller.",
   "missing_requirements": [
     {
-      "id": "REQ-49",
-      "requirement": "Backend stable variables for districts and villages use stable var declarations so data survives canister upgrades — the actual district and village map data must persist across upgrades.",
-      "reason": "In backend/main.mo, the districts and villages maps are declared with let (not stable var), meaning their contents are heap-allocated and will be wiped on canister upgrade. Only the ID counters nextDistrictId and nextVillageId are declared stable var. The actual district/village data will not survive upgrades, so the acceptance criteria requiring no data loss on canister upgrade is not met.",
+      "id": "REQ-57",
+      "requirement": "Investigate and fix why the canister enters a stopped state; ensure no pre/post-upgrade hooks trap or cause the canister to stop; remove any explicit canister stop/shutdown logic or heartbeat errors in main.mo.",
+      "reason": "The diff modifies main.mo but does not show removal of trapping upgrade hooks, heartbeat errors, or shutdown logic. There is no evidence that the IC0508 root cause (canister stopped state) was diagnosed or fixed — the diff only shows the current state of main.mo with authorization logic, not any fix to upgrade hooks or canister lifecycle issues.",
       "evidence": [
         "backend/main.mo"
       ]
     },
     {
-      "id": "REQ-49",
-      "requirement": "The production canister's district and village data must not be silently reset on upgrade.",
-      "reason": "Since the districts and villages maps are non-stable (let declarations), upgrading the production canister will reset all district and village data to empty, directly contradicting the requirement that data is not silently reset on upgrade.",
+      "id": "REQ-57",
+      "requirement": "All district/village backend functions (addDistrict, addVillage, deleteDistrict, deleteVillage) must accept calls from any caller (anonymous or authenticated) — no new authorization/principal checks may be added.",
+      "reason": "The diff shows addDistrict, addVillage, deleteDistrict, and deleteVillage all contain AccessControl.hasPermission admin checks that Runtime.trap on unauthorized callers, directly violating the constraint 'Do not add any new authorization/principal checks' and 'All district/village backend functions must accept calls from any caller'.",
       "evidence": [
         "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-58",
+      "requirement": "End-to-end verification that all four operations (individual district add, individual village add, Excel/CSV bulk import, text-paste bulk import) work without IC0508, authorization, or mutation errors.",
+      "reason": "Because the backend still has admin-only guards on mutation functions and the canister stopped root cause appears unaddressed, the acceptance criteria for REQ-58 cannot be met. The frontend AdminPanel.tsx gates write operations behind Internet Identity login (isIILoggedIn check), which means anonymous callers will be blocked both on the frontend and backend.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/components/AdminPanel.tsx"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "A migration.mo module was added that only passes through nextDistrictId and nextVillageId counter values, providing no actual data migration logic for district or village map contents.",
-      "reason": "The migration module was not requested in the build request and does not solve the data persistence problem since the maps themselves are non-stable. It adds complexity without fulfilling the stated requirement.",
-      "evidence": [
-        "backend/migration.mo"
-      ]
-    },
-    {
-      "description": "A bulk import modal with textarea-based text parsing was added to AdminPanel, allowing batch import of districts and villages via a formatted text format.",
-      "reason": "The build request explicitly lists adding new districts or villages as seed data as a non-goal. No requirement requested a bulk import UI feature.",
+      "description": "Internet Identity (II) login/logout UI and isIILoggedIn guard added to AdminPanel for write operations",
+      "reason": "The build request constraints explicitly state 'Do not change the frontend passcode authentication gate — it must remain as the sole admin authentication layer' and 'Do not add any new authorization/principal checks to addDistrict, addVillage, deleteDistrict, or deleteVillage'. The diff adds II login buttons, handleIILogin/handleIILogout handlers, and blocks addDistrict/addVillage with isIILoggedIn checks, none of which were requested.",
       "evidence": [
         "frontend/src/components/AdminPanel.tsx"
       ]
+    },
+    {
+      "description": "Admin-only AccessControl authorization guards added to addDistrict, addVillage, deleteDistrict, and deleteVillage in the backend",
+      "reason": "The build request explicitly states 'Do not add any new authorization/principal checks to addDistrict, addVillage, deleteDistrict, or deleteVillage in the backend' and 'All district/village backend functions must accept calls from any caller (anonymous or authenticated)'. The diff adds Runtime.trap-based admin permission checks to all four functions.",
+      "evidence": [
+        "backend/main.mo"
+      ]
     }
   ],
-  "confidence": 0.82,
+  "confidence": 0.88,
   "changed_files": [
     "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
     "frontend/src/components/AdminPanel.tsx",
-    "frontend/src/hooks/useQueries.ts",
     "project_state.json"
   ]
 }

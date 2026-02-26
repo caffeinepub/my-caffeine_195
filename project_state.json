@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 45,
+  "projectStateVersion": 55,
   "summary": "गौसिया अशरफिया फाउंडेशन के लिए एक आकर्षक चैरिटेबल सोसाइटी ऐप बनाया जा रहा है। ऐप हिंदी में होगा और फाउंडेशन की गतिविधियों, दान, और सामाजिक कार्यों को प्रदर्शित करेगा। यूज़र ने एक नई कलर पैलेट (colorhunt.co/palette/6326269d5353bf8b67dacc96) अप्लाई करने का अनुरोध किया है।",
   "architectural_notes": [
     "App is in Hindi language targeting Indian audience for a charitable society named गौसिया अशरफिया फाउंडेशन",
@@ -12,10 +12,12 @@
     "Admin Panel > Villages Tab में District Add करने पर लाल रंग का error text दिखता है — district add नहीं हो रहा",
     "Admin Panel page has dark black background making all text invisible — likely a CSS/Tailwind class conflict or missing background color override on the admin route",
     "Admin Panel passcode 'admin1234' is not working — login gate rejecting correct passcode, needs investigation and fix",
-    "Admin Panel > Villages Tab में Manual Add और Bulk Add बटन क्लिक नहीं हो रहे — buttons are unresponsive/disabled",
     "Admin Panel > Villages Tab में गाँव जोड़ने पर error आ रहा है (Version 19 के बाद भी) — addVillage mutation failing",
     "Foundation name is incorrectly spelled somewhere on the UI (circled by user) — needs to be corrected to the proper spelling गौसिया अशरफिया फाउंडेशन",
-    "हमसे जुड़े गाँव (VillagesSection) ड्राफ्ट में दिख रहा है लेकिन लाइव/प्रोडक्शन में नहीं दिख रहा — production build में section missing है"
+    "हमसे जुड़े गाँव (VillagesSection) ड्राफ्ट में दिख रहा है लेकिन लाइव/प्रोडक्शन में नहीं दिख रहा — production build में section missing है",
+    "Admin Panel > Villages Tab में Bulk Export टैब/सेक्शन दिख नहीं रहा — Export to Excel और Export to PDF बटन absent हैं",
+    "Admin Panel > Villages Tab में Bulk Import (Excel/CSV अपलोड) काम नहीं कर रहा — file upload या processing में issue है",
+    "Admin Panel > Villages Tab में individual (Add District/Village) और Bulk Import दोनों काम नहीं कर रहे — Version 26 के बाद भी errors persist हैं"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -378,6 +380,70 @@
         "REQ-49"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-fix-the-copy-failed-error-shown-in-the-donationsection-when-the-user-taps-any-copy-to-clipboard-button-upi-id-account-name-account-no-ifsc-code-the-navigator-clipboard-writetext-api-may-not-be-available-in-certain-mobile-browsers-or-insecure-contexts-implement-a-fallback-copy-mechanism-using-document-execcommand-copy-with-a-temporary-textarea-element-when-navigator-clipboard-is-unavailable-or-throws-an-error-ensure-the-copy-buttons-on-upi-id-and-all-three-bank-detail-fields-account-name-account-no-ifsc-code-succeed-silently-and-show-a-success-toast-confirmation-on-mobile-browsers",
+      "title": "Fix the 'कॉपी नहीं हो सका। कृपया मैन्युअली कॉपी करें।' (Copy failed) error shown in the DonationSection when the user taps any copy-to-clipboard button (UPI ID, Account Name, Account No., IFSC Code). The `navigator.clipboard.writeText` API may not be available in certain mobile browsers or insecure contexts. Implement a fallback copy mechanism using `document.execCommand('copy')` with a temporary `<textarea>` element when `navigator.clipboard` is unavailable or throws an error. Ensure the copy buttons on UPI ID and all three bank detail fields (Account Name, Account No., IFSC Code) succeed silently and show a success toast confirmation on mobile browsers.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-unauthorized-only-admins-can-add-districts-error-shown-in-the-admin-panel-villages-tab-when-submitting-the-add-district-form-e-g-entering-and-clicking-the-backend-adddistrict-addvillage-deletedistrict-and-deletevillage-functions-must-have-their-caller-identity-admin-only-guard-completely-removed-so-they-accept-calls-from-any-caller-anonymous-or-authenticated-since-the-admin-panel-is-already-protected-by-the-frontend-passcode-gate-additionally-ensure-the-useadddistrict-and-useaddvillage-mutation-hooks-in-frontend-src-hooks-usequeries-ts-use-the-actor-instance-without-requiring-an-authenticated-internet-identity-remove-any-isadmin-or-internet-identity-login-check-inside-adminpanel-tsx-that-gates-these-form-submissions-after-the-fix-submitting-a-district-name-must-succeed-add-the-district-to-the-backend-invalidate-the-districts-query-show-a-success-toast-and-display-the-new-district-in-the-list",
+      "title": "Fix the 'जिला जोड़ने में समस्या हुई: Unauthorized: Only admins can add districts' error shown in the Admin Panel > Villages tab when submitting the Add District form (e.g., entering 'जौनपुर' and clicking '+ जोड़ें'). The backend `addDistrict`, `addVillage`, `deleteDistrict`, and `deleteVillage` functions must have their caller-identity / admin-only guard completely removed so they accept calls from any caller — anonymous or authenticated — since the Admin Panel is already protected by the frontend passcode gate. Additionally, ensure the `useAddDistrict` and `useAddVillage` mutation hooks in `frontend/src/hooks/useQueries.ts` use the actor instance without requiring an authenticated Internet Identity. Remove any `isAdmin` or Internet Identity login check inside `AdminPanel.tsx` that gates these form submissions. After the fix, submitting a district name must succeed, add the district to the backend, invalidate the districts query, show a success toast, and display the new district in the list.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-bulk-import-functionality-in-the-admin-panel-villages-tab-the-screenshot-shows-the-import-modal-has-a-text-paste-input-format-district-village1-village2-village3-and-an-0-button-that-shows-0-districts-even-after-pasting-valid-data-fix-the-parsing-logic-so-that-pasting-text-in-the-format-1-2-3-one-district-per-line-colon-separated-villages-comma-separated-correctly-parses-the-district-and-village-names-counts-them-updates-the-button-label-e-g-3-and-on-clicking-the-import-button-sequentially-calls-adddistrict-for-each-unique-district-and-addvillage-for-each-village-under-it-showing-a-progress-indicator-and-a-summary-toast-on-completion",
+      "title": "Fix the Bulk Import (बल्क डेटा आयात करें) functionality in the Admin Panel > Villages tab. The screenshot shows the import modal has a text-paste input (format: 'District: Village1, Village2, Village3') and an 'आयात करें (0 जिले)' button that shows 0 districts even after pasting valid data. Fix the parsing logic so that pasting text in the format 'जिला का नाम: गाँव1, गाँव2, गाँव3' (one district per line, colon-separated, villages comma-separated) correctly parses the district and village names, counts them, updates the button label (e.g., 'आयात करें (3 जिले)'), and on clicking the import button, sequentially calls addDistrict for each unique district and addVillage for each village under it, showing a progress indicator and a summary toast on completion.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-missing-export-section-to-the-admin-panel-villages-tab-frontend-src-components-adminpanel-tsx-the-export-section-should-contain-two-buttons-export-to-excel-excel-and-export-to-pdf-pdf-the-excel-export-should-produce-a-xlsx-file-with-columns-district-name-and-village-name-one-row-per-village-using-sheetjs-the-pdf-export-should-list-districts-as-headings-with-their-villages-as-an-indented-bullet-list-beneath-each-using-jspdf-both-exports-use-data-from-usegetdistricts-and-usegetvillagesbydistrict-name-the-files-villages-export-xlsx-and-villages-export-pdf-style-the-section-consistently-with-the-existing-maroon-gold-admin-panel-palette",
+      "title": "Add the missing Export section to the Admin Panel > Villages tab (frontend/src/components/AdminPanel.tsx). The export section should contain two buttons: 'Export to Excel' (Excel में निर्यात करें) and 'Export to PDF' (PDF में निर्यात करें). The Excel export should produce a .xlsx file with columns District Name and Village Name (one row per village), using SheetJS. The PDF export should list districts as headings with their villages as an indented bullet list beneath each, using jsPDF. Both exports use data from useGetDistricts and useGetVillagesByDistrict. Name the files 'villages-export.xlsx' and 'villages-export.pdf'. Style the section consistently with the existing maroon/gold Admin Panel palette.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-bulk-import-section-in-the-admin-panel-villages-tab-frontend-src-components-adminpanel-tsx-to-support-both-excel-xlsx-xls-and-csv-file-formats-currently-only-a-csv-button-exists-replace-it-with-a-single-file-input-that-accepts-xlsx-xls-and-csv-files-and-update-the-button-label-to-excel-csv-the-file-parsing-logic-must-handle-both-formats-use-sheetjs-xlsx-to-parse-xlsx-xls-files-reading-column-a-as-district-name-column-b-as-village-name-one-row-per-village-and-retain-the-existing-csv-parsing-logic-for-csv-files-the-rest-of-the-bulk-import-flow-sequential-adddistrict-addvillage-calls-progress-indicator-summary-toast-row-level-error-display-must-remain-unchanged",
+      "title": "Update the Bulk Import section in the Admin Panel > Villages tab (frontend/src/components/AdminPanel.tsx) to support both Excel (.xlsx, .xls) and CSV file formats. Currently only a 'बल्क आयात करें (CSV)' button exists — replace it with a single file input that accepts .xlsx, .xls, and .csv files, and update the button label to 'बल्क आयात करें (Excel / CSV)'. The file parsing logic must handle both formats: use SheetJS/xlsx to parse .xlsx/.xls files (reading Column A as District Name, Column B as Village Name, one row per village), and retain the existing CSV parsing logic for .csv files. The rest of the bulk import flow (sequential addDistrict/addVillage calls, progress indicator, summary toast, row-level error display) must remain unchanged.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-bulk-import-error-in-the-admin-panel-villages-tab-where-villages-fail-to-import-with-errors-the-root-cause-is-a-race-condition-villages-are-being-added-before-the-newly-created-district-is-confirmed-and-its-id-is-retrieved-from-the-backend-fix-the-bulk-import-flow-so-that-for-each-district-1-adddistrict-is-called-and-awaits-the-returned-district-id-2-only-after-the-district-id-is-confirmed-does-the-flow-proceed-to-call-addvillage-for-each-village-under-that-district-using-the-correct-districtid-ensure-sequential-async-processing-do-not-batch-or-parallelize-district-creation-with-village-creation-after-the-fix-a-bulk-import-containing-one-district-with-multiple-villages-must-successfully-add-the-district-and-all-its-villages-without-errors",
+      "title": "Fix the bulk import error in the Admin Panel > Villages tab where villages fail to import with 'जिला नहीं मिला' errors. The root cause is a race condition: villages are being added before the newly created district is confirmed and its ID is retrieved from the backend. Fix the bulk import flow so that for each district: (1) `addDistrict` is called and awaits the returned district ID, (2) only after the district ID is confirmed does the flow proceed to call `addVillage` for each village under that district using the correct districtId. Ensure sequential async processing — do not batch or parallelize district creation with village creation. After the fix, a bulk import containing one district with multiple villages must successfully add the district and all its villages without 'जिला नहीं मिला' errors.",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-redesign-the-admin-panel-frontend-src-components-adminpanel-tsx-with-an-attractive-fully-readable-ui-replace-any-dark-black-background-regions-with-explicit-light-backgrounds-using-the-maroon-gold-palette-specifically-1-set-the-page-root-background-to-a-warm-cream-off-white-e-g-bg-fdf6e3-or-bg-faf5eb-2-use-bg-white-or-bg-fff8f0-for-all-tab-panel-content-areas-and-cards-3-style-the-tab-bar-with-a-maroon-632626-background-and-gold-cream-dacc96-text-for-active-selected-tabs-inactive-tabs-in-a-lighter-maroon-tone-4-use-text-gray-900-or-text-3b1a1a-for-all-body-text-to-ensure-high-contrast-on-light-backgrounds-5-style-section-headings-with-text-632626-primary-maroon-6-add-subtle-gold-dacc96-borders-and-dividers-between-sections-7-style-form-inputs-with-a-light-cream-background-maroon-border-on-focus-and-dark-text-8-style-data-tables-with-alternating-row-colors-white-fdf6e3-maroon-header-row-with-gold-text-and-subtle-borders-9-style-action-buttons-with-maroon-background-and-cream-gold-text-with-a-hover-state-in-deep-red-9d5353-10-ensure-the-passcode-login-gate-screen-also-uses-the-cream-maroon-palette-with-centered-card-layout-all-five-tabs-donations-memberships-assistance-requests-contact-inquiries-villages-must-be-fully-readable-and-visually-consistent",
+      "title": "Redesign the Admin Panel (frontend/src/components/AdminPanel.tsx) with an attractive, fully readable UI. Replace any dark/black background regions with explicit light backgrounds using the maroon/gold palette. Specifically: (1) Set the page root background to a warm cream/off-white (e.g., `bg-[#fdf6e3]` or `bg-[#faf5eb]`), (2) Use `bg-white` or `bg-[#fff8f0]` for all tab panel content areas and cards, (3) Style the tab bar with a maroon (`#632626`) background and gold/cream (`#dacc96`) text for active/selected tabs, inactive tabs in a lighter maroon tone, (4) Use `text-gray-900` or `text-[#3b1a1a]` for all body text to ensure high contrast on light backgrounds, (5) Style section headings with `text-[#632626]` (primary maroon), (6) Add subtle gold (`#dacc96`) borders and dividers between sections, (7) Style form inputs with a light cream background, maroon border on focus, and dark text, (8) Style data tables with alternating row colors (white / `#fdf6e3`), maroon header row with gold text, and subtle borders, (9) Style action buttons with maroon background and cream/gold text, with a hover state in deep red (`#9d5353`), (10) Ensure the passcode login gate screen also uses the cream/maroon palette with centered card layout. All five tabs (Donations, Memberships, Assistance Requests, Contact Inquiries, Villages) must be fully readable and visually consistent.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-after-fixing-the-canister-stopped-issue-perform-an-end-to-end-verification-of-the-admin-panel-villages-tab-1-manually-adding-a-district-via-the-form-must-succeed-show-a-success-toast-and-display-the-new-district-in-the-list-2-manually-adding-a-village-via-the-form-must-succeed-show-a-success-toast-and-display-the-village-under-the-correct-district-3-bulk-importing-districts-and-villages-via-excel-csv-file-upload-must-process-all-rows-without-errors-show-a-progress-indicator-and-display-a-summary-toast-on-completion-4-the-text-paste-bulk-import-must-correctly-parse-district-village1-village2-format-and-import-all-entries-ensure-all-four-operations-work-without-any-ic0508-authorization-or-mutation-errors",
+      "title": "After fixing the canister stopped issue, perform an end-to-end verification of the Admin Panel Villages tab: (1) Manually adding a district via the 'नया जिला जोड़ें' form must succeed, show a success toast, and display the new district in the list. (2) Manually adding a village via the 'नया गाँव जोड़ें' form must succeed, show a success toast, and display the village under the correct district. (3) Bulk importing districts and villages via Excel/CSV file upload must process all rows without errors, show a progress indicator, and display a summary toast on completion. (4) The text-paste bulk import (टेक्स्ट से आयात) must correctly parse 'District: Village1, Village2' format and import all entries. Ensure all four operations work without any IC0508, authorization, or mutation errors.",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -561,6 +627,20 @@
       "id": "AR-32",
       "summary": "Admin panel में password reset करने का option जोड़ें — admin passcode बदलने की सुविधा",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Bulk Import में Excel (.xlsx/.xls) और CSV दोनों फाइल फॉर्मेट का ऑप्शन दें — Admin Panel > Villages Tab में",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "The backend canister (oxgjl-hqaaa-aaaai-q6r4a-cai) is returning IC0508 error 'Canister is stopped', which causes all addDistrict, addVillage, deleteDistrict, and deleteVillage calls to fail with a replica rejection (Reject code 5). Investigate why the canister enters a stopped state and ensure the backend actor is always running and accepting calls. Review the backend main.mo for any explicit canister stop/shutdown logic, heartbeat errors, or upgrade hooks that may be halting the canister. Ensure the actor compiles cleanly without any trapping pre/post-upgrade hooks that would leave the canister stopped after a failed upgrade. Fix any such issues so the canister remains in a 'running' state and all district/village mutation calls succeed.",
+      "reqIds": [
+        "REQ-57"
+      ],
       "status": "pending"
     }
   ],

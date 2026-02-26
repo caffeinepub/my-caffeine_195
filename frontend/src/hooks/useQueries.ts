@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import { toast } from 'sonner';
 import { ExternalBlob } from '../backend';
+import type { District, Village } from '../backend';
 
 // ---- Local inline types for stubbed backend methods ----
 
@@ -165,29 +166,34 @@ export function useAddContactInquiry() {
 }
 
 export function useGetFoundationInfo() {
-  return useQuery<FoundationInfo>({
+  return useQuery<FoundationInfo | null>({
     queryKey: ['foundationInfo'],
-    queryFn: async () => ({
-      description: '',
-      email: '',
-      address: '',
-      phone: '',
-      socialMedia: [],
-    }),
+    queryFn: async () => null,
   });
 }
 
-// ---- District & Village hooks (live backend) ----
+export function useUpdateFoundationInfo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (_params: FoundationInfo) => {
+      return;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['foundationInfo'] });
+    },
+  });
+}
+
+// ---- District & Village hooks — use real backend, no auth required ----
 
 export function useGetDistricts() {
   const { actor, isFetching } = useActor();
 
-  return useQuery({
+  return useQuery<District[]>({
     queryKey: ['districts'],
     queryFn: async () => {
       if (!actor) return [];
-      const result = await actor.getDistricts();
-      return result;
+      return actor.getDistricts();
     },
     enabled: !!actor && !isFetching,
     staleTime: 0,
@@ -198,58 +204,52 @@ export function useGetDistricts() {
   });
 }
 
-export function useGetVillagesByDistrict(districtId: bigint) {
+export function useGetVillagesByDistrict(districtId: bigint | null) {
   const { actor, isFetching } = useActor();
 
-  return useQuery({
-    queryKey: ['villages', districtId.toString()],
+  return useQuery<Village[]>({
+    queryKey: ['villages', districtId?.toString()],
     queryFn: async () => {
-      if (!actor) return [];
+      if (!actor || districtId === null) return [];
       return actor.getVillagesByDistrict(districtId);
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && !isFetching && districtId !== null,
     staleTime: 0,
     refetchOnMount: true,
+    refetchOnWindowFocus: true,
     retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 10000),
   });
 }
 
 export function useAddDistrict() {
-  const { actor, isFetching } = useActor();
+  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (name: string) => {
-      if (!actor || isFetching) throw new Error('कनेक्शन तैयार नहीं है — कृपया कुछ सेकंड बाद पुनः प्रयास करें');
-      const trimmed = name.trim();
-      if (!trimmed) throw new Error('जिले का नाम खाली नहीं हो सकता');
-      return actor.addDistrict(trimmed);
+    mutationFn: async (name: string): Promise<bigint> => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.addDistrict(name);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['districts'] });
       toast.success('जिला सफलतापूर्वक जोड़ा गया!');
     },
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error);
-      if (message.includes('तैयार नहीं') || message.includes('not available')) {
-        toast.error('कनेक्शन तैयार नहीं है। कृपया कुछ सेकंड बाद पुनः प्रयास करें।');
-      } else {
-        toast.error(`जिला जोड़ने में समस्या हुई: ${message}`);
-      }
+      const msg = error instanceof Error ? error.message : String(error);
+      toast.error(`जिला जोड़ने में समस्या हुई: ${msg}`);
     },
   });
 }
 
 export function useAddVillage() {
-  const { actor, isFetching } = useActor();
+  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ districtId, villageName }: { districtId: bigint; villageName: string }) => {
-      if (!actor || isFetching) throw new Error('कनेक्शन तैयार नहीं है — कृपया कुछ सेकंड बाद पुनः प्रयास करें');
-      const trimmed = villageName.trim();
-      if (!trimmed) throw new Error('गाँव का नाम खाली नहीं हो सकता');
-      return actor.addVillage(districtId, trimmed);
+    mutationFn: async ({ districtId, villageName }: { districtId: bigint; villageName: string }): Promise<bigint> => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.addVillage(districtId, villageName);
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['districts'] });
@@ -257,23 +257,19 @@ export function useAddVillage() {
       toast.success('गाँव सफलतापूर्वक जोड़ा गया!');
     },
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error);
-      if (message.includes('तैयार नहीं') || message.includes('not available')) {
-        toast.error('कनेक्शन तैयार नहीं है। कृपया कुछ सेकंड बाद पुनः प्रयास करें।');
-      } else {
-        toast.error(`गाँव जोड़ने में समस्या हुई: ${message}`);
-      }
+      const msg = error instanceof Error ? error.message : String(error);
+      toast.error(`गाँव जोड़ने में समस्या हुई: ${msg}`);
     },
   });
 }
 
 export function useDeleteDistrict() {
-  const { actor, isFetching } = useActor();
+  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (districtId: bigint) => {
-      if (!actor || isFetching) throw new Error('कनेक्शन तैयार नहीं है — कृपया कुछ सेकंड बाद पुनः प्रयास करें');
+    mutationFn: async (districtId: bigint): Promise<boolean> => {
+      if (!actor) throw new Error('Actor not available');
       return actor.deleteDistrict(districtId);
     },
     onSuccess: () => {
@@ -281,19 +277,19 @@ export function useDeleteDistrict() {
       toast.success('जिला हटा दिया गया।');
     },
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error);
-      toast.error(`जिला हटाने में समस्या हुई: ${message}`);
+      const msg = error instanceof Error ? error.message : String(error);
+      toast.error(`जिला हटाने में समस्या हुई: ${msg}`);
     },
   });
 }
 
 export function useDeleteVillage() {
-  const { actor, isFetching } = useActor();
+  const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (villageId: bigint) => {
-      if (!actor || isFetching) throw new Error('कनेक्शन तैयार नहीं है — कृपया कुछ सेकंड बाद पुनः प्रयास करें');
+    mutationFn: async (villageId: bigint): Promise<boolean> => {
+      if (!actor) throw new Error('Actor not available');
       return actor.deleteVillage(villageId);
     },
     onSuccess: () => {
@@ -301,21 +297,8 @@ export function useDeleteVillage() {
       toast.success('गाँव हटा दिया गया।');
     },
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error);
-      toast.error(`गाँव हटाने में समस्या हुई: ${message}`);
+      const msg = error instanceof Error ? error.message : String(error);
+      toast.error(`गाँव हटाने में समस्या हुई: ${msg}`);
     },
-  });
-}
-
-export function useIsCallerAdmin() {
-  const { actor, isFetching } = useActor();
-
-  return useQuery<boolean>({
-    queryKey: ['isCallerAdmin'],
-    queryFn: async () => {
-      if (!actor) return false;
-      return actor.isCallerAdmin();
-    },
-    enabled: !!actor && !isFetching,
   });
 }

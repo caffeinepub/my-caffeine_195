@@ -1,38 +1,34 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix VillagesSection data persistence in production build",
+  "title": "Fix Canister Stopped Error Blocking District/Village Add Operations",
   "requirements": [
     {
-      "id": "REQ-49",
-      "summary": "Ensure VillagesSection component renders with district and village data in the production build by verifying component wiring in App.tsx and ensuring the frontend correctly fetches and displays backend district data",
+      "id": "REQ-58",
+      "summary": "Perform end-to-end verification of Admin Panel Villages tab after canister fix, ensuring all district/village add operations (individual forms, Excel/CSV bulk import, text-paste bulk import) work without IC0508, authorization, or mutation errors",
       "acceptanceCriteria": [
-        "The 'हमसे जुड़े गाँव' (VillagesSection) is visible on the live/production site at the correct position between GovernmentSchemesSection and MembershipSection.",
-        "Districts and villages added via the Admin Panel in draft are available (or re-enterable) in production without data loss on canister upgrade.",
-        "Backend stable variables for districts and villages use `stable var` declarations so data survives canister upgrades.",
-        "The section heading, accordion district cards, and village chips all render correctly in the production build.",
-        "No regression in draft — the section continues to display correctly there as well."
+        "Adding a district individually via the form succeeds and the district appears in the list.",
+        "Adding a village individually via the form succeeds and the village appears under the correct district.",
+        "Uploading an Excel/CSV file with district-village rows processes all entries and shows a summary toast.",
+        "Text-paste bulk import correctly parses and imports district/village data.",
+        "No red error messages appear in the Villages tab after any of these operations.",
+        "Success toasts are shown for all successful add operations."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/components/AdminPanel.tsx",
           "operation": "modify",
-          "description": "Verify that VillagesSection is imported and rendered in the correct position in the homepage section stack (between GovernmentSchemesSection and MembershipSection). Ensure there are no conditional rendering statements that would prevent VillagesSection from appearing in production. Confirm the component is rendered on the default route (non-admin routes)."
-        },
-        {
-          "path": "frontend/src/components/VillagesSection.tsx",
-          "operation": "modify",
-          "description": "Review the component to ensure it correctly handles empty state when no districts are available. Verify that the component uses the useGetDistricts hook correctly and that the empty state message 'अभी तक कोई जिला नहीं जोड़ा गया' is only shown when the backend returns an empty array (not when loading or on error). Add error handling for backend failures and ensure loading states are properly managed. Confirm that district expansion correctly triggers useGetVillagesByDistrict for lazy-loading villages."
+          "description": "Review and enhance the Villages tab UI to ensure all four district/village add operations (individual district form, individual village form, Excel/CSV bulk import, text-paste bulk import) properly invoke the backend addDistrict and addVillage methods from the actor. Ensure all mutation hooks from useQueries.ts are correctly wired with proper error handling that catches IC0508 canister stopped errors and displays user-friendly error toasts. Add success toast notifications for all successful add operations. Verify that the district dropdown in the 'नया गाँव जोड़ें' form is populated with fresh district data after a district is added. Ensure the Excel/CSV file upload processes all rows sequentially, shows a progress indicator during bulk import, and displays a summary toast with the count of successfully imported districts and villages. Verify that the text-paste bulk import (टेक्स्ट से आयात) correctly parses 'District: Village1, Village2' format and calls addDistrict/addVillage for each entry. After any successful add operation, invalidate the 'districts' query key to refresh the displayed list. Do not modify the passcode authentication gate or add new authorization checks."
         },
         {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Ensure useGetDistricts correctly calls actor.getDistricts() and returns the full array of District objects with proper TypeScript typing. Verify that useGetVillagesByDistrict correctly fetches villages for a given districtId using actor.getVillagesByDistrict(districtId). Ensure both hooks have proper error handling, retry logic, and React Query configuration (queryKey, enabled flags). Confirm that these hooks are not no-ops and actually invoke the backend methods defined in backend.d.ts."
+          "description": "Review and update the mutation hooks for addDistrict, addVillage, deleteDistrict, and deleteVillage to ensure they correctly call the backend actor methods defined in backend.d.ts (addDistrict(name: string): Promise<bigint>, addVillage(districtId: bigint, villageName: string): Promise<bigint>, deleteDistrict(districtId: bigint): Promise<boolean>, deleteVillage(villageId: bigint): Promise<boolean>). Replace any stubbed/mock implementations with actual actor calls. Ensure all mutation hooks include onSuccess callbacks that invalidate the 'districts' query to trigger a refetch and update the UI. Add proper error handling that catches replica rejection errors (including IC0508 canister stopped errors) and surfaces them to the UI via the mutation's onError callback or error state. Verify that bulk import operations (Excel/CSV and text-paste) use these mutation hooks in a loop or batch, tracking progress and aggregating results for the summary toast. Do not add any authorization or principal checks in these hooks; all backend functions must accept calls from any caller."
         },
         {
-          "path": "frontend/src/components/AdminPanel.tsx",
+          "path": "frontend/src/components/VillagesSection.tsx",
           "operation": "modify",
-          "description": "Review the districts/villages management tab to ensure that addDistrict and addVillage mutations correctly call the backend methods and invalidate the relevant React Query cache keys (['districts'], ['villages', districtId]). Verify that after adding a district or village in the admin panel, the changes are immediately reflected in the VillagesSection on the public site. Ensure that deleteDistrict and deleteVillage also invalidate the correct query keys."
+          "description": "Review the public-facing villages accordion component to ensure it correctly fetches and displays districts and villages using the useGetDistricts and useGetVillagesByDistrict query hooks from useQueries.ts. Verify that the component handles loading states with skeletons and error states with user-friendly messages. Ensure the accordion expands to load villages for a district using the backend getVillagesByDistrict method. This component is read-only and should not include any add/edit/delete UI. Do not modify any authentication or authorization logic."
         }
       ]
     }
