@@ -1,13 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import { toast } from 'sonner';
-import type { District, Village, GalleryEvent, GalleryImage } from '../backend';
+import { ApplicationStatus, MembershipType } from '../backend';
 
-// ---- Districts & Villages ----
-
+// ---- Districts ----
 export function useGetDistricts() {
   const { actor, isFetching } = useActor();
-  return useQuery<District[]>({
+  return useQuery({
     queryKey: ['districts'],
     queryFn: async () => {
       if (!actor) return [];
@@ -29,26 +28,26 @@ export function useAddDistrict() {
       queryClient.invalidateQueries({ queryKey: ['districts'] });
       toast.success('जिला सफलतापूर्वक जोड़ा गया');
     },
-    onError: () => {
-      toast.error('जिला जोड़ने में त्रुटि हुई');
+    onError: (error: Error) => {
+      toast.error('जिला जोड़ने में त्रुटि: ' + error.message);
     },
   });
 }
 
-export function useAddVillage() {
+export function useEditDistrict() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ districtId, villageName }: { districtId: bigint; villageName: string }) => {
+    mutationFn: async ({ id, name }: { id: bigint; name: string }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.addVillage(districtId, villageName);
+      return actor.editDistrict(id, name);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['districts'] });
-      toast.success('गाँव सफलतापूर्वक जोड़ा गया');
+      toast.success('जिला सफलतापूर्वक अपडेट किया गया');
     },
-    onError: () => {
-      toast.error('गाँव जोड़ने में त्रुटि हुई');
+    onError: (error: Error) => {
+      toast.error('जिला अपडेट करने में त्रुटि: ' + error.message);
     },
   });
 }
@@ -57,41 +56,24 @@ export function useDeleteDistrict() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (districtId: bigint) => {
+    mutationFn: async (id: bigint) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.deleteDistrict(districtId);
+      return actor.deleteDistrict(id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['districts'] });
       toast.success('जिला सफलतापूर्वक हटाया गया');
     },
-    onError: () => {
-      toast.error('जिला हटाने में त्रुटि हुई');
+    onError: (error: Error) => {
+      toast.error('जिला हटाने में त्रुटि: ' + error.message);
     },
   });
 }
 
-export function useDeleteVillage() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (villageId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.deleteVillage(villageId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['districts'] });
-      toast.success('गाँव सफलतापूर्वक हटाया गया');
-    },
-    onError: () => {
-      toast.error('गाँव हटाने में त्रुटि हुई');
-    },
-  });
-}
-
+// ---- Villages ----
 export function useGetVillagesByDistrict(districtId: bigint | null) {
   const { actor, isFetching } = useActor();
-  return useQuery<Village[]>({
+  return useQuery({
     queryKey: ['villages', districtId?.toString()],
     queryFn: async () => {
       if (!actor || districtId === null) return [];
@@ -101,258 +83,289 @@ export function useGetVillagesByDistrict(districtId: bigint | null) {
   });
 }
 
-// ---- Donations ----
-
-export function useGetDonations() {
-  const { actor, isFetching } = useActor();
-  return useQuery({
-    queryKey: ['donations'],
-    queryFn: async () => {
-      if (!actor) return [];
-      // @ts-ignore
-      if (typeof actor.getDonations === 'function') return actor.getDonations();
-      return [];
-    },
-    enabled: !!actor && !isFetching,
-  });
-}
-
-export function useAddDonation() {
+export function useAddVillage() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { name: string; amount: string; message: string; upiTransactionId: string }) => {
+    mutationFn: async ({ districtId, name }: { districtId: bigint; name: string }) => {
       if (!actor) throw new Error('Actor not available');
-      // @ts-ignore
-      return actor.addDonation(data.name, data.amount, data.message, data.upiTransactionId);
+      return actor.addVillage(districtId, name);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['donations'] });
-      toast.success('दान की जानकारी सफलतापूर्वक दर्ज की गई');
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['villages', variables.districtId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['districts'] });
+      toast.success('गाँव सफलतापूर्वक जोड़ा गया');
     },
-    onError: () => {
-      toast.error('दान दर्ज करने में त्रुटि हुई');
+    onError: (error: Error) => {
+      toast.error('गाँव जोड़ने में त्रुटि: ' + error.message);
     },
   });
 }
 
-// ---- Memberships ----
-
-export function useGetMemberships() {
-  const { actor, isFetching } = useActor();
-  return useQuery({
-    queryKey: ['memberships'],
-    queryFn: async () => {
-      if (!actor) return [];
-      // @ts-ignore
-      if (typeof actor.getMemberships === 'function') return actor.getMemberships();
-      return [];
-    },
-    enabled: !!actor && !isFetching,
-  });
-}
-
-export function useAddMembership() {
+export function useEditVillage() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: {
-      fullName: string;
-      mobile: string;
+    mutationFn: async ({ id, name, districtId }: { id: bigint; name: string; districtId: bigint }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.editVillage(id, name);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['villages', variables.districtId.toString()] });
+      toast.success('गाँव सफलतापूर्वक अपडेट किया गया');
+    },
+    onError: (error: Error) => {
+      toast.error('गाँव अपडेट करने में त्रुटि: ' + error.message);
+    },
+  });
+}
+
+export function useDeleteVillage() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, districtId }: { id: bigint; districtId: bigint }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.deleteVillage(id);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['villages', variables.districtId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['districts'] });
+      toast.success('गाँव सफलतापूर्वक हटाया गया');
+    },
+    onError: (error: Error) => {
+      toast.error('गाँव हटाने में त्रुटि: ' + error.message);
+    },
+  });
+}
+
+// ---- Contact Inquiry ----
+export function useAddContactInquiry() {
+  const { actor } = useActor();
+  return useMutation({
+    mutationFn: async ({
+      name,
+      email,
+      phone,
+      message,
+    }: {
+      name: string;
       email: string;
-      city: string;
-      aadhaar: string;
-      addressProof: string;
-      identityProof: string;
+      phone: string;
+      message: string;
     }) => {
       if (!actor) throw new Error('Actor not available');
-      // @ts-ignore
-      return actor.addMembership(
-        data.fullName,
-        data.mobile,
-        data.email,
-        data.city,
-        data.aadhaar,
-        data.addressProof,
-        data.identityProof
-      );
+      return actor.addContactInquiry(name, email, phone, message);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['memberships'] });
-      toast.success('सदस्यता आवेदन सफलतापूर्वक दर्ज किया गया');
+      toast.success('आपका संदेश सफलतापूर्वक भेजा गया! हम जल्द संपर्क करेंगे।');
     },
-    onError: () => {
-      toast.error('सदस्यता दर्ज करने में त्रुटि हुई');
+    onError: (error: Error) => {
+      toast.error('संदेश भेजने में त्रुटि: ' + error.message);
     },
   });
 }
 
-// ---- Assistance Requests ----
-
-export function useGetAssistanceRequests() {
-  const { actor, isFetching } = useActor();
-  return useQuery({
-    queryKey: ['assistanceRequests'],
-    queryFn: async () => {
-      if (!actor) return [];
-      // @ts-ignore
-      if (typeof actor.getAssistanceRequests === 'function') return actor.getAssistanceRequests();
-      return [];
-    },
-    enabled: !!actor && !isFetching,
-  });
-}
-
+// ---- Assistance Request ----
 export function useAddAssistanceRequest() {
+  const { actor } = useActor();
+  return useMutation({
+    mutationFn: async ({
+      name,
+      mobile,
+      address,
+      requestType,
+      description,
+    }: {
+      name: string;
+      mobile: string;
+      address: string;
+      requestType: string;
+      description: string;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.addAssistanceRequest(name, mobile, address, requestType, description);
+    },
+    onSuccess: () => {
+      toast.success('आपकी सहायता अनुरोध सफलतापूर्वक भेजी गई!');
+    },
+    onError: (error: Error) => {
+      toast.error('अनुरोध भेजने में त्रुटि: ' + error.message);
+    },
+  });
+}
+
+// ---- Donation Intent ----
+export function useAddDonationIntent() {
+  const { actor } = useActor();
+  return useMutation({
+    mutationFn: async ({
+      name,
+      email,
+      amount,
+      message,
+    }: {
+      name: string;
+      email: string;
+      amount: string;
+      message: string;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.addDonationIntent(name, email, amount, message);
+    },
+    onSuccess: () => {
+      toast.success('आपकी दान जानकारी सफलतापूर्वक दर्ज की गई! जज़ाकल्लाह खैर।');
+    },
+    onError: (error: Error) => {
+      toast.error('दान जानकारी दर्ज करने में त्रुटि: ' + error.message);
+    },
+  });
+}
+
+// ---- Membership Application ----
+export function useAddMembershipApplication() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { fullName: string; mobile: string; city: string; assistanceType: string }) => {
+    mutationFn: async ({
+      name,
+      phone,
+      email,
+      address,
+      membershipType,
+      paymentConfirmed,
+    }: {
+      name: string;
+      phone: string;
+      email: string;
+      address: string;
+      membershipType: MembershipType;
+      paymentConfirmed: boolean;
+    }) => {
       if (!actor) throw new Error('Actor not available');
-      // @ts-ignore
-      return actor.addAssistanceRequest(data.fullName, data.mobile, data.city, data.assistanceType);
+      return actor.addMembershipApplication(name, phone, email, address, membershipType, paymentConfirmed);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['assistanceRequests'] });
-      toast.success('सहायता अनुरोध सफलतापूर्वक दर्ज किया गया');
+      queryClient.invalidateQueries({ queryKey: ['membershipApplications'] });
+      toast.success('सदस्यता आवेदन सफलतापूर्वक जमा किया गया! हम जल्द संपर्क करेंगे।');
     },
-    onError: () => {
-      toast.error('सहायता अनुरोध दर्ज करने में त्रुटि हुई');
+    onError: (error: Error) => {
+      toast.error('आवेदन जमा करने में त्रुटि: ' + error.message);
     },
   });
 }
 
-// ---- Contact Inquiries ----
+export function useListMembershipApplications(statusFilter?: ApplicationStatus | null) {
+  const { actor, isFetching } = useActor();
+  return useQuery({
+    queryKey: ['membershipApplications', statusFilter ?? 'all'],
+    queryFn: async () => {
+      if (!actor) return [];
+      try {
+        return await actor.listMembershipApplications(statusFilter ?? null);
+      } catch (e: any) {
+        if (e?.message?.includes('Unauthorized')) {
+          throw new Error('Admin access required. Please ensure you are logged in as admin.');
+        }
+        throw e;
+      }
+    },
+    enabled: !!actor && !isFetching,
+    retry: false,
+  });
+}
 
-export function useGetContactInquiries() {
+export function useUpdateMembershipStatus() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: bigint; status: ApplicationStatus }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.updateApplicationStatus(id, status);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['membershipApplications'] });
+      toast.success('आवेदन स्थिति सफलतापूर्वक अपडेट की गई');
+    },
+    onError: (error: Error) => {
+      toast.error('स्थिति अपडेट करने में त्रुटि: ' + error.message);
+    },
+  });
+}
+
+// ---- Admin Password ----
+export function useVerifyAdminPassword() {
+  const { actor } = useActor();
+  return useMutation({
+    mutationFn: async (password: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.verifyAdminPassword(password);
+    },
+    onError: (error: Error) => {
+      toast.error('पासवर्ड सत्यापन में त्रुटि: ' + error.message);
+    },
+  });
+}
+
+// ---- Admin: List Donation Intents ----
+export function useListDonationIntents() {
+  const { actor, isFetching } = useActor();
+  return useQuery({
+    queryKey: ['donationIntents'],
+    queryFn: async () => {
+      if (!actor) return [];
+      try {
+        return await actor.listDonationIntents();
+      } catch (e: any) {
+        if (e?.message?.includes('Unauthorized')) {
+          throw new Error('Admin access required.');
+        }
+        throw e;
+      }
+    },
+    enabled: !!actor && !isFetching,
+    retry: false,
+  });
+}
+
+// ---- Admin: List Contact Inquiries ----
+export function useListContactInquiries() {
   const { actor, isFetching } = useActor();
   return useQuery({
     queryKey: ['contactInquiries'],
     queryFn: async () => {
       if (!actor) return [];
-      // @ts-ignore
-      if (typeof actor.getContactInquiries === 'function') return actor.getContactInquiries();
-      return [];
+      try {
+        return await actor.listContactInquiries();
+      } catch (e: any) {
+        if (e?.message?.includes('Unauthorized')) {
+          throw new Error('Admin access required.');
+        }
+        throw e;
+      }
     },
     enabled: !!actor && !isFetching,
+    retry: false,
   });
 }
 
-export function useAddContactInquiry() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (data: { name: string; email: string; mobile: string; message: string }) => {
-      if (!actor) throw new Error('Actor not available');
-      // @ts-ignore
-      return actor.addContactInquiry(data.name, data.email, data.mobile, data.message);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contactInquiries'] });
-      toast.success('संदेश सफलतापूर्वक भेजा गया');
-    },
-    onError: () => {
-      toast.error('संदेश भेजने में त्रुटि हुई');
-    },
-  });
-}
-
-// ---- Gallery ----
-
-export function useGetGalleryEvents() {
+// ---- Admin: List Assistance Requests ----
+export function useListAssistanceRequests() {
   const { actor, isFetching } = useActor();
-  return useQuery<GalleryEvent[]>({
-    queryKey: ['galleryEvents'],
+  return useQuery({
+    queryKey: ['assistanceRequests'],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getGalleryEvents();
+      try {
+        return await actor.listAssistanceRequests();
+      } catch (e: any) {
+        if (e?.message?.includes('Unauthorized')) {
+          throw new Error('Admin access required.');
+        }
+        throw e;
+      }
     },
     enabled: !!actor && !isFetching,
-  });
-}
-
-export function useAddGalleryEvent() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ title, subtitle }: { title: string; subtitle: string }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.addGalleryEvent(title, subtitle);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['galleryEvents'] });
-      toast.success('गैलरी इवेंट सफलतापूर्वक जोड़ा गया');
-    },
-    onError: () => {
-      toast.error('गैलरी इवेंट जोड़ने में त्रुटि हुई');
-    },
-  });
-}
-
-export function useDeleteGalleryEvent() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (eventId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.deleteGalleryEvent(eventId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['galleryEvents'] });
-      toast.success('गैलरी इवेंट सफलतापूर्वक हटाया गया');
-    },
-    onError: () => {
-      toast.error('गैलरी इवेंट हटाने में त्रुटि हुई');
-    },
-  });
-}
-
-export function useGetGalleryImagesByEvent(eventId: bigint | null) {
-  const { actor, isFetching } = useActor();
-  return useQuery<GalleryImage[]>({
-    queryKey: ['galleryImages', eventId?.toString()],
-    queryFn: async () => {
-      if (!actor || eventId === null) return [];
-      return actor.getGalleryImagesByEvent(eventId);
-    },
-    enabled: !!actor && !isFetching && eventId !== null,
-  });
-}
-
-export function useAddGalleryImage() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ eventId, imageData, caption }: { eventId: bigint; imageData: string; caption: string }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.addGalleryImage(eventId, imageData, caption);
-    },
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['galleryEvents'] });
-      queryClient.invalidateQueries({ queryKey: ['galleryImages', variables.eventId.toString()] });
-      toast.success('फोटो सफलतापूर्वक अपलोड की गई');
-    },
-    onError: () => {
-      toast.error('फोटो अपलोड करने में त्रुटि हुई');
-    },
-  });
-}
-
-export function useDeleteGalleryImage() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (imageId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.deleteGalleryImage(imageId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['galleryEvents'] });
-      queryClient.invalidateQueries({ queryKey: ['galleryImages'] });
-      toast.success('फोटो सफलतापूर्वक हटाई गई');
-    },
-    onError: () => {
-      toast.error('फोटो हटाने में त्रुटि हुई');
-    },
+    retry: false,
   });
 }

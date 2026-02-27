@@ -1,80 +1,18 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T16:43:27.177Z",
+  "generatedAt": "2026-02-27T13:03:24.396Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 12,
-    "implemented": 10,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-70",
-        "summary": "Create a new Admin Panel component at frontend/src/components/AdminPanel.tsx with a passcode login gate using the default passcode 'damin1234' (stored in localStorage under key 'gaf_admin_passcode', falling back to 'damin1234' if no stored value). The login gate must trim whitespace and use strict string equality. Style the login gate with a centered card layout using the cream/maroon palette (bg-[#fdf6e3] page, bg-white card, maroon border, maroon button).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/AdminPanel.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/AdminPanel.tsx"
-        ]
-      },
-      {
-        "id": "REQ-71",
-        "summary": "Add a backend Motoko data model and API for managing gallery events. Each GalleryEvent record should have: id (auto-incremented Nat), title (Text), subtitle (Text), createdAt (Int timestamp), and a list of associated GalleryImage records. Each GalleryImage record should have: id (Nat), eventId (Nat), imageData (Text — base64 data URI), caption (Text), sortOrder (Nat). Expose: addGalleryEvent(title: Text, subtitle: Text): async Nat, getGalleryEvents(): async [GalleryEvent], deleteGalleryEvent(eventId: Nat): async Bool, addGalleryImage(eventId: Nat, imageData: Text, caption: Text): async Nat, getGalleryImagesByEvent(eventId: Nat): async [GalleryImage], deleteGalleryImage(imageId: Nat): async Bool. Store all data in stable variables.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-72",
-        "summary": "Add React Query hooks to frontend/src/hooks/useQueries.ts for the new gallery backend endpoints: useGetGalleryEvents(), useAddGalleryEvent() (mutation returning new event id), useDeleteGalleryEvent() (mutation), useGetGalleryImagesByEvent(eventId: number | null) (disabled when eventId is null), useAddGalleryImage() (mutation accepting eventId, imageData, caption), useDeleteGalleryImage() (mutation). Follow the existing hook patterns in the file. All mutations must call backend actor methods without requiring authenticated Internet Identity (use anonymous actor).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ]
-      },
-      {
-        "id": "REQ-73",
-        "summary": "In the new AdminPanel component (frontend/src/components/AdminPanel.tsx), implement a tabbed interface with six tabs: (1) Donations — table of all donation records using useGetDonations; (2) Memberships — table of all membership registrations using useGetMemberships, with address/identity proof download links; (3) Assistance Requests — table using useGetAssistanceRequests; (4) Contact Inquiries — table using useGetContactInquiries; (5) Villages — district/village management with manual add forms (useAddDistrict, useAddVillage), bulk import (text-paste and Excel/CSV file upload via SheetJS), export to Excel and PDF (via jsPDF), and a districts list with delete buttons (useDeleteDistrict, useDeleteVillage); (6) Gallery Management — interface to create gallery events (title + subtitle form), upload images (file input converted to base64, with caption field) per event, and delete events/images. Style the entire panel with the maroon/gold palette: bg-[#fdf6e3] page root, bg-white tab content areas, maroon (#632626) tab bar with gold (#dacc96) active tab text, text-gray-900 body text, maroon section headings, gold borders, cream form inputs with maroon focus border, maroon header row in tables with alternating row colors. Remove all Internet Identity / isAdmin login checks — passcode gate is the only authentication layer.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/AdminPanel.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/AdminPanel.tsx"
-        ]
-      },
-      {
-        "id": "REQ-74",
-        "summary": "Add a 'Change Passcode' (पासकोड बदलें) section within the Admin Panel (frontend/src/components/AdminPanel.tsx), displayed in the panel header or as a settings tab after login. The form has three fields: Current Passcode, New Passcode (minimum 6 characters), and Confirm New Passcode. Validate that the current passcode matches the stored value, that new passcode and confirmation match, and that new passcode meets minimum length. On success, update localStorage key 'gaf_admin_passcode' and show a success toast. Show clear inline error messages on validation failure.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/AdminPanel.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/AdminPanel.tsx"
-        ]
-      },
-      {
-        "id": "REQ-75",
-        "summary": "Add the Admin Panel route back to frontend/src/App.tsx as a hash route (#/admin) that renders the new AdminPanel component (with the site Header and Footer) when that hash is active. The homepage layout and other routes (#/gallery, #/villages) must remain intact.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-76",
-        "summary": "Add an 'Admin' navigation link back to the Header component (frontend/src/components/Header.tsx) in the hamburger/mobile menu only (NOT in the desktop navigation bar). Clicking the Admin link should navigate to /#/admin and close the hamburger menu.",
+        "id": "REQ-1",
+        "summary": "Add a clearly visible 'Admin Panel' button/link in the main navigation header (Header.tsx) that navigates to the admin route (#/admin). The button should be consistently accessible on both desktop and mobile navigation menus, styled to match the existing maroon/gold theme.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/components/Header.tsx"
@@ -82,116 +20,15 @@
         "matchedFiles": [
           "frontend/src/components/Header.tsx"
         ]
-      },
-      {
-        "id": "REQ-77",
-        "summary": "Update the GallerySection component (frontend/src/components/GallerySection.tsx) to dynamically fetch and display gallery events and their images from the backend using the useGetGalleryEvents and useGetGalleryImagesByEvent hooks. Display each event as a card with a responsive image grid, event title, and subtitle caption. Show a loading state while fetching. If no events exist, show an empty-state message (e.g., 'अभी तक कोई फोटो नहीं जोड़ी गई'). Retain the 'गैलेरी' section heading and decorative gold divider. Style consistently with the existing maroon/gold palette.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/GallerySection.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/GallerySection.tsx"
-        ]
-      },
-      {
-        "id": "REQ-78",
-        "summary": "Add scroll-triggered fade-in and slide-in entrance animations to all major page sections (HeroSection, AboutSection, DonationSection, ActivitiesSection, GovernmentSchemesSection, MembershipSection, AssistanceSection, ContactSection, Footer). Use the Intersection Observer API (or a lightweight CSS approach with Tailwind animation utilities) to trigger animations when each section enters the viewport. Each section should animate once — fading in and sliding up from slightly below its final position. Ensure animations do not cause layout shift or affect performance negatively.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/HeroSection.tsx",
-          "frontend/src/components/AboutSection.tsx",
-          "frontend/src/components/DonationSection.tsx",
-          "frontend/src/components/ActivitiesSection.tsx",
-          "frontend/src/components/GovernmentSchemesSection.tsx",
-          "frontend/src/components/MembershipSection.tsx",
-          "frontend/src/components/AssistanceSection.tsx",
-          "frontend/src/components/ContactSection.tsx",
-          "frontend/src/components/Footer.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/HeroSection.tsx",
-          "frontend/src/components/AboutSection.tsx",
-          "frontend/src/components/DonationSection.tsx",
-          "frontend/src/components/ActivitiesSection.tsx",
-          "frontend/src/components/GovernmentSchemesSection.tsx",
-          "frontend/src/components/MembershipSection.tsx",
-          "frontend/src/components/AssistanceSection.tsx",
-          "frontend/src/components/ContactSection.tsx"
-        ]
-      },
-      {
-        "id": "REQ-79",
-        "summary": "Add hover and focus animations to all interactive buttons and card elements throughout the app. Buttons should have a smooth scale-up (e.g., scale-105) and subtle shadow increase on hover, plus a color transition. CTA buttons in HeroSection should have an additional glow/pulse effect. Navigation links should have an underline slide-in animation on hover. Cards in AboutSection, ActivitiesSection, GovernmentSchemesSection, and MembershipSection should lift slightly (translate-y and shadow increase) on hover.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/HeroSection.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/AboutSection.tsx",
-          "frontend/src/components/ActivitiesSection.tsx",
-          "frontend/src/components/GovernmentSchemesSection.tsx",
-          "frontend/src/components/MembershipSection.tsx",
-          "frontend/src/components/DonationSection.tsx",
-          "frontend/src/components/AssistanceSection.tsx",
-          "frontend/src/components/ContactSection.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/HeroSection.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/AboutSection.tsx",
-          "frontend/src/components/ActivitiesSection.tsx",
-          "frontend/src/components/GovernmentSchemesSection.tsx",
-          "frontend/src/components/MembershipSection.tsx",
-          "frontend/src/components/DonationSection.tsx",
-          "frontend/src/components/AssistanceSection.tsx",
-          "frontend/src/components/ContactSection.tsx"
-        ]
-      },
-      {
-        "id": "REQ-80",
-        "summary": "Add a special entrance animation to the HeroSection component. The foundation name in Hindi/English should animate in with a staggered fade-in-up sequence (each text element appearing one after another). The tagline badge should appear with a scale-in animation. The CTA buttons should slide in from below. Include a subtle background shimmer or parallax scroll effect on the hero background image overlay. All animations should complete within 2 seconds of page load.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/HeroSection.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/HeroSection.tsx"
-        ]
-      },
-      {
-        "id": "REQ-81",
-        "summary": "In backend/main.mo, ensure the addGalleryEvent, getGalleryEvents, deleteGalleryEvent, addGalleryImage, getGalleryImagesByEvent, and deleteGalleryImage functions have no caller-identity or admin-only guards — they must accept calls from any caller (anonymous or authenticated). This is consistent with the existing pattern applied to addDistrict, addVillage, deleteDistrict, and deleteVillage.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/AboutSection.tsx",
-    "frontend/src/components/ActivitiesSection.tsx",
-    "frontend/src/components/AdminPanel.tsx",
-    "frontend/src/components/AssistanceSection.tsx",
-    "frontend/src/components/ContactSection.tsx",
-    "frontend/src/components/DonationSection.tsx",
-    "frontend/src/components/GallerySection.tsx",
-    "frontend/src/components/GovernmentSchemesSection.tsx",
     "frontend/src/components/Header.tsx",
-    "frontend/src/components/HeroSection.tsx",
-    "frontend/src/components/MembershipSection.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/index.css",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

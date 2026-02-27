@@ -66,6 +66,18 @@ export default function Footer() {
                     </a>
                   </li>
                 ))}
+                {/* Discreet Admin Link */}
+                <li>
+                  <a
+                    href="#/admin"
+                    className="text-xs transition-colors opacity-40 hover:opacity-70"
+                    style={{ color: "oklch(0.62 0.05 30)" }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "oklch(0.84 0.07 85)")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "oklch(0.62 0.05 30)")}
+                  >
+                    › Admin
+                  </a>
+                </li>
               </ul>
             </div>
 

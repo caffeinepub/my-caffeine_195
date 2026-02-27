@@ -1,152 +1,171 @@
-import { useState, useEffect } from "react";
-import { Menu, X, Search } from "lucide-react";
-import SearchBar from "./SearchBar";
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Search, ShieldCheck } from 'lucide-react';
 
-const navLinks = [
-  { label: "होम", href: "#home" },
-  { label: "हमारे बारे में", href: "#about" },
-  { label: "गतिविधियाँ", href: "#activities" },
-  { label: "सरकारी योजनाएं", href: "#schemes" },
-  { label: "दान करें", href: "#donation" },
-  { label: "सदस्यता", href: "#membership" },
-  { label: "सहायता", href: "#assistance" },
-  { label: "गैलेरी", href: "#/gallery" },
-  { label: "गाँव", href: "#/villages" },
-  { label: "संपर्क", href: "#contact" },
+interface NavItem {
+  label: string;
+  href: string;
+  isHash?: boolean;
+  isAdmin?: boolean;
+}
+
+const navItems: NavItem[] = [
+  { label: 'होम', href: '#home', isHash: true },
+  { label: 'हमारे बारे में', href: '#about', isHash: true },
+  { label: 'गतिविधियाँ', href: '#activities', isHash: true },
+  { label: 'सदस्यता', href: '#membership', isHash: true },
+  { label: 'दान करें', href: '#donation', isHash: true },
+  { label: 'संपर्क', href: '#contact', isHash: true },
+  { label: 'जिले', href: '#/districts', isHash: false },
 ];
 
-export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+interface HeaderProps {
+  onSearchOpen?: () => void;
+}
+
+export default function Header({ onSearchOpen }: HeaderProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (href: string) => {
-    setMenuOpen(false);
-    if (href.startsWith("#/")) {
-      window.location.hash = href.replace("#", "");
-    } else if (href.startsWith("#")) {
-      const id = href.replace("#", "");
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: "smooth" });
+  const handleNavClick = (item: NavItem) => {
+    setIsMenuOpen(false);
+    if (item.isHash) {
+      // Smooth scroll to section
+      const sectionId = item.href.replace('#', '');
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // If not on home page, navigate to home first
+        window.location.hash = '/';
+        setTimeout(() => {
+          const el = document.getElementById(sectionId);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+      }
+    } else {
+      window.location.hash = item.href.replace('#', '');
     }
   };
 
+  const handleAdminClick = () => {
+    setIsMenuOpen(false);
+    window.location.hash = '/admin';
+  };
+
   return (
-    <>
-      <header
-        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-lg" : ""}`}
-        style={{ background: "#632626" }}
-      >
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? 'bg-maroon-950/95 backdrop-blur-md shadow-lg shadow-maroon-950/20'
+          : 'bg-maroon-950/80 backdrop-blur-sm'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <a
-            href="#home"
-            onClick={e => { e.preventDefault(); handleNavClick("#home"); }}
+            href="#/"
             className="flex items-center gap-3 group"
+            onClick={() => setIsMenuOpen(false)}
           >
-            <img
-              src="/assets/generated/foundation-logo.dim_300x300.png"
-              alt="Logo"
-              className="w-10 h-10 rounded-full object-cover border-2 transition-transform duration-200 group-hover:scale-110"
-              style={{ borderColor: "#dacc96" }}
-            />
-            <div>
-              <div
-                className="text-sm font-bold leading-tight"
-                style={{ color: "#dacc96", fontFamily: "Noto Serif Devanagari, serif" }}
-              >
-                गौसिया अशरफिया
-              </div>
-              <div className="text-xs" style={{ color: "rgba(218,204,150,0.8)" }}>
-                फाउंडेशन
-              </div>
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gold-400/50 group-hover:border-gold-400 transition-colors">
+              <img
+                src="/assets/generated/foundation-logo.dim_300x300.png"
+                alt="Foundation Logo"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            </div>
+            <div className="hidden sm:block">
+              <p className="text-gold-300 font-cinzel font-bold text-sm leading-tight">
+                Gausiya Ashrafia
+              </p>
+              <p className="text-cream-400 text-xs font-devanagari">
+                गौसिया अशरफिया फाउंडेशन
+              </p>
             </div>
           </a>
 
-          {/* Desktop Nav */}
+          {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map(link => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={e => { e.preventDefault(); handleNavClick(link.href); }}
-                className="relative px-2 py-1 text-xs font-medium transition-colors duration-200 group"
-                style={{ color: "rgba(218,204,150,0.85)" }}
+            {navItems.map((item) => (
+              <button
+                key={item.href}
+                onClick={() => handleNavClick(item)}
+                className="px-3 py-2 text-cream-300 hover:text-gold-300 font-devanagari text-sm rounded-lg hover:bg-white/5 transition-all"
               >
-                <span className="relative z-10 group-hover:text-[#dacc96] transition-colors duration-200">
-                  {link.label}
-                </span>
-                <span
-                  className="absolute bottom-0 left-0 w-0 h-0.5 group-hover:w-full transition-all duration-300"
-                  style={{ background: "#dacc96" }}
-                />
-              </a>
+                {item.label}
+              </button>
             ))}
+            {/* Admin Panel Button - Desktop */}
+            <button
+              onClick={handleAdminClick}
+              className="ml-1 flex items-center gap-1.5 px-3 py-2 text-gold-400 hover:text-gold-300 border border-gold-500/40 hover:border-gold-400/70 hover:bg-gold-500/10 font-devanagari text-sm rounded-lg transition-all"
+              title="Admin Panel"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>प्रशासन</span>
+            </button>
           </nav>
 
-          {/* Right Controls */}
+          {/* Right Actions */}
           <div className="flex items-center gap-2">
+            {onSearchOpen && (
+              <button
+                onClick={onSearchOpen}
+                className="p-2 text-cream-300 hover:text-gold-300 hover:bg-white/5 rounded-lg transition-all"
+                aria-label="Search"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+            )}
+
+            {/* Mobile Menu Toggle */}
             <button
-              onClick={() => setSearchOpen(true)}
-              className="p-2 rounded-full transition-all duration-200 hover:scale-110"
-              style={{ color: "#dacc96" }}
-              aria-label="Search"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="lg:hidden p-2 text-cream-300 hover:text-gold-300 hover:bg-white/5 rounded-lg transition-all"
+              aria-label="Toggle menu"
             >
-              <Search className="w-5 h-5" />
-            </button>
-            <button
-              className="lg:hidden p-2 rounded-full transition-all duration-200 hover:scale-110"
-              onClick={() => setMenuOpen(v => !v)}
-              style={{ color: "#dacc96" }}
-              aria-label="Menu"
-            >
-              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <div
-            className="lg:hidden border-t px-4 py-3 space-y-1"
-            style={{ background: "#7a2e2e", borderColor: "#dacc96" }}
-          >
-            {navLinks.map(link => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={e => { e.preventDefault(); handleNavClick(link.href); }}
-                className="block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
-                style={{ color: "#dacc96" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "rgba(218,204,150,0.15)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="lg:hidden bg-maroon-950/98 backdrop-blur-md border-t border-gold-500/10">
+          <nav className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-1">
+            {navItems.map((item) => (
+              <button
+                key={item.href}
+                onClick={() => handleNavClick(item)}
+                className="text-left px-4 py-3 text-cream-300 hover:text-gold-300 font-devanagari text-sm rounded-lg hover:bg-white/5 transition-all"
               >
-                {link.label}
-              </a>
+                {item.label}
+              </button>
             ))}
-            {/* Admin link — mobile only */}
-            <a
-              href="#/admin"
-              onClick={e => { e.preventDefault(); handleNavClick("#/admin"); }}
-              className="block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02]"
-              style={{ color: "rgba(218,204,150,0.6)" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "rgba(218,204,150,0.15)")}
-              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            {/* Admin Panel Button - Mobile */}
+            <button
+              onClick={handleAdminClick}
+              className="text-left flex items-center gap-2 px-4 py-3 text-gold-400 hover:text-gold-300 border border-gold-500/30 hover:border-gold-400/60 hover:bg-gold-500/10 font-devanagari text-sm rounded-lg transition-all mt-1"
             >
-              🔐 Admin
-            </a>
-          </div>
-        )}
-      </header>
-
-      {/* Search Bar — conditionally rendered, uses its own onClose prop */}
-      {searchOpen && <SearchBar onClose={() => setSearchOpen(false)} />}
-    </>
+              <ShieldCheck className="w-4 h-4" />
+              <span>प्रशासन पैनल (Admin Panel)</span>
+            </button>
+          </nav>
+        </div>
+      )}
+    </header>
   );
 }

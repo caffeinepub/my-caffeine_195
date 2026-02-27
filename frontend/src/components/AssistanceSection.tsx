@@ -28,17 +28,19 @@ function useScrollAnimation() {
 }
 
 interface FormState {
-  fullName: string;
+  name: string;
   mobile: string;
-  city: string;
-  assistanceType: string;
+  address: string;
+  requestType: string;
+  description: string;
 }
 
 const initialForm: FormState = {
-  fullName: "",
+  name: "",
   mobile: "",
-  city: "",
-  assistanceType: "",
+  address: "",
+  requestType: "",
+  description: "",
 };
 
 export default function AssistanceSection() {
@@ -49,14 +51,14 @@ export default function AssistanceSection() {
 
   function validate(): boolean {
     const newErrors: Partial<FormState> = {};
-    if (!form.fullName.trim()) newErrors.fullName = "पूरा नाम आवश्यक है";
+    if (!form.name.trim()) newErrors.name = "पूरा नाम आवश्यक है";
     if (!form.mobile.trim()) {
       newErrors.mobile = "मोबाइल नंबर आवश्यक है";
     } else if (!/^\d{10}$/.test(form.mobile.trim())) {
       newErrors.mobile = "10 अंकों का मोबाइल नंबर दर्ज करें";
     }
-    if (!form.city.trim()) newErrors.city = "शहर आवश्यक है";
-    if (!form.assistanceType.trim()) newErrors.assistanceType = "सहायता का विवरण आवश्यक है";
+    if (!form.address.trim()) newErrors.address = "पता आवश्यक है";
+    if (!form.requestType.trim()) newErrors.requestType = "सहायता का प्रकार आवश्यक है";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
@@ -75,10 +77,11 @@ export default function AssistanceSection() {
 
     addAssistanceRequest.mutate(
       {
-        fullName: form.fullName.trim(),
+        name: form.name.trim(),
         mobile: form.mobile.trim(),
-        city: form.city.trim(),
-        assistanceType: form.assistanceType.trim(),
+        address: form.address.trim(),
+        requestType: form.requestType.trim(),
+        description: form.description.trim(),
       },
       {
         onSuccess: () => {
@@ -143,22 +146,22 @@ export default function AssistanceSection() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Full Name */}
             <div className="space-y-1.5">
-              <Label htmlFor="asst-fullName" style={{ color: "oklch(0.30 0.08 15)" }}>
+              <Label htmlFor="asst-name" style={{ color: "oklch(0.30 0.08 15)" }}>
                 पूरा नाम <span style={{ color: "oklch(0.50 0.18 25)" }}>*</span>
               </Label>
               <Input
-                id="asst-fullName"
-                name="fullName"
-                value={form.fullName}
+                id="asst-name"
+                name="name"
+                value={form.name}
                 onChange={handleChange}
                 placeholder="अपना पूरा नाम लिखें"
                 className="border focus-visible:ring-1"
                 style={{
-                  borderColor: errors.fullName ? "oklch(0.50 0.18 25)" : "oklch(0.80 0.04 45)",
+                  borderColor: errors.name ? "oklch(0.50 0.18 25)" : "oklch(0.80 0.04 45)",
                 }}
               />
-              {errors.fullName && (
-                <p className="text-xs" style={{ color: "oklch(0.50 0.18 25)" }}>{errors.fullName}</p>
+              {errors.name && (
+                <p className="text-xs" style={{ color: "oklch(0.50 0.18 25)" }}>{errors.name}</p>
               )}
             </div>
 
@@ -185,47 +188,68 @@ export default function AssistanceSection() {
               )}
             </div>
 
-            {/* City */}
+            {/* Address */}
             <div className="space-y-1.5">
-              <Label htmlFor="asst-city" style={{ color: "oklch(0.30 0.08 15)" }}>
-                शहर <span style={{ color: "oklch(0.50 0.18 25)" }}>*</span>
+              <Label htmlFor="asst-address" style={{ color: "oklch(0.30 0.08 15)" }}>
+                पता <span style={{ color: "oklch(0.50 0.18 25)" }}>*</span>
               </Label>
               <Input
-                id="asst-city"
-                name="city"
-                value={form.city}
+                id="asst-address"
+                name="address"
+                value={form.address}
                 onChange={handleChange}
-                placeholder="अपना शहर लिखें"
+                placeholder="अपना पूरा पता लिखें"
                 className="border focus-visible:ring-1"
                 style={{
-                  borderColor: errors.city ? "oklch(0.50 0.18 25)" : "oklch(0.80 0.04 45)",
+                  borderColor: errors.address ? "oklch(0.50 0.18 25)" : "oklch(0.80 0.04 45)",
                 }}
               />
-              {errors.city && (
-                <p className="text-xs" style={{ color: "oklch(0.50 0.18 25)" }}>{errors.city}</p>
+              {errors.address && (
+                <p className="text-xs" style={{ color: "oklch(0.50 0.18 25)" }}>{errors.address}</p>
               )}
             </div>
 
-            {/* Assistance Type */}
+            {/* Request Type */}
             <div className="space-y-1.5">
-              <Label htmlFor="asst-assistanceType" style={{ color: "oklch(0.30 0.08 15)" }}>
-                किस प्रकार की सहायता चाहिए <span style={{ color: "oklch(0.50 0.18 25)" }}>*</span>
+              <Label htmlFor="asst-requestType" style={{ color: "oklch(0.30 0.08 15)" }}>
+                सहायता का प्रकार <span style={{ color: "oklch(0.50 0.18 25)" }}>*</span>
+              </Label>
+              <Input
+                id="asst-requestType"
+                name="requestType"
+                value={form.requestType}
+                onChange={handleChange}
+                placeholder="जैसे: शिक्षा, चिकित्सा, आर्थिक सहायता..."
+                className="border focus-visible:ring-1"
+                style={{
+                  borderColor: errors.requestType ? "oklch(0.50 0.18 25)" : "oklch(0.80 0.04 45)",
+                }}
+              />
+              {errors.requestType && (
+                <p className="text-xs" style={{ color: "oklch(0.50 0.18 25)" }}>{errors.requestType}</p>
+              )}
+            </div>
+
+            {/* Description */}
+            <div className="space-y-1.5">
+              <Label htmlFor="asst-description" style={{ color: "oklch(0.30 0.08 15)" }}>
+                विवरण{" "}
+                <span className="text-xs font-normal" style={{ color: "oklch(0.60 0.04 45)" }}>
+                  (वैकल्पिक)
+                </span>
               </Label>
               <Textarea
-                id="asst-assistanceType"
-                name="assistanceType"
-                value={form.assistanceType}
+                id="asst-description"
+                name="description"
+                value={form.description}
                 onChange={handleChange}
-                placeholder="अपनी समस्या या आवश्यकता का विवरण लिखें..."
+                placeholder="अपनी समस्या या आवश्यकता का विस्तृत विवरण लिखें..."
                 rows={4}
                 className="border focus-visible:ring-1 resize-none"
                 style={{
-                  borderColor: errors.assistanceType ? "oklch(0.50 0.18 25)" : "oklch(0.80 0.04 45)",
+                  borderColor: "oklch(0.80 0.04 45)",
                 }}
               />
-              {errors.assistanceType && (
-                <p className="text-xs" style={{ color: "oklch(0.50 0.18 25)" }}>{errors.assistanceType}</p>
-              )}
             </div>
 
             {/* Submit */}

@@ -19,36 +19,69 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
+export const MembershipType = IDL.Variant({
+  'Lifetime' : IDL.Null,
+  'Monthly' : IDL.Null,
+  'Yearly' : IDL.Null,
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const District = IDL.Record({
+  'id' : IDL.Nat,
+  'villageIds' : IDL.Vec(IDL.Nat),
+  'name' : IDL.Text,
+});
 export const Village = IDL.Record({
   'id' : IDL.Nat,
   'name' : IDL.Text,
   'districtId' : IDL.Nat,
 });
-export const District = IDL.Record({
+export const AssistanceRequest = IDL.Record({
   'id' : IDL.Nat,
-  'villages' : IDL.Vec(Village),
   'name' : IDL.Text,
+  'submittedAt' : IDL.Int,
+  'description' : IDL.Text,
+  'address' : IDL.Text,
+  'phone' : IDL.Text,
+  'requestType' : IDL.Text,
 });
-export const GalleryImage = IDL.Record({
+export const ContactInquiry = IDL.Record({
   'id' : IDL.Nat,
-  'eventId' : IDL.Nat,
-  'imageData' : IDL.Text,
-  'sortOrder' : IDL.Nat,
-  'caption' : IDL.Text,
+  'name' : IDL.Text,
+  'submittedAt' : IDL.Int,
+  'email' : IDL.Text,
+  'message' : IDL.Text,
+  'phone' : IDL.Text,
 });
-export const GalleryEvent = IDL.Record({
+export const DonationIntent = IDL.Record({
   'id' : IDL.Nat,
-  'title' : IDL.Text,
-  'createdAt' : IDL.Int,
-  'subtitle' : IDL.Text,
-  'images' : IDL.Vec(GalleryImage),
+  'name' : IDL.Text,
+  'submittedAt' : IDL.Int,
+  'email' : IDL.Text,
+  'message' : IDL.Text,
+  'amount' : IDL.Text,
 });
+export const ApplicationStatus = IDL.Variant({
+  'pending' : IDL.Null,
+  'approved' : IDL.Null,
+  'rejected' : IDL.Null,
+});
+export const MembershipApplication = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : ApplicationStatus,
+  'paymentConfirmed' : IDL.Bool,
+  'name' : IDL.Text,
+  'submittedAt' : IDL.Int,
+  'email' : IDL.Text,
+  'address' : IDL.Text,
+  'phone' : IDL.Text,
+  'membershipType' : MembershipType,
+});
+export const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -78,24 +111,36 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addAssistanceRequest' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Nat],
+      [],
+    ),
+  'addContactInquiry' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Nat],
+      [],
+    ),
   'addDistrict' : IDL.Func([IDL.Text], [IDL.Nat], []),
-  'addGalleryEvent' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
-  'addGalleryImage' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [IDL.Nat], []),
+  'addDonationIntent' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Nat],
+      [],
+    ),
+  'addMembershipApplication' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, MembershipType, IDL.Bool],
+      [IDL.Nat],
+      [],
+    ),
   'addVillage' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Nat], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'deleteDistrict' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-  'deleteGalleryEvent' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-  'deleteGalleryImage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-  'deleteVillage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'deleteDistrict' : IDL.Func([IDL.Nat], [], []),
+  'deleteVillage' : IDL.Func([IDL.Nat], [], []),
+  'editDistrict' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+  'editVillage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getDistricts' : IDL.Func([], [IDL.Vec(District)], ['query']),
-  'getGalleryEvents' : IDL.Func([], [IDL.Vec(GalleryEvent)], ['query']),
-  'getGalleryImagesByEvent' : IDL.Func(
-      [IDL.Nat],
-      [IDL.Vec(GalleryImage)],
-      ['query'],
-    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
@@ -103,7 +148,22 @@ export const idlService = IDL.Service({
     ),
   'getVillagesByDistrict' : IDL.Func([IDL.Nat], [IDL.Vec(Village)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'listAssistanceRequests' : IDL.Func(
+      [],
+      [IDL.Vec(AssistanceRequest)],
+      ['query'],
+    ),
+  'listContactInquiries' : IDL.Func([], [IDL.Vec(ContactInquiry)], ['query']),
+  'listDonationIntents' : IDL.Func([], [IDL.Vec(DonationIntent)], ['query']),
+  'listMembershipApplications' : IDL.Func(
+      [IDL.Opt(ApplicationStatus)],
+      [IDL.Vec(MembershipApplication)],
+      ['query'],
+    ),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'setAdminPassword' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
+  'updateApplicationStatus' : IDL.Func([IDL.Nat, ApplicationStatus], [], []),
+  'verifyAdminPassword' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
 });
 
 export const idlInitArgs = [];
@@ -120,36 +180,69 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
+  const MembershipType = IDL.Variant({
+    'Lifetime' : IDL.Null,
+    'Monthly' : IDL.Null,
+    'Yearly' : IDL.Null,
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const District = IDL.Record({
+    'id' : IDL.Nat,
+    'villageIds' : IDL.Vec(IDL.Nat),
+    'name' : IDL.Text,
+  });
   const Village = IDL.Record({
     'id' : IDL.Nat,
     'name' : IDL.Text,
     'districtId' : IDL.Nat,
   });
-  const District = IDL.Record({
+  const AssistanceRequest = IDL.Record({
     'id' : IDL.Nat,
-    'villages' : IDL.Vec(Village),
     'name' : IDL.Text,
+    'submittedAt' : IDL.Int,
+    'description' : IDL.Text,
+    'address' : IDL.Text,
+    'phone' : IDL.Text,
+    'requestType' : IDL.Text,
   });
-  const GalleryImage = IDL.Record({
+  const ContactInquiry = IDL.Record({
     'id' : IDL.Nat,
-    'eventId' : IDL.Nat,
-    'imageData' : IDL.Text,
-    'sortOrder' : IDL.Nat,
-    'caption' : IDL.Text,
+    'name' : IDL.Text,
+    'submittedAt' : IDL.Int,
+    'email' : IDL.Text,
+    'message' : IDL.Text,
+    'phone' : IDL.Text,
   });
-  const GalleryEvent = IDL.Record({
+  const DonationIntent = IDL.Record({
     'id' : IDL.Nat,
-    'title' : IDL.Text,
-    'createdAt' : IDL.Int,
-    'subtitle' : IDL.Text,
-    'images' : IDL.Vec(GalleryImage),
+    'name' : IDL.Text,
+    'submittedAt' : IDL.Int,
+    'email' : IDL.Text,
+    'message' : IDL.Text,
+    'amount' : IDL.Text,
   });
+  const ApplicationStatus = IDL.Variant({
+    'pending' : IDL.Null,
+    'approved' : IDL.Null,
+    'rejected' : IDL.Null,
+  });
+  const MembershipApplication = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : ApplicationStatus,
+    'paymentConfirmed' : IDL.Bool,
+    'name' : IDL.Text,
+    'submittedAt' : IDL.Int,
+    'email' : IDL.Text,
+    'address' : IDL.Text,
+    'phone' : IDL.Text,
+    'membershipType' : MembershipType,
+  });
+  const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -179,24 +272,36 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addAssistanceRequest' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Nat],
+        [],
+      ),
+    'addContactInquiry' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Nat],
+        [],
+      ),
     'addDistrict' : IDL.Func([IDL.Text], [IDL.Nat], []),
-    'addGalleryEvent' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
-    'addGalleryImage' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [IDL.Nat], []),
+    'addDonationIntent' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Nat],
+        [],
+      ),
+    'addMembershipApplication' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, MembershipType, IDL.Bool],
+        [IDL.Nat],
+        [],
+      ),
     'addVillage' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Nat], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'deleteDistrict' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-    'deleteGalleryEvent' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-    'deleteGalleryImage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-    'deleteVillage' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'deleteDistrict' : IDL.Func([IDL.Nat], [], []),
+    'deleteVillage' : IDL.Func([IDL.Nat], [], []),
+    'editDistrict' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+    'editVillage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getDistricts' : IDL.Func([], [IDL.Vec(District)], ['query']),
-    'getGalleryEvents' : IDL.Func([], [IDL.Vec(GalleryEvent)], ['query']),
-    'getGalleryImagesByEvent' : IDL.Func(
-        [IDL.Nat],
-        [IDL.Vec(GalleryImage)],
-        ['query'],
-      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
@@ -208,7 +313,22 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'listAssistanceRequests' : IDL.Func(
+        [],
+        [IDL.Vec(AssistanceRequest)],
+        ['query'],
+      ),
+    'listContactInquiries' : IDL.Func([], [IDL.Vec(ContactInquiry)], ['query']),
+    'listDonationIntents' : IDL.Func([], [IDL.Vec(DonationIntent)], ['query']),
+    'listMembershipApplications' : IDL.Func(
+        [IDL.Opt(ApplicationStatus)],
+        [IDL.Vec(MembershipApplication)],
+        ['query'],
+      ),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'setAdminPassword' : IDL.Func([IDL.Text, IDL.Text], [Result], []),
+    'updateApplicationStatus' : IDL.Func([IDL.Nat, ApplicationStatus], [], []),
+    'verifyAdminPassword' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   });
 };
 

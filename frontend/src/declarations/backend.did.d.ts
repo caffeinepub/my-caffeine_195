@@ -10,25 +10,55 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type ApplicationStatus = { 'pending' : null } |
+  { 'approved' : null } |
+  { 'rejected' : null };
+export interface AssistanceRequest {
+  'id' : bigint,
+  'name' : string,
+  'submittedAt' : bigint,
+  'description' : string,
+  'address' : string,
+  'phone' : string,
+  'requestType' : string,
+}
+export interface ContactInquiry {
+  'id' : bigint,
+  'name' : string,
+  'submittedAt' : bigint,
+  'email' : string,
+  'message' : string,
+  'phone' : string,
+}
 export interface District {
   'id' : bigint,
-  'villages' : Array<Village>,
+  'villageIds' : Array<bigint>,
   'name' : string,
 }
-export interface GalleryEvent {
+export interface DonationIntent {
   'id' : bigint,
-  'title' : string,
-  'createdAt' : bigint,
-  'subtitle' : string,
-  'images' : Array<GalleryImage>,
+  'name' : string,
+  'submittedAt' : bigint,
+  'email' : string,
+  'message' : string,
+  'amount' : string,
 }
-export interface GalleryImage {
+export interface MembershipApplication {
   'id' : bigint,
-  'eventId' : bigint,
-  'imageData' : string,
-  'sortOrder' : bigint,
-  'caption' : string,
+  'status' : ApplicationStatus,
+  'paymentConfirmed' : boolean,
+  'name' : string,
+  'submittedAt' : bigint,
+  'email' : string,
+  'address' : string,
+  'phone' : string,
+  'membershipType' : MembershipType,
 }
+export type MembershipType = { 'Lifetime' : null } |
+  { 'Monthly' : null } |
+  { 'Yearly' : null };
+export type Result = { 'ok' : null } |
+  { 'err' : string };
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
@@ -66,24 +96,43 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addAssistanceRequest' : ActorMethod<
+    [string, string, string, string, string],
+    bigint
+  >,
+  'addContactInquiry' : ActorMethod<[string, string, string, string], bigint>,
   'addDistrict' : ActorMethod<[string], bigint>,
-  'addGalleryEvent' : ActorMethod<[string, string], bigint>,
-  'addGalleryImage' : ActorMethod<[bigint, string, string], bigint>,
+  'addDonationIntent' : ActorMethod<[string, string, string, string], bigint>,
+  'addMembershipApplication' : ActorMethod<
+    [string, string, string, string, MembershipType, boolean],
+    bigint
+  >,
   'addVillage' : ActorMethod<[bigint, string], bigint>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'deleteDistrict' : ActorMethod<[bigint], boolean>,
-  'deleteGalleryEvent' : ActorMethod<[bigint], boolean>,
-  'deleteGalleryImage' : ActorMethod<[bigint], boolean>,
-  'deleteVillage' : ActorMethod<[bigint], boolean>,
+  'deleteDistrict' : ActorMethod<[bigint], undefined>,
+  'deleteVillage' : ActorMethod<[bigint], undefined>,
+  'editDistrict' : ActorMethod<[bigint, string], undefined>,
+  'editVillage' : ActorMethod<[bigint, string], undefined>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getDistricts' : ActorMethod<[], Array<District>>,
-  'getGalleryEvents' : ActorMethod<[], Array<GalleryEvent>>,
-  'getGalleryImagesByEvent' : ActorMethod<[bigint], Array<GalleryImage>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'getVillagesByDistrict' : ActorMethod<[bigint], Array<Village>>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'listAssistanceRequests' : ActorMethod<[], Array<AssistanceRequest>>,
+  'listContactInquiries' : ActorMethod<[], Array<ContactInquiry>>,
+  'listDonationIntents' : ActorMethod<[], Array<DonationIntent>>,
+  'listMembershipApplications' : ActorMethod<
+    [[] | [ApplicationStatus]],
+    Array<MembershipApplication>
+  >,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'setAdminPassword' : ActorMethod<[string, string], Result>,
+  'updateApplicationStatus' : ActorMethod<
+    [bigint, ApplicationStatus],
+    undefined
+  >,
+  'verifyAdminPassword' : ActorMethod<[string], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

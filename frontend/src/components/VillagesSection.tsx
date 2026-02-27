@@ -92,7 +92,7 @@ function DistrictCard({ district, isOpen, onToggle }: {
               color: isOpen ? "oklch(0.84 0.07 85)" : "oklch(0.40 0.08 15)",
             }}
           >
-            {district.villages.length} गाँव
+            {district.villageIds.length} गाँव
           </span>
         </div>
         <div style={{ color: isOpen ? "oklch(0.84 0.07 85)" : "oklch(0.50 0.06 30)" }}>
@@ -156,7 +156,7 @@ export default function VillagesSection() {
               अभी तक कोई जिला नहीं जोड़ा गया।
             </p>
             <p className="text-sm mt-1" style={{ color: "oklch(0.60 0.04 45)" }}>
-              एडमिन पैनल से जिले और गाँव जोड़ें।
+              जिले प्रबंधन पेज से जिले और गाँव जोड़ें।
             </p>
           </div>
         ) : (
